@@ -1,6 +1,7 @@
 import type { SupabaseClient } from '@supabase/supabase-js'
 import type { MessageKey } from '../i18n/en'
 import type { Vars } from '../i18n/translate'
+import { logEvent } from './log'
 import { rpcErrorMessage } from './rpcError'
 
 /** A server refusal, already turned into an i18n key + variables. */
@@ -35,7 +36,19 @@ export async function callRpc<T>(
   fn: string,
   args: Record<string, unknown> = {},
 ): Promise<T> {
+  const started = performance.now()
   const result = await client.rpc(fn, args)
-  if (result.error) throw toFailure(result.error)
+  const ms = Math.round(performance.now() - started)
+  if (result.error) {
+    const failure = toFailure(result.error)
+    logEvent('warn', 'rpc', `${fn} refused: ${result.error.message}`, {
+      ms,
+      key: failure.key,
+      vars: failure.vars,
+      args,
+    })
+    throw failure
+  }
+  logEvent('debug', 'rpc', `${fn} ok`, { ms })
   return result.data as T
 }

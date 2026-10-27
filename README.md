@@ -34,7 +34,11 @@ python -m jobs.validate_tickers                    # check the 100 tickers (netw
 python -m jobs.dry_run --week 2026-10-19 --out /tmp/week.json  # one real week, no DB
 SUPABASE_DB_URL=... python -m jobs.tick [--now 2026-11-13T21:45:00Z]  # what the cron runs
 python -m jobs.replay --league demo --week 2026-W43 --db postgresql://...  # a past week, local/dev DB
+python -m jobs.dev league --me you@example.test --bots 3   # dev mode: bots + simulated clock
+python -m jobs.dev advance --league <id> --to debrief     # (docs/DEV.md)
 ```
+
+Dev mode, logs and the in-app debug page: [`docs/DEV.md`](docs/DEV.md).
 
 Database tests (`supabase/tests`, RLS matrix and every RPC path) need a Postgres. With the
 Supabase CLI: `supabase db start`, then

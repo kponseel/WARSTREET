@@ -2,6 +2,7 @@ import { Link } from 'react-router'
 import { useAuth } from '../auth/context'
 import { GAME_NAME } from '../config'
 import { useI18n } from '../i18n/context'
+import { isDebug } from '../lib/log'
 import { LanguageSwitch } from './LanguageSwitch'
 
 export function Header() {
@@ -21,6 +22,7 @@ export function Header() {
       </Link>
       <nav className="header-nav" aria-label={t('nav.main')}>
         <Link to="/rules">{t('nav.rules')}</Link>
+        {isDebug() && <Link to="/debug">{t('nav.debug')}</Link>}
         {session && (
           <button type="button" className="header-button" onClick={() => void signOut()}>
             {t('nav.logout')}

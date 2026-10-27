@@ -5,6 +5,7 @@ import { CopyButton } from '../components/CopyButton'
 import { ErrorMessage } from '../components/ErrorMessage'
 import { MemberFields } from '../components/MemberFields'
 import type { MemberDraft } from '../components/memberDraft'
+import { LeagueNav } from '../components/LeagueNav'
 import { MemberList } from '../components/MemberList'
 import { useGameConfig, type GameConfig } from '../data/gameConfig'
 import {
@@ -179,6 +180,7 @@ export function Lobby() {
 
   return (
     <section className="page">
+      {league.status !== 'lobby' && <LeagueNav leagueId={league.id} />}
       <h1>{league.name}</h1>
       <p className="muted">
         {t(`league.status.${league.status}`)} ·{' '}
@@ -195,11 +197,18 @@ export function Lobby() {
           <CopyButton text={link} label={t('lobby.copyLink')} />
         </div>
       ) : (
-        <p className="notice" role="status">
-          {league.start_week
-            ? t('lobby.started', { day: formatDay(locale, league.start_week) })
-            : t(`league.status.${league.status}`)}
-        </p>
+        <div className="notice" role="status">
+          <p>
+            {league.start_week
+              ? t('lobby.started', { day: formatDay(locale, league.start_week) })
+              : t(`league.status.${league.status}`)}
+          </p>
+          {league.status === 'active' && (
+            <Link className="button" to={`/l/${league.id}/briefing`}>
+              {t('lobby.toBriefing')}
+            </Link>
+          )}
+        </div>
       )}
 
       <h2>{t('lobby.members')}</h2>

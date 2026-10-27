@@ -8,7 +8,7 @@ import pytest
 from conftest import OTHER_SQUAD, T_BRIEFING, WEEK, Db, League, make_league
 from fake_market import FakeMarket
 
-from jobs.tick import tick
+from jobs.tick import TickFailed, tick
 
 MONDAY_EU = datetime(2026, 11, 9, 8, 15, tzinfo=UTC)
 WEDNESDAY_NIGHT = datetime(2026, 11, 11, 22, 0, tzinfo=UTC)
@@ -240,11 +240,34 @@ def test_a_failing_league_does_not_block_the_others(
         real(conn, data)  # type: ignore[arg-type]
 
     monkeypatch.setattr(league_jobs, "_open_briefing", open_briefing)
-    with pytest.raises(league_jobs.LeagueTickError) as info:
+    db.exec_admin("delete from public.system_status")  # a clean status row for this test
+    with pytest.raises(TickFailed) as info:
         run(db, FakeMarket(), T_BRIEFING)
-    assert info.value.failed == [str(broken.id)[:8]]
+    cause = info.value.__cause__
+    assert isinstance(cause, league_jobs.LeagueTickError)
+    assert cause.failed == [str(broken.id)[:8]]
     assert f"{str(healthy.id)[:8]} {WEEK} open_briefing" in info.value.done
     assert count(db, "select 1 from public.job_runs where league_id = %s", (broken.id,)) == 0
+    # Journaled: the failed tick, its error and the log lines of the failing transition.
+    last = db.fetch_admin("select ok, error, log from private.tick_runs order by id desc limit 1")[
+        0
+    ]
+    assert last["ok"] is False and str(broken.id)[:8] in last["error"]
+    assert any(
+        e.get("transition") == "open_briefing" and e["level"] == "error" for e in last["log"]
+    )
+    status = db.fetch_admin("select last_tick_ok, consecutive_failures from public.system_status")
+    assert status == [{"last_tick_ok": False, "consecutive_failures": 1}]
+    with pytest.raises(TickFailed):
+        run(db, FakeMarket(), T_BRIEFING)
+    assert db.fetch_admin("select consecutive_failures from public.system_status") == [
+        {"consecutive_failures": 2}
+    ]
+    monkeypatch.setattr(league_jobs, "_open_briefing", real)
+    run(db, FakeMarket(), T_BRIEFING)
+    assert db.fetch_admin(
+        "select last_tick_ok, consecutive_failures from public.system_status"
+    ) == [{"last_tick_ok": True, "consecutive_failures": 0}]
 
 
 def test_replay_of_a_demo_week(db: Db) -> None:
@@ -262,3 +285,19 @@ def test_replay_of_a_demo_week(db: Db) -> None:
     assert keys[1:] == ["dispatch.thursday", "dispatch.debrief"]
     assert all(d["en"] and d["fr"] and "{" not in d["en"] + d["fr"] for d in result["dispatches"])
     assert any(line.endswith(" debrief") for line in result["transitions"])
+
+
+def test_monday_dispatch_ignores_implausible_moves(db: Db, week: League) -> None:
+    """A split over the weekend (Friday close no longer comparable) is never headlined."""
+    market = FakeMarket()
+    run(db, market, T_BRIEFING)
+    run(db, market, T_BRIEFING)
+    db.exec_admin(
+        "update public.reference_prices set price = price / 100 where week = %s and kind = 'p_end'",
+        (date(2026, 11, 2),),
+    )
+    run(db, market, MONDAY_EU)
+    monday = db.fetch_admin(
+        "select vars from public.events where league_id = %s and kind = 'dispatch'", (week.id,)
+    )
+    assert monday[0]["vars"]["mover"] == "-"

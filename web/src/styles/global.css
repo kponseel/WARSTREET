@@ -587,3 +587,325 @@ details.card[open] summary {
 .glossary dd {
   margin: 0;
 }
+
+/* Dev mode and debug page */
+.dev-banner {
+  margin: 0;
+  padding: var(--space-2) var(--space-4);
+  background: var(--color-warn-bg);
+  color: var(--color-warn);
+  font-weight: 700;
+  text-align: center;
+}
+
+.debug-facts {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.debug-facts dt {
+  font-weight: 700;
+}
+
+.debug-facts dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.debug-log {
+  display: grid;
+  gap: var(--space-1);
+  padding-left: var(--space-6);
+  font-size: 0.8125rem;
+}
+
+.debug-log code {
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+
+.debug-log .log-warn code {
+  color: var(--color-warn);
+}
+
+.debug-log .log-error code {
+  color: var(--color-danger);
+}
+
+/* League tabs */
+.league-nav {
+  display: flex;
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
+  overflow-x: auto;
+}
+
+.league-nav a {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--tap);
+  padding: 0 var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  background: var(--color-surface);
+  color: var(--color-primary);
+  font-weight: 700;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.league-nav a[aria-current='page'] {
+  border-color: var(--color-primary);
+  background: var(--color-primary);
+  color: var(--color-primary-contrast);
+}
+
+/* Countdown and banners */
+.countdown {
+  margin: 0 0 var(--space-4);
+}
+
+.final-banner {
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-small);
+  background: var(--color-accent);
+  color: #ffffff;
+  font-weight: 800;
+}
+
+.ok-text {
+  color: var(--color-ok);
+  font-weight: 700;
+}
+
+.rule-errors {
+  margin: 0;
+  padding-left: var(--space-6);
+  color: var(--color-danger);
+}
+
+/* Slot board */
+.slot-list {
+  display: grid;
+  gap: var(--space-2);
+  margin: 0 0 var(--space-3);
+  padding: 0;
+  list-style: none;
+}
+
+.slot {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.slot-pick {
+  display: grid;
+  flex: 1;
+  gap: 2px;
+  min-height: var(--tap);
+  padding: var(--space-2) var(--space-3);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.slot-active .slot-pick,
+.slot-pick[aria-pressed='true'] {
+  border-color: var(--color-primary);
+  background: #eef3fa;
+}
+
+.slot-name {
+  font-weight: 700;
+}
+
+.slot-unit {
+  font-family: var(--font-mono);
+}
+
+/* Catalogue */
+.filters {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: var(--space-3);
+  align-items: end;
+}
+
+.unit-list {
+  display: grid;
+  gap: var(--space-2);
+  margin: 0 0 var(--space-3);
+  padding: 0;
+  list-style: none;
+}
+
+.unit-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-surface);
+}
+
+.unit-main {
+  display: grid;
+  gap: var(--space-1);
+  min-width: 0;
+}
+
+.unit-title {
+  overflow-wrap: anywhere;
+}
+
+.unit-facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1) var(--space-2);
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+}
+
+.up {
+  color: var(--color-ok);
+  font-weight: 700;
+}
+
+.down {
+  color: var(--color-danger);
+  font-weight: 700;
+}
+
+.badge-zone {
+  background: #fde8dc;
+  color: #8a2e06;
+}
+
+.weather-on_fire {
+  background: #fde8dc;
+  color: #8a2e06;
+}
+
+.weather-frozen {
+  background: #e3eefb;
+  color: #1d4f8a;
+}
+
+.weather-earnings {
+  background: #efe7fb;
+  color: #5a2aa8;
+}
+
+.weather-roller_coaster {
+  background: var(--color-warn-bg);
+  color: var(--color-warn);
+}
+
+/* Orders and pacts */
+.orders,
+.pacts,
+.squad {
+  margin-top: var(--space-6);
+}
+
+.ammo {
+  font-size: 1.5rem;
+}
+
+.order-list,
+.played-list,
+.pact-list,
+.pact-propose {
+  display: grid;
+  gap: var(--space-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.order {
+  padding: var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+}
+
+.order-open {
+  border-color: var(--color-primary);
+}
+
+.order-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.order-cost {
+  margin-left: auto;
+  font-weight: 700;
+}
+
+.order-desc {
+  margin: var(--space-2) 0;
+}
+
+.kind-attack {
+  background: var(--color-danger-bg);
+  color: var(--color-danger);
+}
+
+.kind-defense {
+  background: var(--color-ok-bg);
+  color: var(--color-ok);
+}
+
+.kind-maneuver {
+  background: #e3eefb;
+  color: #1d4f8a;
+}
+
+.confirm {
+  padding: var(--space-3);
+  border-radius: var(--radius-small);
+  background: var(--color-warn-bg);
+}
+
+.confirm p {
+  margin-top: 0;
+}
+
+.status-blocked,
+.status-rejected {
+  color: var(--color-danger);
+  font-weight: 700;
+}
+
+.status-applied {
+  color: var(--color-ok);
+  font-weight: 700;
+}
+
+.pact-propose li {
+  justify-content: space-between;
+}
+
+.filters .field:first-child {
+  grid-column: 1 / -1;
+}
+
+.filters label {
+  overflow-wrap: anywhere;
+}
+
+.jump-nav {
+  display: flex;
+  gap: var(--space-4);
+  margin-bottom: var(--space-2);
+}

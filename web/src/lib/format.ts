@@ -24,3 +24,35 @@ export function formatList(
 ): string {
   return new Intl.ListFormat(locale, { style: 'long', type }).format(items)
 }
+
+/** "Sun 8 Nov, 23:59 CET": an instant in Paris time with the zone label. */
+export function formatInstant(locale: Locale, iso: string): string {
+  return new Intl.DateTimeFormat(locale, {
+    weekday: 'short',
+    day: 'numeric',
+    month: 'short',
+    hour: '2-digit',
+    minute: '2-digit',
+    timeZone: DISPLAY_TIME_ZONE,
+    timeZoneName: 'short',
+  }).format(new Date(iso))
+}
+
+/** Remaining time split for a countdown (never negative). */
+export function remaining(fromMs: number, toMs: number): { days: number; hours: number; minutes: number; seconds: number } {
+  let s = Math.max(0, Math.floor((toMs - fromMs) / 1000))
+  const days = Math.floor(s / 86_400)
+  s -= days * 86_400
+  const hours = Math.floor(s / 3600)
+  s -= hours * 3600
+  const minutes = Math.floor(s / 60)
+  return { days, hours, minutes, seconds: s - minutes * 60 }
+}
+
+export function formatSignedPercent(locale: Locale, value: number): string {
+  return new Intl.NumberFormat(locale, {
+    maximumFractionDigits: 1,
+    minimumFractionDigits: 1,
+    signDisplay: 'exceptZero',
+  }).format(value) + ' %'
+}

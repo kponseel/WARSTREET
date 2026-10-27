@@ -277,3 +277,51 @@ def test_week_number_one_is_used(db: Db, armed: League) -> None:
     assert db.fetch_admin("select week from public.orders where id = %s", (order_id,)) == [
         {"week": WEEK}
     ]
+
+
+def _costs(db: Db, league: League, who: str) -> dict[tuple[str, str | None], int]:
+    names = {member: name for name, member in league.members.items()}
+    rows = db.rpc_rows(league.users[who], "order_costs", p_league=league.id)
+    return {
+        (r["type"], names.get(r["target_member_id"]) if r["target_member_id"] else None): r["cost"]
+        for r in rows
+    }
+
+
+def test_order_costs_match_what_play_order_charges(db: Db, armed: League) -> None:
+    db.exec_admin(
+        "insert into public.weeks (league_id, week, number, lock_at, resupply_closes_at) "
+        "values (%s, %s, 0, now(), now())",
+        (armed.id, PREV_WEEK),
+    )
+    for name, points in (("A", 5), ("B", 10), ("C", 2), ("D", 0)):
+        db.exec_admin(
+            "insert into public.scores_final (league_id, week, member_id, pf_total, pf_picking, "
+            "rank, campaign_points) values (%s, %s, %s, 0, 0, 1, %s)",
+            (armed.id, PREV_WEEK, armed.members[name], points),
+        )
+    db.set_now(T_BRIEFING)
+    costs = _costs(db, armed, "A")
+    # Briefing window only; targeted orders per other human (never the Drone, never A).
+    assert {t for t, _ in costs} == {"blockade", "jamming", "force_field", "intel"}
+    assert costs[("blockade", "B")] == 1 and costs[("blockade", "C")] == 2  # B has the Bounty
+    assert costs[("force_field", None)] == 1
+    assert ("blockade", "A") not in costs and ("blockade", "Drone") not in costs
+    rows = db.rpc_rows(armed.users["A"], "order_costs", p_league=armed.id)
+    assert {r["target_has_bounty"] for r in rows if r["type"] == "blockade"} == {True, False}
+    order_id = _order(armed, "A", "blockade", "B")
+    assert db.fetch_admin("select cost from public.orders where id = %s", (order_id,)) == [
+        {"cost": costs[("blockade", "B")]}
+    ]
+    # The Berserker does not see the orders it cannot play.
+    assert ("force_field", None) not in _costs(db, armed, "C")
+
+
+def test_order_costs_follow_the_windows(db: Db, armed: League) -> None:
+    armed.open_resupply()
+    db.set_now(T_AFTER_LOCK)
+    assert _costs(db, armed, "A") == {}
+    db.set_now(T_RESUPPLY)
+    types = {t for t, _ in _costs(db, armed, "A")}
+    assert "orbital_strike" in types and "blockade" not in types
+    assert db.rpc_error(armed.outsider, "order_costs", p_league=armed.id).code == "NOT_A_MEMBER"

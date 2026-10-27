@@ -30,6 +30,11 @@ export class GameConfig {
     return result
   }
 
+  /** The raw JSON value (objects such as `orders`). */
+  raw(key: string): unknown {
+    return this.values.get(key)
+  }
+
   num(key: string): number {
     const value = this.values.get(key)
     if (typeof value !== 'number') throw new Error(`game_config.${key} is not a number`)

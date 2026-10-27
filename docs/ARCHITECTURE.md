@@ -132,6 +132,8 @@ check auth, membership, deadlines and game rules, then write.
 
 RPC functions: `create_league`, `league_preview(code)` (read-only: name, state, host, seats,
 for the join page), `join_league(code)`, `leave_league` (lobby only),
+`order_costs(league)` (read-only: what each order costs the caller now, Bounty discount
+included), `server_time()` (the clock every deadline uses),
 `update_member(pseudo, commander, avatar_color)`, `set_ready`, `start_campaign`,
 `set_locale(locale)`, `save_squad(units jsonb)`, `swap_unit` / `cancel_swap`,
 `play_order`, `propose_pact`, `accept_pact`, `decline_pact`.
@@ -142,8 +144,10 @@ Rules for every database object:
   `resupply_closes_at`; `weeks.phase` is informative only (the cron can be late).
 - **Rule values**: RPCs read `game_config`; no number is hardcoded in SQL.
 - **Clock**: every deadline check uses `private.clock()`. It returns `now()`, except that a
-  direct database session (tests, `jobs/replay.py`) may set `app.fake_now`; API sessions
-  (`authenticator`, `anon`, `authenticated`, `service_role`) always get the real time.
+  direct database session (tests, `jobs/replay.py`) may set `app.fake_now` (ignored for
+  API sessions), and a local database in dev mode has a row in `private.dev_clock` that
+  applies to every session (docs/DEV.md). Production never has that row. The app reads
+  the same clock through `server_time()` for its countdowns.
 - **Errors**: `private.raise_error(code, vars)` raises SQLSTATE `P0001` with the code as
   message and the variables as JSON in `details`; `web/src/lib/rpcError.ts` maps it to the
   `error.<CODE>` i18n key. A test fails if a code has no EN/FR message.
@@ -227,6 +231,9 @@ Workflows:
 - `tick.yml`: `*/15` UTC on weekdays 06:00–22:00, hourly on weekends, plus `workflow_dispatch`.
   `concurrency: tick` so two runs never overlap.
 - `heartbeat.yml`: weekly commit of `status/heartbeat.json` (keeps the schedule alive).
+
+**Journal.** Every tick is recorded in `private.tick_runs` (transitions done, log lines,
+error) and summarised in `public.system_status` (read by the app). See docs/DEV.md §3.
 
 **Failure handling.** A transition and its key are inserted in one transaction: a crash
 rolls both back and the next tick retries. A transition whose inputs are not there yet

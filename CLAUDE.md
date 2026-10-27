@@ -101,6 +101,10 @@ python supabase/scripts/generate_seed.py
 cd web && node scripts/generate-icons.mjs
 # one tick, as the cron runs it (fake clock with --now)
 python -m jobs.tick --now 2026-11-13T21:45:00Z
+# dev mode on the local Supabase (docs/DEV.md): bots + simulated clock, inspect, tick logs
+python -m jobs.dev league --me you@example.test --bots 3
+python -m jobs.dev advance --league <id> --to lock|monday|resupply|thursday|debrief|next|end
+python -m jobs.dev inspect --league <id>; python -m jobs.dev logs --errors
 # replay a past week end-to-end against a local or dev database
 python -m jobs.replay --league demo --week 2026-W43 --db postgresql://...
 ```

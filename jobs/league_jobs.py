@@ -460,6 +460,8 @@ def _monday_dispatch(conn: Connection, data: WeekData, now: datetime) -> None:
         for i, p in prices.items()
         if p.p_mid and previous.get(i, {}).get("p_end")
     }
+    # A split over the weekend makes Friday's close and today's quote incomparable.
+    moves = {i: m for i, m in moves.items() if abs(m) <= config.DISPATCH_MAX_PLAUSIBLE_MOVE}
     tickers = {
         r["id"]: r["ticker"]
         for r in conn.execute("select id, ticker from public.instruments").fetchall()
@@ -639,7 +641,8 @@ def league_tick(
         try:
             _league_steps(conn, league_id, now, done)
         except Exception:
-            log.exception("league %s failed in this tick", league_id[:8])
+            # The traceback is already logged by the failing transition (jobs/db.py).
+            log.error("league %s failed in this tick", league_id[:8])
             failed.append(league_id[:8])
     if failed:
         raise LeagueTickError(done, failed)
