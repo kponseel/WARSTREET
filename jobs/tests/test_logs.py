@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import base64
 import json
 import logging
 
@@ -16,6 +17,12 @@ from jobs.logs import (
     setup_logging,
 )
 
+# A made-up token with the shape of a JWT (base64url header.payload.signature).
+FAKE_JWT = ".".join(
+    base64.urlsafe_b64encode(part).decode().rstrip("=")
+    for part in (b'{"fake":"header"}', b'{"fake":"payload"}', b"not-a-real-signature")
+)
+
 
 @pytest.mark.parametrize(
     ("text", "leak"),
@@ -24,12 +31,9 @@ from jobs.logs import (
             "connect postgresql://postgres.abc:S3cret@aws-0.pooler.supabase.com:5432/postgres",
             "S3cret",
         ),
-        (
-            "token eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMjM0NTY3ODkwIn0.dozjgNryP4J3jVmNHl0w5N",
-            "eyJhbGci",
-        ),
-        ("user kevin.someone@gmail.com joined", "kevin.someone"),
-        ("key sb_secret_N7UND0UgjKTVK-Uodkm0Hg", "N7UND0"),
+        (f"token {FAKE_JWT}", "eyJmYWtl"),
+        ("user jane.player@mail.example joined", "jane.player"),
+        ("key sb_secret_FAKEfakeFAKEfake123", "FAKEfake"),
         ("PASSWORD=hunter2 in env", "hunter2"),
     ],
 )

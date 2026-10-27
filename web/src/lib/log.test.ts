@@ -8,9 +8,11 @@ describe('client debug log', () => {
   })
 
   it('never keeps an email or a token', () => {
-    logEvent('warn', 'rpc', 'join refused for kevin@example.com', {
-      jwt: 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMjM0NTY3ODkwIn0.dozjgNryP4J3jVmNHl0w5N',
-    })
+    // A made-up token with the shape of a JWT.
+    const fakeJwt = ['{"fake":"header"}', '{"fake":"payload"}', 'not-a-real-signature']
+      .map((part) => btoa(part).replace(/=+$/, ''))
+      .join('.')
+    logEvent('warn', 'rpc', 'join refused for player@example.com', { jwt: fakeJwt })
     const [entry] = logEntries()
     expect(entry?.message).toBe('join refused for [email]')
     expect(entry?.data).toEqual({ jwt: '[jwt]' })
