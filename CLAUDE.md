@@ -88,6 +88,8 @@ pip install -r supabase/tests/requirements.txt
 ruff check . && ruff format --check . && pytest -q --cov=engine --cov-fail-under=90
 # balance check (Monte Carlo win rate per commander)
 python -m engine.simulate --players 4 --weeks 8 --runs 2000
+python -m jobs.validate_tickers                    # check the 100 tickers (network)
+python -m jobs.dry_run --week 2026-10-19 --out /tmp/week.json  # one real week, no DB
 # database tests (Supabase CLI): supabase db start, then
 WARSTREET_TEST_DB_URL=postgresql://postgres:postgres@127.0.0.1:54322/postgres WARSTREET_TEST_DB_PREPARED=1 pytest -q supabase/tests
 # regenerate supabase/seed.sql after changing engine/engine/config.py or data/instruments.csv
