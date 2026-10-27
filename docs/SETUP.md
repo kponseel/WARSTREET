@@ -1,0 +1,44 @@
+# WARSTREET — Claude Code starter pack
+
+Everything Claude Code needs to build the game in a public GitHub repo, milestone by milestone.
+
+## What's inside
+
+| File | Role |
+|---|---|
+| `CLAUDE.md` | Project memory: stack, hard rules (public repo, RLS, time, idempotence), conventions |
+| `docs/GAME_RULES.md` | Rules v2 as an engine spec, adapted to 3–5 players |
+| `docs/ARCHITECTURE.md` | Stack, data model, security model, jobs, lobby flow, screens, tests |
+| `data/instruments.csv` | The 100 stocks (50 EU / 50 US) with exchange calendars |
+| `prompts/00…09` | One prompt per milestone, to run in order |
+| `docs/SETUP.md` | This file |
+
+## Before you start (manual, ~20 min)
+
+1. **GitHub**: create a public repo `warstreet`, clone it, copy this pack to the root.
+   Settings → Pages → Source: *GitHub Actions*.
+2. **Supabase**: create a free project. Note the project URL, the anon key and the
+   service role key. Auth → URL configuration: add `https://<you>.github.io/<repo>/`.
+3. **GitHub secrets** (Settings → Secrets and variables → Actions):
+   secrets `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`;
+   variables `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`.
+   The service role key never goes anywhere else.
+
+## How to run the prompts
+
+1. Open Claude Code at the repo root. It reads `CLAUDE.md` automatically.
+2. For each milestone: new branch → paste the prompt file content (or
+   "Read prompts/0X_….md and execute it") → approve the plan → review the diff → merge.
+3. Order: 00 → 01 → 02 → 03 → 04 → 05 → 06 → 07 → 08 → 09.
+   02 (engine) and 05 (lobby UI) can run in parallel once 01 is merged.
+4. Use `jobs/replay.py` (milestone 04) to play a past week in minutes before inviting friends.
+
+## Rename the game
+
+Change `GAME_NAME` in `web/src/config.ts` and `engine/config.py`, the repo name, and the
+title in `README.md`. Nothing else references it.
+
+## GitHub "About" box
+
+- **Description**: Weekly fantasy stock-market war game for friends. Draft 5 real EU & US stocks, attack your rivals with orders, climb the free-for-all leaderboard. EN/FR.
+- **Topics**: `fantasy-game`, `stock-market`, `multiplayer`, `pwa`, `react`, `supabase`, `github-actions`, `python`, `game`
