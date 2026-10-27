@@ -43,7 +43,17 @@ export interface CampaignData {
   badges: Badge[]
   dispatches: DispatchEvent[]
   standings: Standing[]
+  /** Weeks whose P_end of some instruments is their last live quote (provider down). */
+  fallbacks: PriceFallback[]
 }
+
+export interface PriceFallback {
+  instrument_id: number
+  week: string
+}
+
+/** jobs/market_jobs.py FALLBACK_SOURCE */
+export const FALLBACK_SOURCE = 'fallback:last_quote'
 
 function rows<T>(result: { data: unknown; error: { message: string } | null }): T[] {
   if (result.error) throw new Error(result.error.message)
@@ -52,7 +62,7 @@ function rows<T>(result: { data: unknown; error: { message: string } | null }): 
 
 /** Everything final of a league: weekly scores, badges, debrief dispatches, standings. */
 export async function loadCampaign(client: SupabaseClient, leagueId: string): Promise<CampaignData | null> {
-  const [league, weeks, instruments, scores, badges, dispatches, standings] = await Promise.all([
+  const [league, weeks, instruments, scores, badges, dispatches, standings, fallbacks] = await Promise.all([
     fetchLeague(client, leagueId),
     fetchWeeks(client, leagueId),
     fetchInstruments(client),
@@ -72,6 +82,7 @@ export async function loadCampaign(client: SupabaseClient, leagueId: string): Pr
       .from('campaign_standings')
       .select('member_id, campaign_points, weekly_wins, pf_cumulative')
       .eq('league_id', leagueId),
+    client.from('reference_prices').select('instrument_id, week').eq('kind', 'p_end').eq('source', FALLBACK_SOURCE),
   ])
   if (!league) return null
   return {
@@ -82,6 +93,7 @@ export async function loadCampaign(client: SupabaseClient, leagueId: string): Pr
     badges: rows<Badge>(badges),
     dispatches: rows<DispatchEvent>(dispatches),
     standings: rows<Standing>(standings),
+    fallbacks: rows<PriceFallback>(fallbacks),
   }
 }
 

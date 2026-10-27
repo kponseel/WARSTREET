@@ -5,6 +5,8 @@ import type { Locale, Vars } from './translate'
 export interface I18nValue {
   locale: Locale
   setLocale: (locale: Locale) => void
+  /** Counts language changes: a late profile read must not undo a newer choice. */
+  localeVersion: () => number
   t: (key: MessageKey, vars?: Vars) => string
 }
 

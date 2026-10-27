@@ -5,6 +5,10 @@ Per exchange of the catalogue (`capture_p0:XPAR`, `capture_p_end:XNYS`…):
 - capture_p_end: `debrief_delay_min` after the last close, the whole week is re-read in ONE
   fetch (one share basis) and P0, P_mid, P_end and dividends are rewritten together.
 - confirm_p_end: one tick later, P_end is read again; a change is applied and logged.
+- Provider down on Friday night: capture_p_end waits and retries for CAPTURE_GRACE, then
+  takes the last live quote of the week as P_end, flagged `source = 'fallback:last_quote'`
+  (the debrief shows it); a later read that works replaces it. With no quote at all the
+  price stays missing and the unit scores 0 (flagged too, GAME_RULES §2).
 Then `week_stats` prepares the next week (coef, Conflict Zone, weather…) once every exchange
 is confirmed, and `live_prices` stores quotes while an exchange is open.
 """
@@ -36,6 +40,7 @@ log = logging.getLogger(__name__)
 
 CAPTURE_GRACE = timedelta(hours=2)  # after this, missing prices stay missing (flagged)
 CONFIRM_DELAY = timedelta(minutes=15)  # second read of P_end, at least one tick later
+FALLBACK_SOURCE = "fallback:last_quote"  # P_end taken from the last live quote of the week
 
 
 @dataclass(frozen=True, slots=True)
@@ -129,11 +134,35 @@ def _capture_week(
             if price is not None:
                 _upsert_price(conn, inst.id, monday, kind, price, dividend, source)
         if week.p_end is None:
-            missing.append(inst.ticker)
+            missing.append(inst)
     if missing and not deadline_passed:
-        raise RetryLater(f"p_end missing for {', '.join(missing[:5])}")
+        raise RetryLater(f"p_end missing for {', '.join(i.ticker for i in missing[:5])}")
     if missing:
-        log.warning("p_end %s still missing after the grace period: %s", monday, missing)
+        _fallback_p_end(conn, missing, monday, sessions)
+
+
+def _fallback_p_end(
+    conn: Connection, insts: list[DbInstrument], monday: date, sessions: SegmentSessions
+) -> None:
+    """After the grace period: the last live quote of the week stands for P_end."""
+    assert sessions.p_end is not None
+    close = session_close(insts[0].calendar_mic, sessions.p_end)
+    used, still_missing = [], []
+    for inst in insts:
+        quote = conn.execute(
+            "select price from public.prices_live where instrument_id = %s "
+            "and ts >= %s and ts <= %s order by ts desc limit 1",
+            (inst.id, monday, close),
+        ).fetchone()
+        if quote is None:
+            still_missing.append(inst.ticker)
+            continue
+        _upsert_price(conn, inst.id, monday, "p_end", float(quote["price"]), 0.0, FALLBACK_SOURCE)
+        used.append(inst.ticker)
+    if used:
+        log.warning("p_end %s from the last live quote (provider down): %s", monday, used)
+    if still_missing:
+        log.warning("p_end %s still missing after the grace period: %s", monday, still_missing)
 
 
 def _confirm_week(
@@ -145,8 +174,8 @@ def _confirm_week(
 ) -> None:
     for inst in insts:
         row = conn.execute(
-            "select price from public.reference_prices where instrument_id = %s and week = %s "
-            "and kind = 'p_end'",
+            "select price, source from public.reference_prices where instrument_id = %s "
+            "and week = %s and kind = 'p_end'",
             (inst.id, monday),
         ).fetchone()
         if row is None:
@@ -154,11 +183,19 @@ def _confirm_week(
         history = provider.history(inst.ticker, monday, monday + timedelta(days=4))
         week = instrument_week(
             inst.id,
-            inst.region,
-            sessions,  # type: ignore[arg-type]
+            inst.region,  # type: ignore[arg-type]
+            sessions,
             history.bars if history else {},
+            history.dividends if history else (),
         )
-        if week.p_end is not None and abs(week.p_end - float(row["price"])) > 1e-9:
+        if week.p_end is not None and row["source"] == FALLBACK_SOURCE:
+            log.warning("p_end of %s read again: the last quote is replaced", inst.ticker)
+            conn.execute(
+                "update public.reference_prices set price = %s, dividend = %s, source = %s, "
+                "fetched_at = now() where instrument_id = %s and week = %s and kind = 'p_end'",
+                (week.p_end, week.d2, _source(provider), inst.id, monday),
+            )
+        elif week.p_end is not None and abs(week.p_end - float(row["price"])) > 1e-9:
             log.warning(
                 "p_end of %s changed on second read: %s -> %s",
                 inst.ticker,

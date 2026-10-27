@@ -49,8 +49,8 @@ export function Catalogue({
             }}
           >
             <option value="">{t('briefing.all')}</option>
-            <option value="EU">EU</option>
-            <option value="US">US</option>
+            <option value="EU">{t('region.EU')}</option>
+            <option value="US">{t('region.US')}</option>
           </select>
         </div>
         <div className="field">

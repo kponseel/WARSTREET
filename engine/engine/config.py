@@ -152,6 +152,16 @@ CANNON_FODDER_THIS_MAX_RETURN: Final = -5.0
 # a bad quote between Friday's close and Monday's quote) and is never headlined.
 DISPATCH_MAX_PLAUSIBLE_MOVE: Final = 40.0
 
+# --- Security (ARCHITECTURE.md) ---------------------------------------------------------
+# Player RPCs that write, per user and per minute (PostgREST pre-request hook). A person
+# playing makes a few a minute; a script looping on an RPC is stopped.
+RPC_RATE_LIMIT_PER_MINUTE: Final = 30
+
+# --- Ops (status page) -----------------------------------------------------------------
+# The tick runs every 15 min on weekdays (hourly at weekends) and pauses at night: no tick
+# for this long means the cron is stopped (disabled workflow, Actions outage).
+STATUS_TICK_LATE_AFTER_HOURS: Final = 8
+
 # --- Mirror for the `game_config` table ------------------------------------------------
 GAME_CONFIG: Final[dict[str, object]] = {
     "min_players": MIN_PLAYERS,
@@ -233,4 +243,6 @@ GAME_CONFIG: Final[dict[str, object]] = {
     "cannon_fodder_prev_max_return": CANNON_FODDER_PREV_MAX_RETURN,
     "cannon_fodder_this_max_return": CANNON_FODDER_THIS_MAX_RETURN,
     "dispatch_max_plausible_move": DISPATCH_MAX_PLAUSIBLE_MOVE,
+    "rpc_rate_limit_per_minute": RPC_RATE_LIMIT_PER_MINUTE,
+    "status_tick_late_after_hours": STATUS_TICK_LATE_AFTER_HOURS,
 }

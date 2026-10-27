@@ -51,6 +51,10 @@ export function Debrief() {
   const dispatch = data.dispatches.find((d) => d.week === week)
   const me = data.league.league_members.find((m) => m.user_id === session?.user.id)
   const index = debriefed.indexOf(week)
+  const fallbackTickers = data.fallbacks
+    .filter((f) => f.week === week)
+    .map((f) => data.instruments.get(f.instrument_id)?.ticker ?? String(f.instrument_id))
+    .sort()
   const pf = (value: number) => t('front.pf', { pf: formatNumber(locale, value, 0) })
   const points = (value: number) => t('debrief.points', { n: formatNumber(locale, value) })
 
@@ -84,6 +88,12 @@ export function Debrief() {
           <Link to={`/l/${id}/debrief/${debriefed[index + 1] ?? ''}`}>{t('debrief.next')}</Link>
         )}
       </nav>
+
+      {fallbackTickers.length > 0 && (
+        <p className="notice" role="note">
+          {t('debrief.priceFallback', { tickers: fallbackTickers.join(', ') })}
+        </p>
+      )}
 
       {dispatch && (
         <blockquote className="dispatch">

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import type { MessageKey } from './en'
 import { I18nContext, type I18nValue } from './context'
 import { detectLocale, isLocale, translate, type Locale, type Vars } from './translate'
@@ -28,7 +28,11 @@ export function I18nProvider({
 }) {
   const [locale, setLocaleState] = useState<Locale>(() => forcedLocale ?? initialLocale())
 
+  const changes = useRef(0)
+  const localeVersion = useCallback(() => changes.current, [])
+
   const setLocale = useCallback((next: Locale) => {
+    changes.current += 1
     setLocaleState(next)
     try {
       window.localStorage.setItem(STORAGE_KEY, next)
@@ -45,9 +49,10 @@ export function I18nProvider({
     () => ({
       locale,
       setLocale,
+      localeVersion,
       t: (key: MessageKey, vars?: Vars) => translate(locale, key, vars),
     }),
-    [locale, setLocale],
+    [locale, setLocale, localeVersion],
   )
 
   return <I18nContext value={value}>{children}</I18nContext>

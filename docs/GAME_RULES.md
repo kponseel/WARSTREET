@@ -112,7 +112,10 @@ Every RPC checks `now()` against these timestamps, never against `week.phase` al
 With a split of ratio `k` (new shares per old share, e.g. 2 for a 2-for-1) inside a segment,
 the segment's end price and its dividend are per new share:
 `r1 = ((P_mid + D1) × k1 / P0 − 1) × 100`, `r2 = ((P_end + D2) × k2 / P_mid − 1) × 100`.
-A segment with a missing price returns 0 and is flagged in the breakdown.
+A segment with a missing price returns 0 and is flagged in the breakdown. If the price
+source is down on Friday night, the debrief waits 2 hours for `P_end`, then uses the
+instrument's last live quote of the week instead, flagged in the debrief; with no quote at
+all, the price is missing.
 
 Scoring is additive per segment. The small difference from a compounded weekly return is
 accepted: it lets every mid-week order apply cleanly to S2 only.

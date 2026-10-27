@@ -198,6 +198,7 @@ export const GAME_CONFIG_VALUES = {
   "resurrection_prev_max_return": -6.0,
   "resurrection_this_min_return": 4.0,
   "reversal_marksman_multiplier": -1.0,
+  "rpc_rate_limit_per_minute": 30,
   "s2_start_local_time": "09:00:00",
   "slot_multipliers": {
     "champion": 2.0,
@@ -206,6 +207,7 @@ export const GAME_CONFIG_VALUES = {
     "saboteur": -1.0,
     "veteran": 1.5
   },
+  "status_tick_late_after_hours": 8,
   "targeted_orders": [
     "orbital_strike",
     "pillage",
