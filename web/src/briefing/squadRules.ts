@@ -60,6 +60,16 @@ export function squadErrors(
       }
     }
   }
+  errors.push(...pairRules(squad, units))
+  return errors
+}
+
+function pairRules(squad: Squad, units: ReadonlyMap<number, Unit>): RuleError[] {
+  const errors: RuleError[] = []
+  const region = (slot: string) => {
+    const id = squad[slot]
+    return id === undefined ? undefined : units.get(id)?.region
+  }
   const champion = region('champion')
   if (champion !== undefined && champion === region('veteran')) {
     errors.push({ key: 'error.VETERAN_SAME_REGION' })
@@ -69,6 +79,24 @@ export function squadErrors(
     errors.push({ key: 'error.PRIORITY_TARGET_NOT_IN_ZONE' })
   }
   return errors
+}
+
+/** The front rules alone (check_front): what a swap must keep true (GAME_RULES §3). */
+export function frontErrors(
+  front: Squad,
+  units: ReadonlyMap<number, Unit>,
+  config: GameConfig,
+): RuleError[] {
+  const errors: RuleError[] = []
+  const min = config.num('front_min_per_region')
+  for (const r of ['EU', 'US'] as const) {
+    const count = frontSlots(config).filter((slot) => {
+      const id = front[slot]
+      return id !== undefined && units.get(id)?.region === r
+    }).length
+    if (count < min) errors.push({ key: 'error.FRONT_NEEDS_REGION', vars: { region: r, min, count } })
+  }
+  return [...errors, ...pairRules(front, units)]
 }
 
 /** A random valid squad ("Drone, suggest a squad"); null if the catalogue cannot make one. */

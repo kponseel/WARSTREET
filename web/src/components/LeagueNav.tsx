@@ -5,6 +5,8 @@ import type { MessageKey } from '../i18n/en'
 const TABS: { path: string; label: MessageKey }[] = [
   { path: 'lobby', label: 'nav.league.lobby' },
   { path: 'briefing', label: 'nav.league.briefing' },
+  { path: 'front', label: 'nav.league.front' },
+  { path: 'resupply', label: 'nav.league.resupply' },
 ]
 
 /** Tabs between the screens of one league. */

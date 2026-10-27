@@ -342,6 +342,7 @@ def test_views_run_as_invoker_except_orders_public(db: Db) -> None:
     assert {r["relname"]: r["invoker"] for r in rows} == {
         "ammo_balance": True,
         "campaign_standings": True,
+        "live_returns": True,
         "orders_public": False,
         "squads_visible": True,
     }

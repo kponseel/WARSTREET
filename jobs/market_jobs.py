@@ -245,6 +245,27 @@ def _live_prices(
     return count
 
 
+def write_sessions(conn: Connection, monday: date) -> int:
+    """The week's trading sessions per exchange (display: the app's daily phase banner)."""
+    exists = conn.execute(
+        "select 1 from public.market_sessions where session between %s and %s limit 1",
+        (monday, monday + timedelta(days=4)),
+    ).fetchone()
+    if exists:
+        return 0
+    count = 0
+    with conn.transaction():
+        for mic in MICS:
+            for session in week_sessions(mic, monday):
+                conn.execute(
+                    "insert into public.market_sessions (mic, session, open_at, close_at) "
+                    "values (%s, %s, %s, %s) on conflict do nothing",
+                    (mic, session, session_open(mic, session), session_close(mic, session)),
+                )
+                count += 1
+    return count
+
+
 def open_mics(now: datetime) -> list[str]:
     """Exchanges in session at `now` (from the calendars, never hardcoded hours)."""
     monday = week_monday(now)
@@ -264,6 +285,9 @@ def market_tick(
     done: list[str] = []
     monday = week_monday(now)
     insts = instruments(conn)
+    for week in (monday, monday + timedelta(days=7)):
+        if write_sessions(conn, week):
+            done.append(f"sessions {week}")
     delay = timedelta(minutes=config.PRICE_CAPTURE_DELAY_MIN)
     end_delay = timedelta(minutes=config.DEBRIEF_DELAY_MIN)
     for mic in MICS:

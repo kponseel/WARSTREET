@@ -123,6 +123,13 @@ Enums: `league_status(lobby, active, finished)`,
 | `game_config` | key/value generated from `engine/config.py`. **Runtime source for RPC validation** (costs, caps, ammo, swaps…) and for display. A CI test fails if it differs from `engine/config.py` |
 | `market_runs` | unique (`week`, `transition`), `ran_at` — idempotence of global market transitions |
 | `job_runs` | unique (`league_id`, `week`, `transition`), `league_id` **not null**, `ran_at` — idempotence of league transitions |
+| `market_sessions` | (`mic`, `session`), `open_at`, `close_at` — the week's sessions from `exchange_calendars`, written by the market job; the app's daily phase banner reads them (no market hours in the frontend) |
+| `system_status` | one row: `last_tick_at`, `last_tick_ok`, `last_success_at`, `consecutive_failures`, `prices_updated_at`, `dev_clock` — written by `jobs/tick.py` |
+| `private.tick_runs` | one row per tick: `game_time`, `ok`, `done`, `log` (the tick's log lines), `error` — not exposed to the API (docs/DEV.md) |
+| `private.dev_clock` | local dev only: the simulated time every session uses (docs/DEV.md); never present in production |
+
+Read-only views besides those above: `live_returns` (each instrument's move this week,
+last live quote or final P_end against P0, for display next to units).
 
 ## 5. Security model (public repo)
 

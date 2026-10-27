@@ -301,3 +301,25 @@ def test_monday_dispatch_ignores_implausible_moves(db: Db, week: League) -> None
         "select vars from public.events where league_id = %s and kind = 'dispatch'", (week.id,)
     )
     assert monday[0]["vars"]["mover"] == "-"
+
+
+def test_sessions_and_live_returns_for_the_front(db: Db, week: League) -> None:
+    market = FakeMarket()
+    run(db, market, T_BRIEFING)
+    sessions = db.fetch_admin(
+        "select mic, count(*)::int as n from public.market_sessions "
+        "where session between %s and %s group by mic",
+        (WEEK, date(2026, 11, 13)),
+    )
+    assert {r["mic"]: r["n"] for r in sessions}["XNYS"] == 5  # 9-13 Nov, no US holiday
+    run(db, market, MONDAY_EU)
+    user = week.users["A"]
+    returns = db.select(
+        user,
+        "select r.week_return_pct, r.last_price from public.live_returns r "
+        "join public.instruments i on i.id = r.instrument_id where i.ticker = 'MC.PA' "
+        "and r.week = %s",
+        (WEEK,),
+    )
+    assert len(returns) == 1 and returns[0]["last_price"] is not None
+    assert db.select(None, "select 1 from public.market_sessions limit 1") != []

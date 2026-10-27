@@ -9,17 +9,21 @@ import { ClockProvider } from '../data/ClockProvider'
 import { getSupabase } from '../lib/supabase'
 import { Briefing } from '../pages/Briefing'
 import { Debug } from '../pages/Debug'
+import { Front } from '../pages/Front'
 import { Home } from '../pages/Home'
 import { Join } from '../pages/Join'
 import { Lobby } from '../pages/Lobby'
 import { Login } from '../pages/Login'
 import { NotFound } from '../pages/NotFound'
+import { Resupply } from '../pages/Resupply'
 import { Rules } from '../pages/Rules'
 
 const PRIVATE_ROUTES = [
   { path: '/join/:code', element: <Join /> },
   { path: '/l/:id/lobby', element: <Lobby /> },
   { path: '/l/:id/briefing', element: <Briefing /> },
+  { path: '/l/:id/front', element: <Front /> },
+  { path: '/l/:id/resupply', element: <Resupply /> },
 ]
 
 // HashRouter: GitHub Pages has no SPA fallback.
