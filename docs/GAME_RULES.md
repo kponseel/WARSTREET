@@ -49,7 +49,8 @@ re-checked for 3–5 players before the first real campaign.
 - **Start**: host only, when ≥3 humans are ready. Week 1 is the first market week whose
   lock is at least `min_first_briefing_hours` (default **12 h**) after the start time
   (start before Sunday 11:59:59 Paris → the coming Monday; otherwise the Monday after).
-  Commanders are locked at start.
+  Commanders are locked at start. Every member plays, ready or not: "ready" only lets the
+  host know when to start (a member who never drafts gets an auto squad).
 - **Leaving**: a player can leave a league only while it is in `lobby`.
 - **End**: after the debrief of the last week → `finished`, final standings frozen.
 
