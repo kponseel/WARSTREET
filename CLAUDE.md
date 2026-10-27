@@ -1,0 +1,86 @@
+# CLAUDE.md — WARSTREET
+
+Weekly fantasy stock-market game for a private league of 3 to 5 friends.
+Futuristic-army theme, free-for-all: every player fights every other player.
+Real EU and US stock prices drive the scores; players draft a 5-unit squad on the weekend,
+play orders against each other mid-week, and are ranked every Friday night.
+
+The game is called **WARSTREET** (one word, all caps in logos and titles). The name lives in
+ONE place: `web/src/config.ts` (`GAME_NAME`) and `engine/config.py` (`GAME_NAME`).
+Never hardcode it elsewhere.
+
+The game is **bilingual: English and French**. English is the reference language.
+
+## Source of truth
+
+Read these before any task. If code and docs disagree, the docs win; if the docs are
+ambiguous, stop and ask instead of guessing.
+
+- `docs/GAME_RULES.md` — the full rules as an engine spec (formulas, timings, orders, edge cases)
+- `docs/ARCHITECTURE.md` — stack, data model, security model, jobs, lobby flow
+- `data/instruments.csv` — the 100-stock catalogue (seed)
+- `prompts/` — the build plan, one prompt per milestone, run in order
+
+## Stack (do not change without asking)
+
+- `web/` — Vite + React + TypeScript (strict), mobile-first PWA, deployed to GitHub Pages.
+  HashRouter (Pages has no SPA fallback). Light theme only. UI in English and French (i18n).
+- `supabase/` — Postgres schema, RLS policies, RPC functions, seed, as SQL migrations.
+  Supabase Auth (email magic link), Realtime for live scores and the event feed.
+- `engine/` — Python 3.12 package: scoring, commanders, orders, ranking, market calendar.
+  Pure functions, no I/O. This is the ONLY place game maths lives.
+- `jobs/` — Python scripts run by GitHub Actions: price fetch, phase transitions, scoring,
+  Front Dispatch (gazette). They call `engine/` and write to Supabase with the service role key.
+- `.github/workflows/` — CI (lint + tests), Pages deploy, `tick` cron, weekly heartbeat.
+
+## Hard rules
+
+1. **Public repository.** Never commit secrets, `.env` files, real emails or league data.
+   The Supabase anon key is public by design; the service role key exists ONLY in GitHub
+   Actions secrets. Add `.env*` to `.gitignore` on day one.
+2. **RLS is the security boundary.** Anyone can read the frontend code and the anon key.
+   Clients never write game tables directly: every player action goes through a Postgres
+   RPC function (`security definer`) that validates phase, ownership and game rules.
+   Hidden information (squads before lock, the Shadow commander, force fields, jamming)
+   must be enforced in RLS or views, never only in the UI.
+3. **Time.** Store UTC everywhere. Display Europe/Paris. Never hardcode market hours:
+   derive them from `exchange_calendars` (DST mismatches happen ~3 weeks a year).
+4. **Jobs are idempotent.** A cron run can be late, skipped or doubled. Every transition is
+   keyed (`league_id, week, transition`) in `job_runs` and computed from "what should be
+   true now", so re-running a tick never double-scores.
+5. **Game maths only in `engine/`**, covered by pytest. The frontend displays numbers it
+   reads from the database; it never recomputes scores.
+6. **Tunable values live in `engine/config.py`** (multipliers, commander values, bonuses,
+   points tables) and are mirrored to a `game_config` table for display. No magic numbers.
+7. Brand/IP: original universe. Do not use Warhammer 40,000 names, factions, emblems or
+   terms (Games Workshop trademark). Commander emblems are simple original SVG glyphs.
+
+## Conventions
+
+- Code, identifiers, commits and docs: English.
+- UI strings: never inline. One key set in `web/src/i18n/en.ts` (reference) and
+  `web/src/i18n/fr.ts`; a test fails if a key is missing in either file. Labels for game
+  terms come from `docs/GAME_RULES.md` §13. Language = `profiles.locale`, defaulting to the
+  browser language (fr* → French, else English), switchable in the header.
+- Server messages (RPC errors, Front Dispatch, events) are stored as a message key + variables,
+  never as finished text, so each player reads them in their own language.
+- Numbers and dates formatted with `Intl` for the active locale; times shown in Europe/Paris
+  with the zone label.
+- Python: ruff + pytest, type hints. TypeScript: eslint + vitest, no `any`.
+- SQL: one migration per change, never edit an applied migration.
+- Conventional commits (`feat:`, `fix:`, `chore:`…). One milestone = one branch = one PR.
+- Before writing code for a milestone, show a short plan and wait for approval.
+- At the end of a milestone: run all tests, list what changed, list what is NOT done.
+
+## Commands (fill in as the repo grows)
+
+```
+# web
+cd web && npm install && npm run dev        # local dev
+npm run test && npm run lint && npm run build
+# engine + jobs
+python -m venv .venv && . .venv/bin/activate && pip install -e "engine[dev]" -r jobs/requirements.txt
+pytest -q
+# replay a past week end-to-end against a dev Supabase project
+python -m jobs.replay --league demo --week 2026-W43
+```
