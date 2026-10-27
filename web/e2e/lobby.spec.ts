@@ -1,6 +1,7 @@
 import AxeBuilder from '@axe-core/playwright'
 import { expect, test, type Browser, type Page } from '@playwright/test'
-import { loginCode, loginLink } from './mailbox'
+import { loginLink } from './mailbox'
+import { logIn } from './session'
 
 const run = Date.now().toString(36)
 const email = (who: string) => `${who}-${run}@example.test`
@@ -8,16 +9,6 @@ const email = (who: string) => `${who}-${run}@example.test`
 async function newPlayer(browser: Browser): Promise<Page> {
   const context = await browser.newContext()
   return context.newPage()
-}
-
-/** Logs in on the current page with the 6-digit code (the iOS home-screen path). */
-async function logIn(page: Page, address: string) {
-  await expect(page.getByRole('heading', { name: 'Log in' })).toBeVisible()
-  await page.getByLabel('Email').fill(address)
-  await page.getByRole('button', { name: 'Send me a login email' }).click()
-  await expect(page.getByText(`Email sent to ${address}`)).toBeVisible()
-  await page.getByLabel('6-digit code').fill(await loginCode(address))
-  await page.getByRole('button', { name: 'Log in', exact: true }).click()
 }
 
 async function expectAccessible(page: Page) {

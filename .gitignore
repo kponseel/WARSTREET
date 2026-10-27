@@ -30,3 +30,6 @@ supabase/.branches/
 .DS_Store
 .idea/
 .vscode/
+
+# Local caches (price histories for simulations)
+.cache/

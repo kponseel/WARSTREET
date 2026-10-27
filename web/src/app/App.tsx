@@ -3,8 +3,12 @@ import { HashRouter, Route, Routes } from 'react-router'
 import { AuthProvider } from '../auth/AuthProvider'
 import { PendingRedirect } from '../auth/PendingRedirect'
 import { RequireAuth } from '../auth/RequireAuth'
+import { DevBanner } from '../components/DevBanner'
 import { Header } from '../components/Header'
+import { ClockProvider } from '../data/ClockProvider'
 import { getSupabase } from '../lib/supabase'
+import { Briefing } from '../pages/Briefing'
+import { Debug } from '../pages/Debug'
 import { Home } from '../pages/Home'
 import { Join } from '../pages/Join'
 import { Lobby } from '../pages/Lobby'
@@ -12,38 +16,35 @@ import { Login } from '../pages/Login'
 import { NotFound } from '../pages/NotFound'
 import { Rules } from '../pages/Rules'
 
+const PRIVATE_ROUTES = [
+  { path: '/join/:code', element: <Join /> },
+  { path: '/l/:id/lobby', element: <Lobby /> },
+  { path: '/l/:id/briefing', element: <Briefing /> },
+]
+
 // HashRouter: GitHub Pages has no SPA fallback.
 export function App({ client = getSupabase() }: { client?: SupabaseClient | null }) {
   return (
     <AuthProvider client={client}>
-      <HashRouter>
-        <PendingRedirect />
-        <Header />
-        <main id="main">
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/rules" element={<Rules />} />
-            <Route
-              path="/join/:code"
-              element={
-                <RequireAuth>
-                  <Join />
-                </RequireAuth>
-              }
-            />
-            <Route
-              path="/l/:id/lobby"
-              element={
-                <RequireAuth>
-                  <Lobby />
-                </RequireAuth>
-              }
-            />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </main>
-      </HashRouter>
+      <ClockProvider>
+        <HashRouter>
+          <PendingRedirect />
+          <Header />
+          <DevBanner />
+          <main id="main" tabIndex={-1}>
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/rules" element={<Rules />} />
+              <Route path="/debug" element={<Debug />} />
+              {PRIVATE_ROUTES.map(({ path, element }) => (
+                <Route key={path} path={path} element={<RequireAuth>{element}</RequireAuth>} />
+              ))}
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </main>
+        </HashRouter>
+      </ClockProvider>
     </AuthProvider>
   )
 }

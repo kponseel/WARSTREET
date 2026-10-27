@@ -61,6 +61,7 @@ export const GAME_CONFIG_VALUES = {
   ],
   "conflict_zone_size": 8,
   "debrief_delay_min": 30,
+  "dispatch_max_plausible_move": 40.0,
   "display_class_thresholds": {
     "armored": 3.0,
     "commando": 9.0,

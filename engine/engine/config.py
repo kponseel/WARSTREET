@@ -147,6 +147,11 @@ ORACLE_MIN_SABOTEUR_PF: Final = 50
 CANNON_FODDER_PREV_MAX_RETURN: Final = -6.0
 CANNON_FODDER_THIS_MAX_RETURN: Final = -5.0
 
+# --- §10 Front Dispatch ----------------------------------------------------------------
+# A Monday opening move larger than this (in %) is treated as a data artefact (a split or
+# a bad quote between Friday's close and Monday's quote) and is never headlined.
+DISPATCH_MAX_PLAUSIBLE_MOVE: Final = 40.0
+
 # --- Mirror for the `game_config` table ------------------------------------------------
 GAME_CONFIG: Final[dict[str, object]] = {
     "min_players": MIN_PLAYERS,
@@ -227,4 +232,5 @@ GAME_CONFIG: Final[dict[str, object]] = {
     "oracle_min_saboteur_pf": ORACLE_MIN_SABOTEUR_PF,
     "cannon_fodder_prev_max_return": CANNON_FODDER_PREV_MAX_RETURN,
     "cannon_fodder_this_max_return": CANNON_FODDER_THIS_MAX_RETURN,
+    "dispatch_max_plausible_move": DISPATCH_MAX_PLAUSIBLE_MOVE,
 }

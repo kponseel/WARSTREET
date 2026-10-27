@@ -22,122 +22,35 @@ import json
 import logging
 import uuid
 from collections.abc import Callable, Iterator, Sequence
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from datetime import UTC, date, datetime, timedelta
 from pathlib import Path
 from typing import Any
 
-from psycopg.types.json import Jsonb
-
 from engine import config
-from engine.calendar import (
-    MICS,
-    local_instant,
-    phase_timestamps,
-    segment_sessions,
-    session_close,
-    session_open,
-    week_sessions,
-)
+from engine.calendar import phase_timestamps
 from engine.drone import random_squad, seeded_rng
 from jobs import dispatch
 from jobs.db import Connection, connect
-from jobs.league_jobs import THURSDAY_DISPATCH_LOCAL_TIME, _load
+from jobs.league_jobs import _load
+from jobs.logs import setup_logging
 from jobs.market import HISTORY_WEEKS
-from jobs.market_jobs import CONFIRM_DELAY, bootstrap_week_stats, instruments
-from jobs.prices import Fundamentals, History, PriceProvider, default_provider
+from jobs.market_jobs import bootstrap_week_stats, instruments
+from jobs.prices import PriceProvider, default_provider
+from jobs.sim import HistoricalProvider, as_user, briefing_opens, parse_week, week_instants
+from jobs.sim import set_fake_now as set_clock
 from jobs.tick import tick
+
+__all__ = ["parse_week", "replay"]
 
 log = logging.getLogger(__name__)
 
 BOTS = (("Vega", "bastion"), ("Orion", "hunter"), ("Nyx", "shadow"), ("Kestrel", "berserker"))
 COLORS = ("#1f3a5f", "#c2410c", "#166534", "#7c3aed")
 DEMO_CAMPAIGN_WEEKS = config.CAMPAIGN_WEEKS_MIN
-LIVE_HOURS_UTC = range(6, 23)  # extra ticks so live scores move like a real week
-
-
-def parse_week(value: str) -> date:
-    """`2026-W43` (ISO week) or any date of the week -> its Monday."""
-    if "W" in value:
-        year, week = value.split("-W")
-        return date.fromisocalendar(int(year), int(week), 1)
-    day = date.fromisoformat(value)
-    return day - timedelta(days=day.weekday())
-
-
-# --- prices --------------------------------------------------------------------------------
-@dataclass
-class HistoricalProvider:
-    """Real daily bars, fetched once per ticker, never beyond the fake clock."""
-
-    base: PriceProvider
-    start: date
-    end: date
-    mics: dict[str, str] = field(default_factory=dict)
-    now: datetime = field(default_factory=lambda: datetime.now(UTC))
-    name: str = "replay"
-    _cache: dict[str, History | None] = field(default_factory=dict)
-
-    @property
-    def last_source(self) -> str:
-        return f"replay:{getattr(self.base, 'last_source', None) or self.base.name}"
-
-    def _full(self, ticker: str) -> History | None:
-        if ticker not in self._cache:
-            self._cache[ticker] = self.base.history(ticker, self.start, self.end)
-        return self._cache[ticker]
-
-    def history(self, ticker: str, start: date, end: date) -> History | None:
-        full = self._full(ticker)
-        if full is None:
-            return None
-        part = History(ticker, full.source, full.currency, splits=list(full.splits))
-        part.bars = {d: b for d, b in full.bars.items() if start <= d <= end}
-        part.dividends = [x for x in full.dividends if start <= x.ex_date <= end]
-        return part
-
-    def live_price(self, ticker: str) -> float | None:
-        full, mic = self._full(ticker), self.mics.get(ticker)
-        if full is None or mic is None:
-            return None
-        for day in sorted(full.bars, reverse=True):
-            bar = full.bars[day]
-            opened, closed = session_open(mic, day), session_close(mic, day)
-            if opened > self.now:
-                continue
-            if self.now >= closed or bar.open is None or bar.close is None:
-                return bar.close
-            # No intraday bars: a straight line from the open to the close.
-            elapsed = (self.now - opened) / (closed - opened)
-            return bar.open + (bar.close - bar.open) * elapsed
-        return None
-
-    def fundamentals(self, ticker: str) -> Fundamentals | None:
-        return self.base.fundamentals(ticker)
 
 
 # --- demo league ---------------------------------------------------------------------------
-def set_clock(conn: Connection, now: datetime) -> None:
-    conn.execute("select set_config('app.fake_now', %s, false)", (now.isoformat(),))
-
-
-def as_user(conn: Connection, user_id: str, function: str, **params: Any) -> Any:
-    """Calls an RPC the way the app does (role `authenticated` + the user's JWT claims)."""
-    args = ", ".join(f"{name} => %({name})s" for name in params)
-    values = {k: Jsonb(v) if isinstance(v, dict | list) else v for k, v in params.items()}
-    claims = json.dumps({"sub": user_id, "role": "authenticated"})
-    with conn.transaction():
-        conn.execute("select set_config('request.jwt.claims', %s, true)", (claims,))
-        conn.execute("select set_config('request.jwt.claim.sub', %s, true)", (user_id,))
-        conn.execute("set local role authenticated")
-        row = conn.execute(f"select public.{function}({args}) as result", values).fetchone()
-        # Back to the admin identity (a savepoint release would keep the local settings).
-        conn.execute("reset role")
-        conn.execute("select set_config('request.jwt.claims', '', true)")
-        conn.execute("select set_config('request.jwt.claim.sub', '', true)")
-    return row["result"] if row else None
-
-
 def try_order(conn: Connection, user_id: str, function: str, **params: Any) -> bool:
     """One bot move, one second after the previous one (orders resolve by play time)."""
     row = conn.execute("select current_setting('app.fake_now') as now").fetchone()
@@ -251,41 +164,13 @@ def resupply_moves(conn: Connection, demo: Demo) -> None:
     )
 
 
-# --- the timeline --------------------------------------------------------------------------
-def timeline(monday: date) -> list[datetime]:
-    """Every instant at which a transition of the week becomes due, plus hourly live ticks."""
-    ts = phase_timestamps(monday)
-    instants = {
-        local_instant(monday - timedelta(days=2), "12:00:00"),  # Saturday: briefing
-        ts.lock_at + timedelta(seconds=1),
-        ts.resupply_opens_at + timedelta(minutes=1),
-        ts.resupply_closes_at + timedelta(seconds=1),
-        local_instant(monday + timedelta(days=3), THURSDAY_DISPATCH_LOCAL_TIME),
-    }
-    delay = timedelta(minutes=config.PRICE_CAPTURE_DELAY_MIN)
-    end_delay = timedelta(minutes=config.DEBRIEF_DELAY_MIN)
-    for mic in MICS:
-        sessions = segment_sessions(mic, monday)
-        for session in (sessions.p0, sessions.p_mid):
-            if session is not None:
-                instants.add(session_open(mic, session) + delay)
-        if sessions.p_end is not None:
-            closed = session_close(mic, sessions.p_end) + end_delay
-            instants |= {closed, closed + CONFIRM_DELAY, closed + 2 * CONFIRM_DELAY}
-    for day in week_sessions("XNYS", monday):
-        for hour in LIVE_HOURS_UTC:
-            instants.add(datetime(day.year, day.month, day.day, hour, 30, tzinfo=UTC))
-    end = ts.debrief_at + 3 * CONFIRM_DELAY
-    return sorted(i for i in instants if i <= end)
-
-
 def _moves(
     monday: date, demo: Demo | None, conn: Connection
 ) -> Iterator[tuple[datetime, Callable[[], None]]]:
     if demo is None:
         return
     ts = phase_timestamps(monday)
-    saturday = local_instant(monday - timedelta(days=2), "12:00:00")
+    saturday = briefing_opens(monday)
     yield saturday + timedelta(minutes=5), lambda: briefing_moves(conn, demo, monday)
     yield ts.resupply_opens_at + timedelta(minutes=5), lambda: resupply_moves(conn, demo)
 
@@ -299,7 +184,7 @@ def replay(conn: Connection, base: PriceProvider, monday: date, league: str) -> 
     provider.now = datetime.combine(monday - timedelta(days=3), datetime.min.time(), UTC)
     bootstrap_week_stats(conn, provider, monday)  # the Conflict Zone of the replayed week
     moves = sorted(_moves(monday, demo, conn), key=lambda m: m[0])
-    instants = sorted(set(timeline(monday)) | {at for at, _ in moves})
+    instants = sorted(set(week_instants(monday)) | {at for at, _ in moves})
     actions = dict(moves)
     lines: list[str] = []
     for now in instants:
@@ -363,8 +248,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument("--db", default=None, help="Postgres URL (default: $SUPABASE_DB_URL)")
     parser.add_argument("--out", type=Path, default=None, help="write the summary as JSON")
     args = parser.parse_args(argv)
-    logging.basicConfig(level=logging.INFO, format="%(levelname)s %(name)s: %(message)s")
-    logging.getLogger("yfinance").setLevel(logging.WARNING)
+    setup_logging()
     with connect(args.db) as conn:
         result = replay(conn, default_provider(), args.week, args.league)
     for row in result["scores"]:

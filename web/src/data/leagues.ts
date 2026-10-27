@@ -1,5 +1,6 @@
-import type { SupabaseClient } from '@supabase/supabase-js'
+import { REALTIME_SUBSCRIBE_STATES, type SupabaseClient } from '@supabase/supabase-js'
 import { useCallback, useEffect, useState } from 'react'
+import { logEvent } from '../lib/log'
 
 export type LeagueStatus = 'lobby' | 'active' | 'finished'
 
@@ -157,7 +158,12 @@ export function useLeagueRoom(
       .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'league_members', filter }, refresh)
       .on('postgres_changes', { event: 'DELETE', schema: 'public', table: 'league_members' }, refresh)
       .on('postgres_changes', { event: '*', schema: 'public', table: 'weeks', filter }, refresh)
-      .subscribe()
+      .subscribe((status, error) => {
+        logEvent(status === REALTIME_SUBSCRIBE_STATES.SUBSCRIBED ? 'debug' : 'warn', 'realtime', `lobby ${status}`, {
+          league: id,
+          ...(error ? { error: error.message } : {}),
+        })
+      })
     const onVisible = () => {
       if (document.visibilityState === 'visible') refresh()
     }

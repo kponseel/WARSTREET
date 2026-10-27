@@ -15,6 +15,8 @@ from typing import Any
 import psycopg
 from psycopg.rows import dict_row
 
+from jobs.logs import log_context
+
 ENV_VAR = "SUPABASE_DB_URL"
 log = logging.getLogger(__name__)
 
@@ -42,18 +44,26 @@ def connect(url: str | None = None) -> Connection:
 
 
 def _run(
-    conn: Connection, insert: str, params: tuple[Any, ...], label: str, work: Callable[[], None]
+    conn: Connection,
+    insert: str,
+    params: tuple[Any, ...],
+    context: dict[str, object],
+    work: Callable[[], None],
 ) -> bool:
-    try:
-        with conn.transaction():
-            if conn.execute(insert, params).fetchone() is None:
-                return False  # already done
-            work()
-    except RetryLater as reason:
-        log.info("%s: not ready (%s)", label, reason)
-        return False
-    log.info("%s: done", label)
-    return True
+    with log_context(**context):
+        try:
+            with conn.transaction():
+                if conn.execute(insert, params).fetchone() is None:
+                    return False  # already done
+                work()
+        except RetryLater as reason:
+            log.info("not ready: %s", reason)
+            return False
+        except Exception:
+            log.exception("failed (rolled back, retried next tick)")
+            raise
+        log.info("done")
+        return True
 
 
 def run_market_once(conn: Connection, week: Any, transition: str, work: Callable[[], None]) -> bool:
@@ -62,7 +72,7 @@ def run_market_once(conn: Connection, week: Any, transition: str, work: Callable
         "insert into public.market_runs (week, transition) values (%s, %s) "
         "on conflict do nothing returning week",
         (week, transition),
-        f"market {week} {transition}",
+        {"scope": "market", "week": week, "transition": transition},
         work,
     )
 
@@ -75,7 +85,7 @@ def run_league_once(
         "insert into public.job_runs (league_id, week, transition) values (%s, %s, %s) "
         "on conflict do nothing returning week",
         (league_id, week, transition),
-        f"league {str(league_id)[:8]} {week} {transition}",
+        {"league": str(league_id)[:8], "week": week, "transition": transition},
         work,
     )
 
