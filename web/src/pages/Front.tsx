@@ -8,6 +8,7 @@ import { Leaderboard } from '../front/Leaderboard'
 import { MyUnits } from '../front/MyUnits'
 import { PhaseBanner } from '../front/PhaseBanner'
 import { useFront } from '../front/useFront'
+import { useLatestBadges } from '../debrief/useLatestBadges'
 import { useI18n } from '../i18n/context'
 
 export function Front() {
@@ -16,6 +17,7 @@ export function Front() {
   const { t } = useI18n()
   const { synced } = useClock()
   const state = useFront(client, id, session?.user.id ?? '')
+  const badges = useLatestBadges(client, id)
   const now = useNow(10_000).getTime()
 
   if (state.status === 'loading' || !synced) return <p aria-busy="true">{t('common.loading')}</p>
@@ -65,9 +67,16 @@ export function Front() {
           </Link>
         </div>
       )}
-      {debriefed && <p className="notice">{t('front.debriefed')}</p>}
+      {debriefed && (
+        <div className="notice">
+          <p>{t('front.debriefed')}</p>
+          <Link className="button" to={`/l/${id}/debrief/${week.week}`}>
+            {t('front.toDebrief')}
+          </Link>
+        </div>
+      )}
       {locked && <MyUnits data={data} />}
-      {locked && <Leaderboard data={data} />}
+      {locked && <Leaderboard data={data} badges={badges} />}
       <EventFeed data={data} />
     </section>
   )

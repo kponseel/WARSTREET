@@ -87,6 +87,9 @@ still shows the right deadlines, and the dev mode's simulated time shows in a ba
 
 ## 5. End-to-end tests
 
-`web/e2e` runs against the local stack: `lobby.spec.ts` (login, create, join, start) and
-`briefing.spec.ts`, which creates a league of bots with `jobs.dev` and moves the clock to
-the lock. CI runs them in the `e2e` job.
+`web/e2e` runs against the local stack: `lobby.spec.ts` (login, create, join, start),
+`briefing.spec.ts` (squad, orders, pacts, then the lock), `front.spec.ts` (live front and
+resupply) and `debrief.spec.ts` (Friday ranking, breakdown, Drone verdict, share card,
+campaign). The last three create a league of bots with `jobs.dev` and move the clock.
+The dev clock is global, so the tests run one at a time (`workers: 1`). CI runs them in
+the `e2e` job.

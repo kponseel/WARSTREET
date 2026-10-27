@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { BadgeChips } from '../components/BadgeChips'
 import { CommanderEmblem } from '../components/CommanderEmblem'
 import { commanderName } from '../components/commanderText'
 import { Avatar } from '../components/MemberList'
@@ -34,7 +35,13 @@ function Units({ data, row }: { data: FrontData; row: LiveRow }) {
   )
 }
 
-export function Leaderboard({ data }: { data: FrontData }) {
+export function Leaderboard({
+  data,
+  badges,
+}: {
+  data: FrontData
+  badges: ReadonlyMap<string, string[]>
+}) {
   const { t, locale } = useI18n()
   const [open, setOpen] = useState<string | null>(null)
   const members = new Map(data.league.league_members.map((m) => [m.member_id, m]))
@@ -68,7 +75,9 @@ export function Leaderboard({ data }: { data: FrontData }) {
                 <span className="board-rank">{row.rank_live ?? '—'}</span>
                 <Avatar pseudo={m?.pseudo ?? '?'} color={m?.avatar_color ?? '#666666'} />
                 <span className="board-name">
-                  {m?.pseudo}
+                  <span>
+                    {m?.pseudo} <BadgeChips codes={badges.get(row.member_id) ?? []} />
+                  </span>
                   <span className="member-commander">
                     {m?.commander && <CommanderEmblem code={m.commander} size={16} />}
                     {commanderName(t, m?.commander ?? null)}
