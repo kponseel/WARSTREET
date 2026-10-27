@@ -18,7 +18,8 @@ Everything Claude Code needs to build the game in a public GitHub repo, mileston
 1. **GitHub**: create a public repo `warstreet`, clone it, copy this pack to the root.
    Settings → Pages → Source: *GitHub Actions*.
 2. **Supabase**: create a free project. Note the project URL, the anon key and the
-   service role key. Auth → URL configuration: set the Site URL and add the redirect URL
+   database connection string: Connect → *Session pooler* (IPv4, port 5432; GitHub
+   runners have no IPv6), with the database password filled in. Auth → URL configuration: set the Site URL and add the redirect URL
    `https://<you>.github.io/<repo>/`.
 3. **Email (required)**: Supabase's built-in email only reaches members of your Supabase
    organization, about 2 emails per hour, so your friends would never receive a login
@@ -30,9 +31,12 @@ Everything Claude Code needs to build the game in a public GitHub repo, mileston
    - Send yourself a test login before inviting anyone.
    The SMTP password is entered in the Supabase dashboard only, never in the repo.
 4. **GitHub secrets** (Settings → Secrets and variables → Actions):
-   secrets `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`;
+   secret `SUPABASE_DB_URL` (the session pooler connection string, used by `tick.yml`);
    variables `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`.
-   The service role key never goes anywhere else.
+   The connection string never goes anywhere else (no file, no log, no frontend).
+5. **First tick**: Actions → Tick → *Run workflow*. Then the cron takes over
+   (`*/15` on weekdays, hourly on weekends). `heartbeat.yml` commits once a week so
+   GitHub never disables the schedule.
 
 ## How to run the prompts
 
@@ -41,7 +45,8 @@ Everything Claude Code needs to build the game in a public GitHub repo, mileston
    "Read prompts/0X_….md and execute it") → approve the plan → review the diff → merge.
 3. Order: 00 → 01 → 02 → 03 → 04 → 05 → 06 → 07 → 08 → 09.
    02 (engine) and 05 (lobby UI) can run in parallel once 01 is merged.
-4. Use `jobs/replay.py` (milestone 04) to play a past week in minutes before inviting friends.
+4. Use `python -m jobs.replay --league demo --week 2026-W43 --db <dev or local URL>`
+   (milestone 04) to play a past week in minutes before inviting friends.
 
 ## Rename the game
 

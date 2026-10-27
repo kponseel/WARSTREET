@@ -51,8 +51,10 @@ jobs:
           cache: pip
           cache-dependency-path: |
             engine/pyproject.toml
+            jobs/requirements.txt
             supabase/tests/requirements.txt
-      - run: pip install -e "engine[dev]" -r supabase/tests/requirements.txt
+      # The job tests (supabase/tests/test_jobs.py) import jobs/.
+      - run: pip install -e "engine[dev]" -r jobs/requirements.txt -r supabase/tests/requirements.txt
       - run: pytest -q supabase/tests
         env:
           WARSTREET_TEST_DB_URL: postgresql://postgres:postgres@127.0.0.1:54322/postgres

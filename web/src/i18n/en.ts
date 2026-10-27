@@ -72,6 +72,31 @@ export const en = {
   'error.TARGET_SLOT_REQUIRED': 'Choose a unit.',
   'error.UNKNOWN_INSTRUMENT': 'Unknown stock ({slot}).',
   'error.VETERAN_SAME_REGION': 'Your Veteran must come from a different region than your Champion.',
+  // Front Dispatch (jobs/dispatch.py): template_key + '.' + variant; same variant in EN and FR.
+  'dispatch.monday.0':
+    'Front Dispatch, Monday: first shots fired. {mover} opens the war at {move} %. {leader} takes the early lead with {pf} FP.',
+  'dispatch.monday.1':
+    'Dawn report: {mover} moved {move} % before the coffee was cold. Early commander of the field: {leader} ({pf} FP).',
+  'dispatch.monday.2':
+    'The markets wake up and {mover} is already at {move} %. {leader} plants the flag first: {pf} FP.',
+  'dispatch.monday_fog.0':
+    'Front Dispatch, Monday: {mover} opens at {move} %. The fog of war hides the leader.',
+  'dispatch.monday_fog.1':
+    'Dawn report: {mover} moved {move} %. No visible leader yet: someone is hiding.',
+  'dispatch.monday_fog.2':
+    '{mover} starts the week at {move} %. The leaderboard is jammed in smoke.',
+  'dispatch.thursday.0':
+    'Resupply recap: {swaps} swap(s), {attacks} attack(s) landed, {blocked} blocked by force fields, {pacts} pact(s) holding.',
+  'dispatch.thursday.1':
+    'Thursday convoy: {swaps} unit(s) rotated, {attacks} hit(s) confirmed, {blocked} shot(s) deflected, {pacts} alliance(s) on the map.',
+  'dispatch.thursday.2':
+    'Mid-week intel: {attacks} strike(s) went through, {blocked} bounced off a shield, {swaps} swap(s) at the depot, {pacts} pact(s) signed.',
+  'dispatch.debrief.0':
+    'Debrief: {winner} wins the week with {pf} FP. Hero unit: {best} ({best_move} %). Casualty of the week: {worst} ({worst_move} %). The Drone scored {drone_pf} and rusted {rusty} commander(s).',
+  'dispatch.debrief.1':
+    'Friday night, the smoke clears: {winner} holds the hill with {pf} FP. {best} carried the squad ({best_move} %), {worst} sank ({worst_move} %). Drone: {drone_pf} FP, {rusty} player(s) beaten by a random draft.',
+  'dispatch.debrief.2':
+    "Week over. Medal to {winner} ({pf} FP). Best unit {best} at {best_move} %, worst {worst} at {worst_move} %. The Drone's {drone_pf} FP embarrassed {rusty} commander(s).",
 } as const satisfies Record<string, string>
 
 export type MessageKey = keyof typeof en

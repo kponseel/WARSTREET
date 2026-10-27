@@ -76,4 +76,29 @@ export const fr: Record<MessageKey, string> = {
   'error.TARGET_SLOT_REQUIRED': 'Choisissez une unité.',
   'error.UNKNOWN_INSTRUMENT': 'Action inconnue ({slot}).',
   'error.VETERAN_SAME_REGION': "Votre Vétéran doit venir d'une autre région que votre Champion.",
+  // Front Dispatch (jobs/dispatch.py): template_key + '.' + variant; same variant in EN and FR.
+  'dispatch.monday.0':
+    'Communiqué du Front, lundi : premiers tirs. {mover} ouvre les hostilités à {move} %. {leader} prend la tête avec {pf} PF.',
+  'dispatch.monday.1':
+    "Rapport de l'aube : {mover} a bougé de {move} % avant la fin du café. Premier maître du terrain : {leader} ({pf} PF).",
+  'dispatch.monday.2':
+    'Les marchés se réveillent et {mover} est déjà à {move} %. {leader} plante le drapeau le premier : {pf} PF.',
+  'dispatch.monday_fog.0':
+    'Communiqué du Front, lundi : {mover} ouvre à {move} %. Le brouillard de guerre cache le meneur.',
+  'dispatch.monday_fog.1':
+    "Rapport de l'aube : {mover} a bougé de {move} %. Aucun meneur visible : quelqu'un se cache.",
+  'dispatch.monday_fog.2':
+    '{mover} démarre la semaine à {move} %. Le classement est noyé dans la fumée.',
+  'dispatch.thursday.0':
+    'Bilan du ravitaillement : {swaps} échange(s), {attacks} attaque(s) réussie(s), {blocked} bloquée(s) par un champ de force, {pacts} pacte(s) en vigueur.',
+  'dispatch.thursday.1':
+    'Convoi du jeudi : {swaps} unité(s) relevée(s), {attacks} tir(s) au but, {blocked} tir(s) déviés, {pacts} alliance(s) sur la carte.',
+  'dispatch.thursday.2':
+    'Renseignement de mi-semaine : {attacks} frappe(s) passée(s), {blocked} arrêtée(s) par un bouclier, {swaps} échange(s) au dépôt, {pacts} pacte(s) signé(s).',
+  'dispatch.debrief.0':
+    'Bilan : {winner} remporte la semaine avec {pf} PF. Unité héroïque : {best} ({best_move} %). Perte de la semaine : {worst} ({worst_move} %). Le Drone a marqué {drone_pf} PF et rouillé {rusty} commandant(s).',
+  'dispatch.debrief.1':
+    "Vendredi soir, la fumée se dissipe : {winner} tient la colline avec {pf} PF. {best} a porté l'escouade ({best_move} %), {worst} a coulé ({worst_move} %). Drone : {drone_pf} PF, {rusty} joueur(s) battu(s) par un tirage au sort.",
+  'dispatch.debrief.2':
+    'Semaine terminée. Médaille pour {winner} ({pf} PF). Meilleure unité {best} à {best_move} %, pire {worst} à {worst_move} %. Les {drone_pf} PF du Drone ont humilié {rusty} commandant(s).',
 }
