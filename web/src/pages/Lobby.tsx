@@ -8,6 +8,7 @@ import type { MemberDraft } from '../components/memberDraft'
 import { LeagueNav } from '../components/LeagueNav'
 import { MemberList } from '../components/MemberList'
 import { useGameConfig, type GameConfig } from '../data/gameConfig'
+import { useLatestBadges } from '../debrief/useLatestBadges'
 import {
   canStart,
   humans,
@@ -163,6 +164,7 @@ export function Lobby() {
   const { t, locale } = useI18n()
   const config = useGameConfig(client)
   const room = useLeagueRoom(client, id)
+  const badges = useLatestBadges(client, id)
   const userId = session?.user.id ?? ''
 
   if (room.status === 'loading' || !config) return <p aria-busy="true">{t('common.loading')}</p>
@@ -212,7 +214,7 @@ export function Lobby() {
       )}
 
       <h2>{t('lobby.members')}</h2>
-      <MemberList league={league} userId={userId} />
+      <MemberList league={league} userId={userId} badges={badges} />
 
       {league.status === 'lobby' && me && (
         <>

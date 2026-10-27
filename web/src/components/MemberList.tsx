@@ -1,5 +1,6 @@
 import type { League } from '../data/leagues'
 import { useI18n } from '../i18n/context'
+import { BadgeChips } from './BadgeChips'
 import { CommanderEmblem } from './CommanderEmblem'
 import { commanderName } from './commanderText'
 import { textOn } from '../lib/color'
@@ -12,7 +13,15 @@ export function Avatar({ pseudo, color }: { pseudo: string; color: string }) {
   )
 }
 
-export function MemberList({ league, userId }: { league: League; userId: string }) {
+export function MemberList({
+  league,
+  userId,
+  badges,
+}: {
+  league: League
+  userId: string
+  badges?: ReadonlyMap<string, string[]>
+}) {
   const { t } = useI18n()
   return (
     <ul className="member-list" aria-label={t('lobby.members')}>
@@ -24,6 +33,7 @@ export function MemberList({ league, userId }: { league: League; userId: string 
               {m.pseudo}
               {m.user_id === userId && <span className="tag">{t('lobby.you')}</span>}
               {m.user_id === league.host_id && <span className="tag">{t('lobby.host')}</span>}
+              <BadgeChips codes={badges?.get(m.member_id) ?? []} />
             </span>
             <span className="member-commander">
               {m.commander && <CommanderEmblem code={m.commander} size={18} />}

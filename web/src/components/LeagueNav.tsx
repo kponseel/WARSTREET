@@ -7,6 +7,8 @@ const TABS: { path: string; label: MessageKey }[] = [
   { path: 'briefing', label: 'nav.league.briefing' },
   { path: 'front', label: 'nav.league.front' },
   { path: 'resupply', label: 'nav.league.resupply' },
+  { path: 'debrief/latest', label: 'nav.league.debrief' },
+  { path: 'campaign', label: 'nav.league.campaign' },
 ]
 
 /** Tabs between the screens of one league. */
