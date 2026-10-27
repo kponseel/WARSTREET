@@ -84,7 +84,12 @@ cd web && npm install && npm run dev        # local dev
 npm run lint && npm run test && npm run build
 # engine + jobs (Python 3.12, from the repo root)
 python3.12 -m venv .venv && . .venv/bin/activate && pip install -e "engine[dev]" -r jobs/requirements.txt
+pip install -r supabase/tests/requirements.txt
 ruff check . && ruff format --check . && pytest -q
+# database tests (Supabase CLI): supabase db start, then
+WARSTREET_TEST_DB_URL=postgresql://postgres:postgres@127.0.0.1:54322/postgres WARSTREET_TEST_DB_PREPARED=1 pytest -q supabase/tests
+# regenerate supabase/seed.sql after changing engine/engine/config.py or data/instruments.csv
+python supabase/scripts/generate_seed.py
 # regenerate the PWA icons from web/public/icon.svg (needs Playwright + Chromium)
 cd web && node scripts/generate-icons.mjs
 # replay a past week end-to-end against a dev Supabase project

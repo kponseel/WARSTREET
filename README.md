@@ -24,9 +24,17 @@ npm run lint && npm run test && npm run build
 
 # engine + jobs (from the repository root)
 python3.12 -m venv .venv && . .venv/bin/activate
-pip install -e "engine[dev]" -r jobs/requirements.txt
+pip install -e "engine[dev]" -r jobs/requirements.txt -r supabase/tests/requirements.txt
 ruff check . && ruff format --check . && pytest -q
 ```
+
+Database tests (`supabase/tests`, RLS matrix and every RPC path) need a Postgres. With the
+Supabase CLI: `supabase db start`, then
+`WARSTREET_TEST_DB_URL=postgresql://postgres:postgres@127.0.0.1:54322/postgres WARSTREET_TEST_DB_PREPARED=1 pytest -q supabase/tests`.
+With any plain Postgres 15+ superuser URL, omit `WARSTREET_TEST_DB_PREPARED`: the tests create
+a throwaway database with a small stand-in for Supabase's `auth` schema. Without a URL they
+are skipped. After changing `engine/engine/config.py` or `data/instruments.csv`, regenerate
+the seed with `python supabase/scripts/generate_seed.py`.
 
 Without Supabase variables the app runs and shows "server connection not configured".
 To connect a dev project, create `web/.env.local` (git-ignored) with `VITE_SUPABASE_URL`

@@ -140,6 +140,12 @@ Rules for every database object:
 - **Deadlines**: RPCs compare `now()` with `weeks.lock_at`, `resupply_opens_at`,
   `resupply_closes_at`; `weeks.phase` is informative only (the cron can be late).
 - **Rule values**: RPCs read `game_config`; no number is hardcoded in SQL.
+- **Clock**: every deadline check uses `private.clock()`. It returns `now()`, except that a
+  direct database session (tests, `jobs/replay.py`) may set `app.fake_now`; API sessions
+  (`authenticator`, `anon`, `authenticated`, `service_role`) always get the real time.
+- **Errors**: `private.raise_error(code, vars)` raises SQLSTATE `P0001` with the code as
+  message and the variables as JSON in `details`; `web/src/lib/rpcError.ts` maps it to the
+  `error.<CODE>` i18n key. A test fails if a code has no EN/FR message.
 - **Views** run with their owner's rights and bypass RLS unless created with
   `security_invoker = true`. Use `security_invoker` by default; a view that must bypass
   RLS to show masked data (e.g. `orders_public`) filters on league membership of

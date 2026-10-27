@@ -27,10 +27,36 @@ jobs:
           cache-dependency-path: |
             engine/pyproject.toml
             jobs/requirements.txt
-      - run: pip install -e "engine[dev]" -r jobs/requirements.txt
+      - run: pip install -e "engine[dev]" -r jobs/requirements.txt -r supabase/tests/requirements.txt
       - run: ruff check .
       - run: ruff format --check .
+      - run: python supabase/scripts/generate_seed.py --check
+      # Database tests are skipped here (no database); the `database` job runs them.
       - run: pytest -q
+
+  database:
+    name: Database (Supabase Postgres + RLS/RPC tests)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: supabase/setup-cli@v1
+        with:
+          version: latest
+      # The real Supabase Postgres image: API roles, auth schema, Realtime publication.
+      - run: supabase db start
+      - uses: actions/setup-python@v6
+        with:
+          python-version-file: .python-version
+          cache: pip
+          cache-dependency-path: |
+            engine/pyproject.toml
+            supabase/tests/requirements.txt
+      - run: pip install -e "engine[dev]" -r supabase/tests/requirements.txt
+      - run: pytest -q supabase/tests
+        env:
+          WARSTREET_TEST_DB_URL: postgresql://postgres:postgres@127.0.0.1:54322/postgres
+          WARSTREET_TEST_DB_PREPARED: "1"
+          WARSTREET_REQUIRE_DB: "1"
 
   web:
     name: Web (eslint + vitest + build)

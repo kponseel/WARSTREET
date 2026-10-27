@@ -1,0 +1,2 @@
+# Database tests (supabase/tests). The engine itself has no runtime dependency.
+psycopg[binary]>=3.2

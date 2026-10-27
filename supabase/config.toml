@@ -1,0 +1,12 @@
+# Supabase CLI configuration for local development and CI (`supabase db start`).
+# Only the database is used locally; hosted settings (auth, SMTP…) live in the dashboard.
+project_id = "warstreet"
+
+[db]
+port = 54322
+shadow_port = 54320
+major_version = 17
+
+[db.seed]
+enabled = true
+sql_paths = ["./seed.sql"]
