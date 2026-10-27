@@ -76,7 +76,7 @@ values
   ('SPOT', 'Spotify', 'US', 'XNYS', 'USD', 'apps_gaming'),
   ('SHOP', 'Shopify', 'US', 'XNYS', 'USD', 'apps_gaming'),
   ('RBLX', 'Roblox', 'US', 'XNYS', 'USD', 'apps_gaming'),
-  ('EA', 'Electronic Arts', 'US', 'XNYS', 'USD', 'apps_gaming'),
+  ('TTWO', 'Take-Two Interactive', 'US', 'XNYS', 'USD', 'apps_gaming'),
   ('RDDT', 'Reddit', 'US', 'XNYS', 'USD', 'apps_gaming'),
   ('MSTR', 'MicroStrategy', 'US', 'XNYS', 'USD', 'hype_extreme_vol'),
   ('COIN', 'Coinbase', 'US', 'XNYS', 'USD', 'hype_extreme_vol'),
