@@ -29,6 +29,8 @@ ruff check . && ruff format --check . && pytest -q --cov=engine --cov-fail-under
 python -m engine.simulate --players 4 --weeks 8 --runs 2000   # balance check
 python -m jobs.validate_tickers                    # check the 100 tickers (network)
 python -m jobs.dry_run --week 2026-10-19 --out /tmp/week.json  # one real week, no DB
+SUPABASE_DB_URL=... python -m jobs.tick [--now 2026-11-13T21:45:00Z]  # what the cron runs
+python -m jobs.replay --league demo --week 2026-W43 --db postgresql://...  # a past week, local/dev DB
 ```
 
 Database tests (`supabase/tests`, RLS matrix and every RPC path) need a Postgres. With the
@@ -41,7 +43,7 @@ the seed with `python supabase/scripts/generate_seed.py`.
 
 Without Supabase variables the app runs and shows "server connection not configured".
 To connect a dev project, create `web/.env.local` (git-ignored) with `VITE_SUPABASE_URL`
-and `VITE_SUPABASE_ANON_KEY`. Never put the service role key in a file.
+and `VITE_SUPABASE_ANON_KEY`. Never put the database connection string or any server key in a file.
 
 ## Deploy
 

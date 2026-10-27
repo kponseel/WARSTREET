@@ -1,0 +1,43 @@
+name: Tick
+
+# The game clock: market captures, phase transitions, scoring and the Front Dispatch.
+# Every transition is keyed (market_runs / job_runs), so a late, skipped or doubled run
+# is harmless (CLAUDE.md hard rule 4).
+on:
+  schedule:
+    - cron: "*/15 6-22 * * 1-5" # weekdays, every 15 minutes (UTC)
+    - cron: "0 * * * 0,6" # weekends, hourly (briefing opening, lock)
+  workflow_dispatch:
+    inputs:
+      now:
+        description: "Fake clock, ISO UTC (empty = now). Only for a dev database."
+        required: false
+        default: ""
+
+permissions:
+  contents: read
+
+concurrency:
+  group: tick
+  cancel-in-progress: false
+
+jobs:
+  tick:
+    runs-on: ubuntu-latest
+    timeout-minutes: 14
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version-file: .python-version
+          cache: pip
+          cache-dependency-path: |
+            engine/pyproject.toml
+            jobs/requirements.txt
+      - run: pip install -e engine -r jobs/requirements.txt
+      - name: Run the due transitions
+        env:
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+          NOW: ${{ inputs.now }}
+        run: |
+          if [ -n "$NOW" ]; then python -m jobs.tick --now "$NOW"; else python -m jobs.tick; fi

@@ -30,14 +30,14 @@ ambiguous, stop and ask instead of guessing.
 - `engine/` — Python 3.12 package: scoring, commanders, orders, ranking, market calendar.
   Pure functions, no I/O. This is the ONLY place game maths lives.
 - `jobs/` — Python scripts run by GitHub Actions: price fetch, phase transitions, scoring,
-  Front Dispatch (gazette). They call `engine/` and write to Supabase with the service role key.
+  Front Dispatch (gazette). They call `engine/` and write to Postgres directly (`SUPABASE_DB_URL`).
 - `.github/workflows/` — CI (lint + tests), Pages deploy, `tick` cron, weekly heartbeat.
 
 ## Hard rules
 
 1. **Public repository.** Never commit secrets, `.env` files, real emails or league data.
-   The Supabase anon key is public by design; the service role key exists ONLY in GitHub
-   Actions secrets. Add `.env*` to `.gitignore` on day one.
+   The Supabase anon key is public by design; the database connection string
+   (`SUPABASE_DB_URL`) exists ONLY in GitHub Actions secrets. Add `.env*` to `.gitignore` on day one.
 2. **RLS is the security boundary.** Anyone can read the frontend code and the anon key.
    Clients never write game tables directly: every player action goes through a Postgres
    RPC function (`security definer`) that validates deadlines, ownership and game rules.
@@ -96,6 +96,8 @@ WARSTREET_TEST_DB_URL=postgresql://postgres:postgres@127.0.0.1:54322/postgres WA
 python supabase/scripts/generate_seed.py
 # regenerate the PWA icons from web/public/icon.svg (needs Playwright + Chromium)
 cd web && node scripts/generate-icons.mjs
-# replay a past week end-to-end against a dev Supabase project
-python -m jobs.replay --league demo --week 2026-W43
+# one tick, as the cron runs it (fake clock with --now)
+python -m jobs.tick --now 2026-11-13T21:45:00Z
+# replay a past week end-to-end against a local or dev database
+python -m jobs.replay --league demo --week 2026-W43 --db postgresql://...
 ```

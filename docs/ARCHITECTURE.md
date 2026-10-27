@@ -26,7 +26,7 @@ flowchart LR
   Pages -- RPC calls / selects --> DB
   RT -- live scores, feed --> Pages
   Cron -- fetch prices --> Market
-  Cron -- service role key --> DB
+  Cron -- Postgres connection (SUPABASE_DB_URL) --> DB
   DB --> RT
 ```
 
@@ -180,15 +180,18 @@ Read rules (RLS or `security_barrier` views):
 
 Tests must prove each line of this table with two users and a third outsider.
 
-Secrets: GitHub Actions secrets `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, used only by
-the `tick` and `replay` jobs. Workflows never use `pull_request_target` and never expose
+Secrets: one GitHub Actions secret, `SUPABASE_DB_URL` (Supabase session pooler connection
+string, IPv4), used only by the `tick` workflow. The jobs talk to Postgres directly
+(psycopg) as the `postgres` role, which bypasses RLS like the service role would, and run
+each transition and its `job_runs` / `market_runs` key in one transaction. The string is
+never logged or written to a file. `replay` runs by hand against a local or dev database. Workflows never use `pull_request_target` and never expose
 secrets to pull-request runs. Frontend build variables `VITE_SUPABASE_URL`,
 `VITE_SUPABASE_ANON_KEY` (public by design) as repository variables. Supabase Auth
 redirect URL = the Pages URL.
 
 ## 6. Jobs and schedules
 
-`jobs/tick.py` is the single entry point. It first runs the **market transitions**
+`jobs/tick.py` is the single entry point (`python -m jobs.tick [--now ISO]`). It first runs the **market transitions**
 (global, guarded by `market_runs`), then loads all active leagues, computes the phase
 each week should be in **now** from the stored phase timestamps, and performs any missing
 **league transition** (guarded by `job_runs`).
@@ -219,7 +222,21 @@ Workflows:
 
 - `tick.yml`: `*/15` UTC on weekdays 06:00–22:00, hourly on weekends, plus `workflow_dispatch`.
   `concurrency: tick` so two runs never overlap.
-- `heartbeat.yml`: weekly commit of `status/heartbeat.json`.
+- `heartbeat.yml`: weekly commit of `status/heartbeat.json` (keeps the schedule alive).
+
+**Failure handling.** A transition and its key are inserted in one transaction: a crash
+rolls both back and the next tick retries. A transition whose inputs are not there yet
+(no Conflict Zone at lock, `P_end` not confirmed at debrief, prices missing at a capture)
+raises `RetryLater`: nothing is written, the next tick tries again. A missing price is
+retried for 2 hours, then left missing and logged. `capture_p_end` and `confirm_p_end`
+always run on two different ticks. The next week's `open_briefing` runs on the tick after
+the debrief.
+
+**Replay** (`python -m jobs.replay --league demo --week 2026-W43 --db URL`): creates a
+demo league (4 bots and the Drone) whose first week is the replayed one, then walks a fake
+clock (`app.fake_now`, honoured only for direct Postgres sessions) through every
+transition of the week, calling the same `tick` with real daily bars cut at the fake
+clock. It prints the final ranking and the three Front Dispatches in English and French.
 - `ci.yml`: ruff, pytest, eslint, vitest, build on every PR.
 - `deploy-pages.yml`: build `web/` and deploy on push to `main`.
 

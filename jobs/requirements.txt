@@ -1,3 +1,4 @@
 # Runtime dependencies of jobs/ (prices: milestone 03; database: milestone 04).
 yfinance>=1.7
 requests>=2.32
+psycopg[binary]>=3.2
