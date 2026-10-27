@@ -27,23 +27,35 @@ export interface DevLeague {
   clock: string
 }
 
-/** A started league (synthetic prices) with `bots` bots and the given local accounts. */
-export function devLeague(me: string[], bots = 3): DevLeague {
+/**
+ * A started league (synthetic prices) with `bots` bots and the given local accounts.
+ * `botsPlay: false` keeps the bots idle at briefing (no random pact or order), for
+ * deterministic assertions.
+ */
+export function devLeague(me: string[], bots = 3, botsPlay = true): DevLeague {
   return dev([
     'league',
     '--bots',
     String(bots),
     '--prices',
     'synthetic',
+    ...(botsPlay ? [] : ['--no-bots']),
     ...me.flatMap((email) => ['--me', email]),
   ]) as DevLeague
 }
 
 /** Moves the simulated clock (lock, monday, resupply, thursday, debrief, next, end…). */
-export function devAdvance(leagueId: string, to: string): { clock: string } {
-  return dev(['advance', '--league', leagueId, '--to', to, '--prices', 'synthetic']) as {
-    clock: string
-  }
+export function devAdvance(leagueId: string, to: string, botsPlay = true): { clock: string } {
+  return dev([
+    'advance',
+    '--league',
+    leagueId,
+    '--to',
+    to,
+    '--prices',
+    'synthetic',
+    ...(botsPlay ? [] : ['--no-bots']),
+  ]) as { clock: string }
 }
 
 export function devClearClock(): void {

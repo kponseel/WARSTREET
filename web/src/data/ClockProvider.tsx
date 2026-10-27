@@ -38,9 +38,18 @@ export function ClockProvider({ children }: { children: ReactNode }) {
     }
     void sync()
     const timer = window.setInterval(() => void sync(), value.devClock ? DEV_RESYNC_MS : RESYNC_MS)
+    // Also on every screen change and when the tab comes back (the dev clock may have
+    // moved, or the device slept).
+    const onChange = () => {
+      if (document.visibilityState === 'visible') void sync()
+    }
+    window.addEventListener('hashchange', onChange)
+    document.addEventListener('visibilitychange', onChange)
     return () => {
       run.cancelled = true
       window.clearInterval(timer)
+      window.removeEventListener('hashchange', onChange)
+      document.removeEventListener('visibilitychange', onChange)
     }
   }, [client, signedIn, value.devClock])
 

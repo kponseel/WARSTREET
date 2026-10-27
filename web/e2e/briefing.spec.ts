@@ -17,7 +17,7 @@ test('briefing: build a squad, see why it is invalid, play orders, answer a pact
   await page.goto('/#/login')
   await logIn(page, email)
   await expect(page.getByRole('heading', { name: 'My leagues' })).toBeVisible()
-  const league = devLeague([email], 3)
+  const league = devLeague([email], 3, false)
 
   await page.goto(`/#/l/${league.league_id}/briefing`)
   await expect(page.getByRole('heading', { name: 'Briefing — week 1' })).toBeVisible()
@@ -62,7 +62,7 @@ test('briefing: build a squad, see why it is invalid, play orders, answer a pact
   expect(await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth)).toBe(0)
 
   // Sunday 23:59 passes: squads are locked.
-  devAdvance(league.league_id, 'lock')
+  devAdvance(league.league_id, 'lock', false)
   await page.reload()
   await expect(page.getByText('The briefing is closed: squads are locked.')).toBeVisible()
 })
