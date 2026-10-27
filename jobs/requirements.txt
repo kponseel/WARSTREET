@@ -1,1 +1,3 @@
-# Runtime dependencies of jobs/ (filled in milestones 03 and 04).
+# Runtime dependencies of jobs/ (prices: milestone 03; database: milestone 04).
+yfinance>=1.7
+requests>=2.32

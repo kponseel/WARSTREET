@@ -91,8 +91,11 @@ Every RPC checks `now()` against these timestamps, never against `week.phase` al
 - `P_mid` = official **open** of the first trading session on or after Thursday.
 - `P_end` = official **close** of the last trading session of the week.
 - If the exchange has no session in a segment, that segment's return is 0.
-- Prices come **unadjusted** from the provider (for `yfinance`: `auto_adjust=False`);
-  the engine applies splits and dividends itself, so nothing is counted twice.
+- Prices are **never adjusted for dividends** (for `yfinance`: `auto_adjust=False`); the
+  engine adds dividends back itself, so nothing is counted twice. Yahoo adjusts past
+  prices for splits: when every reference price of a week comes from one fetch, they share
+  one share basis and the split ratios are 1; `k` is only needed for prices captured
+  before a split and compared with prices captured after it.
 - Splits: prices are adjusted by the split ratio.
 - Dividends: a cash dividend belongs to the segment in which its price drop is observed.
   A segment runs from a start price to an end price; the dividend counts when its ex-date

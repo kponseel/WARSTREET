@@ -27,6 +27,8 @@ python3.12 -m venv .venv && . .venv/bin/activate
 pip install -e "engine[dev]" -r jobs/requirements.txt -r supabase/tests/requirements.txt
 ruff check . && ruff format --check . && pytest -q --cov=engine --cov-fail-under=90
 python -m engine.simulate --players 4 --weeks 8 --runs 2000   # balance check
+python -m jobs.validate_tickers                    # check the 100 tickers (network)
+python -m jobs.dry_run --week 2026-10-19 --out /tmp/week.json  # one real week, no DB
 ```
 
 Database tests (`supabase/tests`, RLS matrix and every RPC path) need a Postgres. With the

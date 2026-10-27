@@ -223,12 +223,14 @@ Workflows:
 - `ci.yml`: ruff, pytest, eslint, vitest, build on every PR.
 - `deploy-pages.yml`: build `web/` and deploy on push to `main`.
 
-**Price source**: `yfinance` batch download for the 100 tickers in one call (live prices)
-and daily bars for official open/close, dividends and splits, always with
-`auto_adjust=False` (raw prices; the engine applies dividends and splits). Wrap it behind a
-`PriceProvider` interface with a working fallback from milestone 03 (e.g. a Google Sheets
-`GOOGLEFINANCE` CSV), because Yahoo often rate-limits GitHub runners. Never let a provider
-failure corrupt reference prices: retry with backoff, switch provider, then mark missing.
+**Price source** (`jobs/prices.py`): primary `yfinance` with `auto_adjust=False` (never
+adjusted for dividends; the engine adds them back), fallback the Yahoo chart HTTP API
+called directly (`query2.finance.yahoo.com/v8/finance/chart`), behind one `PriceProvider`
+protocol. Each call retries (2 s, 4 s, 8 s), then falls back per ticker, and the source that
+answered is stored. The fallback has no market cap and no earnings dates: reported as
+missing, never invented. A provider failure never corrupts reference prices: retry, switch
+provider, then mark missing. `python -m jobs.validate_tickers` checks the catalogue;
+`python -m jobs.dry_run` fetches one real week into a local JSON file.
 
 ## 7. Lobby and game flow
 
