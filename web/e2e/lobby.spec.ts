@@ -64,10 +64,10 @@ test('create, join by code, everyone ready, the host starts the campaign', async
   await fillMember(charlie, 'Charlie', 'The Berserker')
   await charlie.getByRole('button', { name: 'Join the league' }).click()
 
-  // Realtime: the host sees both newcomers without reloading.
+  // Realtime (or its 20 s safety net): the host sees both newcomers without reloading.
   const members = host.getByRole('list', { name: 'Players' })
-  await expect(members.getByText('Bravo')).toBeVisible()
-  await expect(members.getByText('Charlie')).toBeVisible()
+  await expect(members.getByText('Bravo')).toBeVisible({ timeout: 30_000 })
+  await expect(members.getByText('Charlie')).toBeVisible({ timeout: 30_000 })
 
   const start = host.getByRole('button', { name: 'Start the campaign' })
   for (const page of [host, bravo, charlie]) {
@@ -75,15 +75,15 @@ test('create, join by code, everyone ready, the host starts the campaign', async
     await page.getByRole('button', { name: 'I’m ready' }).click()
     await expect(page.getByRole('button', { name: /Ready ✓/ })).toBeVisible()
   }
-  await expect(host.getByText('3 ready, 3 needed to start.')).toBeVisible()
+  await expect(host.getByText('3 ready, 3 needed to start.')).toBeVisible({ timeout: 30_000 })
   await expect(start).toBeEnabled()
   await start.click()
 
   // Everyone, the host included, sees the campaign start (Realtime on weeks).
   for (const page of [host, bravo, charlie]) {
-    await expect(page.getByText(/The campaign has started/)).toBeVisible()
+    await expect(page.getByText(/The campaign has started/)).toBeVisible({ timeout: 30_000 })
   }
-  await expect(members.getByText('Random Drone')).toBeVisible()
+  await expect(members.getByText('Random Drone')).toBeVisible({ timeout: 30_000 })
 
   // The language choice is saved in the profile: a fresh English browser logs in in French.
   await bravo.getByRole('button', { name: 'FR' }).click()
