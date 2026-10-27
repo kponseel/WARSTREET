@@ -79,12 +79,14 @@ ambiguous, stop and ask instead of guessing.
 ## Commands (fill in as the repo grows)
 
 ```
-# web
+# web (Node 22, .nvmrc)
 cd web && npm install && npm run dev        # local dev
-npm run test && npm run lint && npm run build
-# engine + jobs
-python -m venv .venv && . .venv/bin/activate && pip install -e "engine[dev]" -r jobs/requirements.txt
-pytest -q
+npm run lint && npm run test && npm run build
+# engine + jobs (Python 3.12, from the repo root)
+python3.12 -m venv .venv && . .venv/bin/activate && pip install -e "engine[dev]" -r jobs/requirements.txt
+ruff check . && ruff format --check . && pytest -q
+# regenerate the PWA icons from web/public/icon.svg (needs Playwright + Chromium)
+cd web && node scripts/generate-icons.mjs
 # replay a past week end-to-end against a dev Supabase project
 python -m jobs.replay --league demo --week 2026-W43
 ```
