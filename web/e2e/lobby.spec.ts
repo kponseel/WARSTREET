@@ -63,6 +63,11 @@ test('create, join by code, everyone ready, the host starts the campaign', async
   await charlie.getByRole('button', { name: 'Continue' }).click()
   await fillMember(charlie, 'Charlie', 'The Berserker')
   await charlie.getByRole('button', { name: 'Join the league' }).click()
+  // Charlie is in before the host looks for him (or the refusal is shown in the report).
+  const joined = charlie.getByRole('heading', { name: `Smoke ${run}` })
+  const refused = charlie.getByRole('alert')
+  await expect(joined.or(refused).first()).toBeVisible({ timeout: 30_000 })
+  expect(await refused.allTextContents(), 'Charlie could not join').toEqual([])
 
   // Realtime (or its 20 s safety net): the host sees both newcomers without reloading.
   const members = host.getByRole('list', { name: 'Players' })
