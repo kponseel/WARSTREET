@@ -1,0 +1,101 @@
+ticker,name,region,calendar_mic,currency,sector
+MC.PA,LVMH,EU,XPAR,EUR,Luxury & Fashion
+RMS.PA,Hermès,EU,XPAR,EUR,Luxury & Fashion
+KER.PA,Kering,EU,XPAR,EUR,Luxury & Fashion
+OR.PA,L'Oréal,EU,XPAR,EUR,Luxury & Fashion
+RACE.MI,Ferrari,EU,XMIL,EUR,Luxury & Fashion
+ADS.DE,Adidas,EU,XETR,EUR,Luxury & Fashion
+ITX.MC,Inditex,EU,XMAD,EUR,Luxury & Fashion
+ASML.AS,ASML,EU,XAMS,EUR,Tech & Semiconductors
+SAP.DE,SAP,EU,XETR,EUR,Tech & Semiconductors
+CAP.PA,Capgemini,EU,XPAR,EUR,Tech & Semiconductors
+DSY.PA,Dassault Systèmes,EU,XPAR,EUR,Tech & Semiconductors
+STMPA.PA,STMicroelectronics,EU,XPAR,EUR,Tech & Semiconductors
+ADYEN.AS,Adyen,EU,XAMS,EUR,Tech & Semiconductors
+NOKIA.HE,Nokia,EU,XHEL,EUR,Tech & Semiconductors
+AIR.PA,Airbus,EU,XPAR,EUR,"Industry, Defense & Aero"
+SAF.PA,Safran,EU,XPAR,EUR,"Industry, Defense & Aero"
+HO.PA,Thales,EU,XPAR,EUR,"Industry, Defense & Aero"
+RHM.DE,Rheinmetall,EU,XETR,EUR,"Industry, Defense & Aero"
+SU.PA,Schneider Electric,EU,XPAR,EUR,"Industry, Defense & Aero"
+AI.PA,Air Liquide,EU,XPAR,EUR,"Industry, Defense & Aero"
+DG.PA,Vinci,EU,XPAR,EUR,"Industry, Defense & Aero"
+SGO.PA,Saint-Gobain,EU,XPAR,EUR,"Industry, Defense & Aero"
+SIE.DE,Siemens,EU,XETR,EUR,"Industry, Defense & Aero"
+RNO.PA,Renault,EU,XPAR,EUR,Auto & Mobility
+STLAP.PA,Stellantis,EU,XPAR,EUR,Auto & Mobility
+ML.PA,Michelin,EU,XPAR,EUR,Auto & Mobility
+VOW3.DE,Volkswagen,EU,XETR,EUR,Auto & Mobility
+MBG.DE,Mercedes-Benz,EU,XETR,EUR,Auto & Mobility
+TTE.PA,TotalEnergies,EU,XPAR,EUR,Energy & Utilities
+ENGI.PA,Engie,EU,XPAR,EUR,Energy & Utilities
+VIE.PA,Veolia,EU,XPAR,EUR,Energy & Utilities
+IBE.MC,Iberdrola,EU,XMAD,EUR,Energy & Utilities
+BNP.PA,BNP Paribas,EU,XPAR,EUR,Banks & Insurance
+GLE.PA,Société Générale,EU,XPAR,EUR,Banks & Insurance
+ACA.PA,Crédit Agricole,EU,XPAR,EUR,Banks & Insurance
+CS.PA,AXA,EU,XPAR,EUR,Banks & Insurance
+ALV.DE,Allianz,EU,XETR,EUR,Banks & Insurance
+SAN.PA,Sanofi,EU,XPAR,EUR,Health & Consumer
+EL.PA,EssilorLuxottica,EU,XPAR,EUR,Health & Consumer
+NOVO-B.CO,Novo Nordisk,EU,XCSE,DKK,Health & Consumer
+BN.PA,Danone,EU,XPAR,EUR,Health & Consumer
+CA.PA,Carrefour,EU,XPAR,EUR,Health & Consumer
+RI.PA,Pernod Ricard,EU,XPAR,EUR,Health & Consumer
+UBI.PA,Ubisoft,EU,XPAR,EUR,French high-volatility
+TEP.PA,Teleperformance,EU,XPAR,EUR,French high-volatility
+EDEN.PA,Edenred,EU,XPAR,EUR,French high-volatility
+ERF.PA,Eurofins Scientific,EU,XPAR,EUR,French high-volatility
+WLN.PA,Worldline,EU,XPAR,EUR,French high-volatility
+ALO.PA,Alstom,EU,XPAR,EUR,French high-volatility
+SOI.PA,Soitec,EU,XPAR,EUR,French high-volatility
+AAPL,Apple,US,XNYS,USD,Magnificent 7
+MSFT,Microsoft,US,XNYS,USD,Magnificent 7
+NVDA,Nvidia,US,XNYS,USD,Magnificent 7
+GOOGL,Alphabet,US,XNYS,USD,Magnificent 7
+AMZN,Amazon,US,XNYS,USD,Magnificent 7
+META,Meta,US,XNYS,USD,Magnificent 7
+TSLA,Tesla,US,XNYS,USD,Magnificent 7
+AMD,AMD,US,XNYS,USD,"Tech, AI & Semiconductors"
+PLTR,Palantir,US,XNYS,USD,"Tech, AI & Semiconductors"
+AVGO,Broadcom,US,XNYS,USD,"Tech, AI & Semiconductors"
+INTC,Intel,US,XNYS,USD,"Tech, AI & Semiconductors"
+NFLX,Netflix,US,XNYS,USD,"Tech, AI & Semiconductors"
+CRM,Salesforce,US,XNYS,USD,"Tech, AI & Semiconductors"
+ADBE,Adobe,US,XNYS,USD,"Tech, AI & Semiconductors"
+ORCL,Oracle,US,XNYS,USD,"Tech, AI & Semiconductors"
+CRWD,CrowdStrike,US,XNYS,USD,"Tech, AI & Semiconductors"
+SNOW,Snowflake,US,XNYS,USD,"Tech, AI & Semiconductors"
+SMCI,Super Micro Computer,US,XNYS,USD,"Tech, AI & Semiconductors"
+UBER,Uber,US,XNYS,USD,Apps & Gaming
+ABNB,Airbnb,US,XNYS,USD,Apps & Gaming
+SPOT,Spotify,US,XNYS,USD,Apps & Gaming
+SHOP,Shopify,US,XNYS,USD,Apps & Gaming
+RBLX,Roblox,US,XNYS,USD,Apps & Gaming
+EA,Electronic Arts,US,XNYS,USD,Apps & Gaming
+RDDT,Reddit,US,XNYS,USD,Apps & Gaming
+MSTR,MicroStrategy,US,XNYS,USD,Hype & Extreme volatility
+COIN,Coinbase,US,XNYS,USD,Hype & Extreme volatility
+GME,GameStop,US,XNYS,USD,Hype & Extreme volatility
+HOOD,Robinhood,US,XNYS,USD,Hype & Extreme volatility
+NKE,Nike,US,XNYS,USD,Consumer brands
+MCD,McDonald's,US,XNYS,USD,Consumer brands
+KO,Coca-Cola,US,XNYS,USD,Consumer brands
+PEP,PepsiCo,US,XNYS,USD,Consumer brands
+SBUX,Starbucks,US,XNYS,USD,Consumer brands
+DIS,Walt Disney,US,XNYS,USD,Consumer brands
+WMT,Walmart,US,XNYS,USD,Consumer brands
+COST,Costco,US,XNYS,USD,Consumer brands
+PG,Procter & Gamble,US,XNYS,USD,Consumer brands
+JPM,JPMorgan Chase,US,XNYS,USD,Wall Street & Payments
+GS,Goldman Sachs,US,XNYS,USD,Wall Street & Payments
+BRK-B,Berkshire Hathaway,US,XNYS,USD,Wall Street & Payments
+V,Visa,US,XNYS,USD,Wall Street & Payments
+MA,Mastercard,US,XNYS,USD,Wall Street & Payments
+PYPL,PayPal,US,XNYS,USD,Wall Street & Payments
+LLY,Eli Lilly,US,XNYS,USD,"Health, Energy & Industry"
+PFE,Pfizer,US,XNYS,USD,"Health, Energy & Industry"
+BA,Boeing,US,XNYS,USD,"Health, Energy & Industry"
+CAT,Caterpillar,US,XNYS,USD,"Health, Energy & Industry"
+XOM,ExxonMobil,US,XNYS,USD,"Health, Energy & Industry"
+CVX,Chevron,US,XNYS,USD,"Health, Energy & Industry"
