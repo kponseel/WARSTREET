@@ -32,7 +32,8 @@ jobs:
       - run: ruff format --check .
       - run: python supabase/scripts/generate_seed.py --check
       # Database tests are skipped here (no database); the `database` job runs them.
-      - run: pytest -q
+      # The engine must stay covered at 90 % or more (prompts/02_engine_scoring.md).
+      - run: pytest -q --cov=engine --cov-report=term --cov-fail-under=90
 
   database:
     name: Database (Supabase Postgres + RLS/RPC tests)

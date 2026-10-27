@@ -25,7 +25,8 @@ npm run lint && npm run test && npm run build
 # engine + jobs (from the repository root)
 python3.12 -m venv .venv && . .venv/bin/activate
 pip install -e "engine[dev]" -r jobs/requirements.txt -r supabase/tests/requirements.txt
-ruff check . && ruff format --check . && pytest -q
+ruff check . && ruff format --check . && pytest -q --cov=engine --cov-fail-under=90
+python -m engine.simulate --players 4 --weeks 8 --runs 2000   # balance check
 ```
 
 Database tests (`supabase/tests`, RLS matrix and every RPC path) need a Postgres. With the

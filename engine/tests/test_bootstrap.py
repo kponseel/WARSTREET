@@ -18,8 +18,11 @@ MODULES = [
     "models",
     "orders",
     "ranking",
+    "returns",
+    "rounding",
     "scoring",
     "simulate",
+    "squads",
     "weather",
 ]
 
