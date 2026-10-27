@@ -40,18 +40,22 @@ ambiguous, stop and ask instead of guessing.
    Actions secrets. Add `.env*` to `.gitignore` on day one.
 2. **RLS is the security boundary.** Anyone can read the frontend code and the anon key.
    Clients never write game tables directly: every player action goes through a Postgres
-   RPC function (`security definer`) that validates phase, ownership and game rules.
+   RPC function (`security definer`) that validates deadlines, ownership and game rules.
    Hidden information (squads before lock, the Shadow commander, force fields, jamming)
-   must be enforced in RLS or views, never only in the UI.
+   must be enforced in RLS, membership-filtered views, or tables the jobs write already
+   masked (Realtime only watches tables), never only in the UI.
 3. **Time.** Store UTC everywhere. Display Europe/Paris. Never hardcode market hours:
    derive them from `exchange_calendars` (DST mismatches happen ~3 weeks a year).
 4. **Jobs are idempotent.** A cron run can be late, skipped or doubled. Every transition is
-   keyed (`league_id, week, transition`) in `job_runs` and computed from "what should be
-   true now", so re-running a tick never double-scores.
+   keyed in `job_runs` (`league_id, week, transition`) or, for global market work, in
+   `market_runs` (`week, transition`), and computed from "what should be true now", so
+   re-running a tick never double-scores.
 5. **Game maths only in `engine/`**, covered by pytest. The frontend displays numbers it
    reads from the database; it never recomputes scores.
 6. **Tunable values live in `engine/config.py`** (multipliers, commander values, bonuses,
-   points tables) and are mirrored to a `game_config` table for display. No magic numbers.
+   points tables) and are mirrored to a generated `game_config` table (checked by a sync
+   test) that RPCs read for validation and the UI reads for display. No magic numbers,
+   in Python or in SQL.
 7. Brand/IP: original universe. Do not use Warhammer 40,000 names, factions, emblems or
    terms (Games Workshop trademark). Commander emblems are simple original SVG glyphs.
 
