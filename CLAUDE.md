@@ -92,7 +92,10 @@ python -m jobs.validate_tickers                    # check the 100 tickers (netw
 python -m jobs.dry_run --week 2026-10-19 --out /tmp/week.json  # one real week, no DB
 # database tests (Supabase CLI): supabase db start, then
 WARSTREET_TEST_DB_URL=postgresql://postgres:postgres@127.0.0.1:54322/postgres WARSTREET_TEST_DB_PREPARED=1 pytest -q supabase/tests
-# regenerate supabase/seed.sql after changing engine/engine/config.py or data/instruments.csv
+# web end-to-end against a local Supabase (Docker): supabase start, build web/ with the local
+# VITE_SUPABASE_URL / VITE_SUPABASE_ANON_KEY, then: cd web && npm run e2e && npm run a11y
+# regenerate supabase/seed.sql (and web/src/content/gameConfig.generated.ts) after changing
+# engine/engine/config.py or data/instruments.csv
 python supabase/scripts/generate_seed.py
 # regenerate the PWA icons from web/public/icon.svg (needs Playwright + Chromium)
 cd web && node scripts/generate-icons.mjs

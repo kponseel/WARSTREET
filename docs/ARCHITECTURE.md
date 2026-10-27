@@ -130,7 +130,8 @@ Enums: `league_status(lobby, active, finished)`,
 functions (`security definer`, `set search_path = ''` with schema-qualified names) that
 check auth, membership, deadlines and game rules, then write.
 
-RPC functions: `create_league`, `join_league(code)`, `leave_league` (lobby only),
+RPC functions: `create_league`, `league_preview(code)` (read-only: name, state, host, seats,
+for the join page), `join_league(code)`, `leave_league` (lobby only),
 `update_member(pseudo, commander, avatar_color)`, `set_ready`, `start_campaign`,
 `set_locale(locale)`, `save_squad(units jsonb)`, `swap_unit` / `cancel_swap`,
 `play_order`, `propose_pact`, `accept_pact`, `decline_pact`.
@@ -160,7 +161,10 @@ Rules for every database object:
 **Auth**: email magic link with the **PKCE flow** (the code comes back as `?code=…`, which
 does not clash with HashRouter's `#/…` routes; the app exchanges it before the router
 mounts) plus a **6-digit email code** that can be typed in the app (needed for the iOS
-home-screen PWA). Emails go through a custom SMTP provider.
+home-screen PWA). Emails go through a custom SMTP provider. A join link opened before
+logging in (`#/join/CODE`) is kept in localStorage and reopened after the login.
+The sign-up sends the browser language (`options.data.locale`); a trigger copies it to
+`profiles.locale`, which then follows the player on every device (`set_locale`).
 
 Read rules (RLS or `security_barrier` views):
 
@@ -295,4 +299,8 @@ Routes are in English for both languages. A language switch sits in the header.
 - A sync test: `game_config` seed equals `engine/config.py`.
 - `jobs/replay.py`: replays a past week on historical daily bars with a fake clock against a
   dev Supabase project, so a full week can be played in minutes.
-- `web/`: vitest for components with logic, one Playwright smoke test (login → join → squad).
+- `web/`: vitest for components with logic. Playwright smoke test (`web/e2e`) against a local
+  Supabase started by the CLI (`supabase start`: Auth, REST, Realtime, Mailpit): log in with
+  the 6-digit code and with the magic link (read from Mailpit), create, join by link and by
+  code, everyone ready, the host starts; axe checks on the main screens. Lighthouse mobile
+  accessibility ≥ 95 on the public pages (`npm run a11y`). Both run in the CI `e2e` job.

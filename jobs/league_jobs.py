@@ -613,60 +613,83 @@ def _debrief_dispatch(
 
 
 # --- the tick --------------------------------------------------------------------------------
+class LeagueTickError(Exception):
+    """Some leagues failed in this tick (the others were still processed)."""
+
+    def __init__(self, done: list[str], failed: list[str]) -> None:
+        super().__init__(f"{len(failed)} league(s) failed: {', '.join(failed)}")
+        self.done = done
+        self.failed = failed
+
+
 def league_tick(
     conn: Connection, now: datetime, league_ids: Sequence[str] | None = None
 ) -> list[str]:
-    """Runs every due league transition (only for `league_ids` when given, e.g. a replay)."""
+    """Runs every due league transition (only for `league_ids` when given, e.g. a replay).
+
+    A league that fails (its transaction rolled back) never blocks the others; the tick then
+    raises LeagueTickError at the end so the run is reported as failed."""
     done: list[str] = []
+    failed: list[str] = []
     leagues = conn.execute("select id from public.leagues where status = 'active'").fetchall()
     if league_ids is not None:
         leagues = [row for row in leagues if str(row["id"]) in set(league_ids)]
     for league in leagues:
         league_id = str(league["id"])
-        row = conn.execute(
-            "select week from public.weeks where league_id = %s order by week desc limit 1",
-            (league_id,),
-        ).fetchone()
-        if row is None:
-            continue
-        week = row["week"]
-
-        def step(name: str, due: bool, work: Any, lid: str = league_id, wk: date = week) -> None:
-            if due and run_league_once(
-                conn, lid, wk, name, lambda: work(conn, _load(conn, lid, wk), now)
-            ):
-                done.append(f"{lid[:8]} {wk} {name}")
-
-        step("open_briefing", True, lambda c, d, n: _open_briefing(c, d))
-        data = _load(conn, league_id, week)
-        ts = data.row
-        step("lock", now >= ts["lock_at"], _lock)
-        monday_open = first_open(MONDAY_DISPATCH_MIC, week)
-        if monday_open is not None:
-            step(
-                "dispatch_monday",
-                now >= monday_open + timedelta(minutes=config.PRICE_CAPTURE_DELAY_MIN)
-                and _done(conn, league_id, week, "lock"),
-                _monday_dispatch,
-            )
-        step(
-            "open_resupply",
-            ts["resupply_opens_at"] is not None and now >= ts["resupply_opens_at"],
-            lambda c, d, n: _set_phase(c, d, "resupply"),
-        )
-        step("close_resupply", now >= ts["resupply_closes_at"], _close_resupply)
-        thursday = local_instant(week + timedelta(days=3), THURSDAY_DISPATCH_LOCAL_TIME)
-        step(
-            "dispatch_thursday",
-            now >= thursday and _done(conn, league_id, week, "close_resupply"),
-            _thursday_dispatch,
-        )
-        debrief_due = ts["debrief_at"] is not None and now >= ts["debrief_at"]
-        step("debrief", debrief_due, _debrief)
-        if _done(conn, league_id, week, "lock") and not _done(conn, league_id, week, "debrief"):
-            live_scores(conn, _load(conn, league_id, week), now)
-            done.append(f"{league_id[:8]} {week} live_scores")
+        try:
+            _league_steps(conn, league_id, now, done)
+        except Exception:
+            log.exception("league %s failed in this tick", league_id[:8])
+            failed.append(league_id[:8])
+    if failed:
+        raise LeagueTickError(done, failed)
     return done
+
+
+def _league_steps(conn: Connection, league_id: str, now: datetime, done: list[str]) -> None:
+    row = conn.execute(
+        "select week from public.weeks where league_id = %s order by week desc limit 1",
+        (league_id,),
+    ).fetchone()
+    if row is None:
+        return
+    week: date = row["week"]
+
+    def step(name: str, due: bool, work: Any) -> None:
+        if due and run_league_once(
+            conn, league_id, week, name, lambda: work(conn, _load(conn, league_id, week), now)
+        ):
+            done.append(f"{league_id[:8]} {week} {name}")
+
+    step("open_briefing", True, lambda c, d, n: _open_briefing(c, d))
+    ts = _load(conn, league_id, week).row
+    step("lock", now >= ts["lock_at"], _lock)
+    # Nothing after the lock happens before it (e.g. a lock waiting for the Conflict Zone).
+    locked = _done(conn, league_id, week, "lock")
+    monday_open = first_open(MONDAY_DISPATCH_MIC, week)
+    if monday_open is not None:
+        step(
+            "dispatch_monday",
+            locked and now >= monday_open + timedelta(minutes=config.PRICE_CAPTURE_DELAY_MIN),
+            _monday_dispatch,
+        )
+    step(
+        "open_resupply",
+        locked and ts["resupply_opens_at"] is not None and now >= ts["resupply_opens_at"],
+        lambda c, d, n: _set_phase(c, d, "resupply"),
+    )
+    step("close_resupply", locked and now >= ts["resupply_closes_at"], _close_resupply)
+    thursday = local_instant(week + timedelta(days=3), THURSDAY_DISPATCH_LOCAL_TIME)
+    step(
+        "dispatch_thursday",
+        now >= thursday and _done(conn, league_id, week, "close_resupply"),
+        _thursday_dispatch,
+    )
+    debrief_due = ts["debrief_at"] is not None and now >= ts["debrief_at"]
+    step("debrief", locked and debrief_due, _debrief)
+    if locked and not _done(conn, league_id, week, "debrief"):
+        live_scores(conn, _load(conn, league_id, week), now)
+        done.append(f"{league_id[:8]} {week} live_scores")
 
 
 def _done(conn: Connection, league_id: str, week: date, transition: str) -> bool:

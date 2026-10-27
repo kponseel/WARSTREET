@@ -179,6 +179,25 @@ class Db:
             self.admin()
         return row["result"] if row else None
 
+    def rpc_rows(
+        self, user_id: uuid.UUID | None, function: str, **params: Any
+    ) -> list[dict[str, Any]]:
+        """Calls a set-returning RPC (`select * from public.fn(...)`) as a user."""
+        args = ", ".join(f"{name} => %({name})s" for name in params)
+        self.as_user(user_id)
+        try:
+            with self.conn.transaction():
+                return self.conn.execute(
+                    f"select * from public.{function}({args})".encode(), params
+                ).fetchall()
+        except errors.RaiseException as exc:
+            detail = exc.diag.message_detail
+            raise RpcError(
+                exc.diag.message_primary or "", json.loads(detail) if detail else {}
+            ) from None
+        finally:
+            self.admin()
+
     def rpc_error(self, user_id: uuid.UUID | None, function: str, **params: Any) -> RpcError:
         with pytest.raises(RpcError) as info:
             self.rpc(user_id, function, **params)

@@ -26,8 +26,10 @@ Everything Claude Code needs to build the game in a public GitHub repo, mileston
    email. In Auth → SMTP settings, plug in a custom SMTP provider with a free tier, e.g.
    Brevo, Resend (needs a domain you own) or Gmail with an app password. Then:
    - Auth → Rate limits: raise the email limit to fit your league (e.g. 30 per hour).
-   - Auth → Email templates → Magic link: keep the link **and** add the 6-digit code
-     `{{ .Token }}`, so players on an iPhone home-screen app can type the code instead.
+   - Auth → Email templates → **Magic link** and **Confirm signup**: paste the content of
+     `supabase/templates/magic_link.html` in both. It holds the link **and** the 6-digit code
+     `{{ .Token }}`, so players on an iPhone home-screen app (or who open the email on
+     another device) can type the code instead. Keep the email OTP length at 6.
    - Send yourself a test login before inviting anyone.
    The SMTP password is entered in the Supabase dashboard only, never in the repo.
 4. **GitHub secrets** (Settings → Secrets and variables → Actions):

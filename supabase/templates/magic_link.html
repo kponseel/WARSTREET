@@ -1,0 +1,7 @@
+<!-- Login email (magic link + 6-digit code). Paste the same content in the hosted project:
+     Auth → Email templates → "Magic link" and "Confirm signup" (docs/SETUP.md). -->
+<h2>Log in / Connexion</h2>
+<p><a href="{{ .ConfirmationURL }}">Log in / Se connecter</a></p>
+<p>Or type this code in the app / Ou tapez ce code dans l'app :</p>
+<p style="font-size: 28px; font-weight: bold; letter-spacing: 6px">{{ .Token }}</p>
+<p>If you did not ask for it, ignore this email. / Si vous n'avez rien demandé, ignorez cet e-mail.</p>

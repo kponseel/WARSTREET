@@ -14,7 +14,7 @@ from collections.abc import Sequence
 from datetime import UTC, datetime
 
 from jobs.db import Connection, connect
-from jobs.league_jobs import league_tick
+from jobs.league_jobs import LeagueTickError, league_tick
 from jobs.market_jobs import market_tick
 from jobs.prices import PriceProvider, default_provider
 
@@ -26,7 +26,12 @@ def tick(
     live: bool = True,
     league_ids: Sequence[str] | None = None,
 ) -> list[str]:
-    return market_tick(conn, provider, now, live=live) + league_tick(conn, now, league_ids)
+    market = market_tick(conn, provider, now, live=live)
+    try:
+        return market + league_tick(conn, now, league_ids)
+    except LeagueTickError as error:
+        error.done[:0] = market
+        raise
 
 
 def _instant(value: str) -> datetime:
@@ -42,8 +47,15 @@ def main(argv: Sequence[str] | None = None) -> int:
     logging.basicConfig(level=logging.INFO, format="%(levelname)s %(name)s: %(message)s")
     now = args.now or datetime.now(UTC)
     with connect() as conn:
-        for line in tick(conn, default_provider(), now, live=not args.no_live):
-            print(line)
+        try:
+            lines = tick(conn, default_provider(), now, live=not args.no_live)
+        except LeagueTickError as error:
+            for line in error.done:
+                print(line)
+            logging.getLogger("jobs.tick").error("%s", error)
+            return 1
+    for line in lines:
+        print(line)
     return 0
 
 
