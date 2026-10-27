@@ -6,8 +6,9 @@ Safe to run publicly with real friends for a full campaign.
 ## Do
 1. Security review of the public repo: secrets scan of the full git history, RLS matrix
    re-run, RPC fuzzing for out-of-phase and cross-league calls, rate limits on RPC
-   (e.g. max N calls per minute per user), Supabase Auth settings (redirect URLs, email
-   rate limits).
+   (e.g. max N calls per minute per user), Supabase Auth settings (redirect URLs, custom
+   SMTP working for a non-team address, email rate limits, 6-digit code in the template),
+   list of functions executable by `anon`, every view's `security_invoker` setting.
 2. Ops: alert (GitHub Actions failure email is enough) when a tick fails twice in a row;
    a `status` page in the app showing last tick time and price freshness.
 3. Data: what happens if the price provider is down on Friday night (debrief waits, retries,

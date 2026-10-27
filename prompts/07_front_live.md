@@ -8,12 +8,16 @@ phase of the day it is, and what just happened.
 
 ## Do
 1. Plan first. Wait for my OK.
-2. `#/l/:id/front`: live leaderboard from `scores_live_public` via Realtime (Shadow hidden,
-   jammed shown as `???`, Drone tagged), my squad with live PF per unit, current daily phase
-   banner (Assaut européen / Feu croisé / Contre-offensive US / marchés fermés) with next
-   change time, last update time, event feed.
-3. `#/l/:id/resupply` (Wednesday night only): swap from reserve, resupply orders,
-   ammo, countdown to Thursday 08:59. Blockaded players see why they cannot act.
+2. `#/l/:id/front`: live leaderboard from the `scores_live_public` **table** via Realtime
+   (already masked by the job: no Shadow row, jammed shown as `???` at the bottom without
+   rank, Drone tagged), my squad with live PF per unit (`???` while I am jammed; prices and
+   returns stay visible), current daily phase banner (labels from GAME_RULES §13:
+   European Assault / Crossfire / US Counter-offensive / Markets closed) with next change
+   time, last update time, event feed.
+3. `#/l/:id/resupply` (from `resupply_opens_at` to `resupply_closes_at`): swap from
+   reserve (1, Quartermaster 2; validation mirrors the RPC; cancel a pending swap),
+   resupply orders, ammo, countdown to Thursday 08:59:59. Blockaded players see why they
+   cannot act.
 4. Empty and closed-market states designed, not blank.
 
 ## Acceptance

@@ -12,10 +12,14 @@ a "hello" page live on GitHub Pages.
    vite-plugin-pwa, eslint, vitest), `engine/` (pyproject, ruff, pytest, empty modules),
    `jobs/` (requirements.txt), `supabase/` (migrations folder, empty seed), `status/`.
 3. `web/src/config.ts` with `GAME_NAME = "WARSTREET"` and the Supabase client reading
-   `import.meta.env.VITE_SUPABASE_URL` / `VITE_SUPABASE_ANON_KEY`.
+   `import.meta.env.VITE_SUPABASE_URL` / `VITE_SUPABASE_ANON_KEY`, created with
+   `auth: { flowType: 'pkce' }` (ARCHITECTURE §5: the login code must not clash with
+   HashRouter). `engine/engine/config.py` with `GAME_NAME = "WARSTREET"`.
 4. `.gitignore` covering `.env*`, `.venv`, `node_modules`, `dist`, `supabase/.temp`.
+   Keep the existing `.gitattributes` (`* text=auto eol=lf`).
 5. Workflows: `ci.yml` (ruff, pytest, eslint, vitest, build) and `deploy-pages.yml`
-   (build `web/` with the `base` set to `/<repo-name>/`, deploy to Pages).
+   (build `web/` with the `base` set to `/<repo-name>/`, deploy to Pages). CI triggers on
+   `pull_request` and `push`, never `pull_request_target`; no secret in CI.
 6. i18n from day one: `web/src/i18n/{en,fr}.ts` with typed keys, a `t()` helper, locale
    detection (fr* → fr, else en), a header language switch, and a vitest that fails when a
    key exists in one language but not the other. Placeholder home page in both languages,

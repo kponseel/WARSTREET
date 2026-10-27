@@ -48,26 +48,41 @@ flowchart LR
 - Supabase free projects are **paused after ~7 days of low database activity**. The tick
   writes to the database every 15 minutes on weekdays, which keeps it active; a weekend
   ping in the hourly weekend tick covers the gap.
+- Supabase's **built-in email service only delivers to members of the project's
+  organization team, at about 2 emails per hour**. Friends cannot log in until a custom
+  SMTP provider is configured (SETUP.md step 3).
+- Supabase **Realtime `postgres_changes` works on tables only** (views cannot be added to
+  the `supabase_realtime` publication), and RLS filters whole rows, not columns. Anything
+  that must be partly masked live is written already masked to its own table by the job.
+- `yfinance` is unofficial and Yahoo often rate-limits datacenter IPs such as GitHub
+  runners (HTTP 429). A fallback provider is required from milestone 03, not "later".
+- iOS opens a magic link in Safari, not in the installed home-screen PWA (separate
+  storage), so the login also offers a 6-digit email code typed in the app.
 
 ## 3. Repository layout
 
 ```
 .
 ├── CLAUDE.md
-├── docs/                  GAME_RULES.md, ARCHITECTURE.md
+├── .gitattributes         `* text=auto eol=lf`
+├── docs/                  GAME_RULES.md, ARCHITECTURE.md, SETUP.md (later PLAYTEST.md)
+├── prompts/               00…09, one prompt per milestone
 ├── data/instruments.csv   catalogue seed
 ├── web/                   React PWA
-│   └── src/{app,pages,components,lib,i18n,config.ts}
+│   └── src/{app,pages,components,lib,i18n,content,config.ts}
 ├── supabase/
 │   ├── migrations/        schema, RLS, RPC (SQL)
-│   ├── seed.sql           instruments, game_config
+│   ├── scripts/           generators (e.g. seed SQL from the CSV and engine/config.py)
+│   ├── seed.sql           instruments, game_config (generated)
 │   └── tests/             RLS / RPC tests (pgTAP or SQL scripts)
 ├── engine/                Python package: pure game logic + calendars
-│   ├── engine/{config,models,scoring,commanders,orders,ranking,feats,calendar,conflict_zone,drone}.py
+│   ├── engine/{config,models,scoring,commanders,orders,ranking,feats,calendar,conflict_zone,weather,drone,simulate}.py
 │   └── tests/
-├── jobs/                  tick.py, prices.py, replay.py, communique.py, db.py
+├── jobs/                  tick.py, prices.py, replay.py, dispatch.py, db.py
 ├── status/heartbeat.json
 └── .github/workflows/     ci.yml, deploy-pages.yml, tick.yml, heartbeat.yml
+
+`engine/config.py` in the docs means the module `engine/engine/config.py`.
 ```
 
 ## 4. Data model (Postgres)
@@ -76,76 +91,123 @@ Enums: `league_status(lobby, active, finished)`,
 `phase(briefing, s1_live, resupply, s2_live, debrief)`,
 `slot(champion, veteran, marksman, saboteur, priority_target, reserve_1, reserve_2, reserve_3)`,
 `commander(bastion, berserker, prophet, hunter, shadow, technomancer, quartermaster)`,
-`order_type(...)`, `order_status(pending, applied, blocked, rejected)`.
+`order_type(...)`, `order_window(briefing, resupply)`,
+`order_status(pending, applied, blocked, rejected)`,
+`pact_status(proposed, active, declined, cancelled)`.
+
+**Players are league members, not users.** Every player-scoped table references
+`league_members.member_id`. The Drone is a member with `user_id = null` and
+`is_drone = true`, so it has squads and scores like everyone else without an auth account.
 
 | Table | Key columns |
 |---|---|
 | `profiles` | `id` (= auth.users.id), `locale` (`en`/`fr`), `created_at` |
 | `leagues` | `id`, `name`, `invite_code` unique, `host_id`, `status`, `max_players` 3–5, `campaign_weeks`, `drone_enabled`, `start_week` (Monday date) |
-| `league_members` | (`league_id`, `user_id`) pk, `pseudo`, `commander`, `avatar_color`, `ready`, `is_drone` |
-| `instruments` | `id`, `ticker`, `name`, `region`, `calendar_mic`, `currency`, `sector` |
-| `instrument_weeks` | (`instrument_id`, `week`), `vol12w`, `coef`, `display_class`, `prev_week_return`, `in_conflict_zone`, `earnings_date` |
-| `reference_prices` | (`instrument_id`, `week`, `kind` p0/p_mid/p_end), `price`, `dividend`, `split_ratio`, `source`, `fetched_at` |
+| `league_members` | `member_id` pk, `league_id`, `user_id` (null for the Drone), unique (`league_id`, `user_id`), `pseudo`, `commander`, `avatar_color`, `ready`, `is_drone` |
+| `instruments` | `id`, `ticker`, `name`, `region`, `calendar_mic`, `currency`, `sector` (code) |
+| `instrument_weeks` | (`instrument_id`, `week`), `vol12w`, `coef`, `display_class`, `prev_week_return`, `max_abs_daily_move_prev`, `market_cap`, `earnings_date`, `in_conflict_zone`, `weather` text[] — global, the same for every league |
+| `reference_prices` | (`instrument_id`, `week`, `kind` p0/p_mid/p_end), `price` (unadjusted), `dividend`, `split_ratio`, `source`, `fetched_at`, `confirmed` |
 | `prices_live` | (`instrument_id`, `ts`), `price` — pruned after 14 days |
-| `weeks` | (`league_id`, `week`), `number`, `phase`, `is_final`, `phase_changed_at` |
-| `squads` | (`league_id`, `week`, `user_id`), `locked`, `auto`, `submitted_at` |
-| `squad_units` | (`league_id`, `week`, `user_id`, `slot`), `instrument_id`, `active_s1`, `active_s2` |
-| `ammo_ledger` | `league_id`, `user_id`, `week`, `delta`, `reason` (view `ammo_balance`) |
-| `orders` | `id`, `league_id`, `week`, `player_id`, `type`, `target_user_id`, `target_slot`, `window`, `cost`, `status`, `created_at` |
-| `pacts` | `league_id`, `week`, `a`, `b`, `status` (proposed, active) |
-| `scores_live` | (`league_id`, `week`, `user_id`), `pf_live`, `rank_live`, `units` jsonb, `updated_at` |
-| `scores_final` | (`league_id`, `week`, `user_id`), `pf_total`, `breakdown` jsonb, `rank`, `campaign_points` |
-| `badges` | `league_id`, `week`, `user_id`, `code` |
-| `events` | `id`, `league_id`, `week`, `ts`, `kind`, `template_key`, `vars` jsonb, `variant`, `audience` (all / user id) — rendered client-side in the reader's language |
-| `game_config` | key/value mirror of `engine/config.py` for display |
-| `job_runs` | unique (`league_id`, `week`, `transition`), `ran_at` — idempotence |
+| `weeks` | (`league_id`, `week`), `number`, `phase`, `is_final`, `lock_at`, `resupply_opens_at`, `resupply_closes_at`, `debrief_at` (UTC, from `engine/calendar.py`), `phase_changed_at` |
+| `squads` | (`league_id`, `week`, `member_id`), `locked`, `auto`, `submitted_at` |
+| `squad_units` | (`league_id`, `week`, `member_id`, `slot`), `instrument_id`, `active_s1`, `active_s2` |
+| `swaps` | `id`, `league_id`, `week`, `member_id`, `slot`, `reserve_slot`, `created_at` — pending until `resupply_closes_at` |
+| `ammo_ledger` | `league_id`, `member_id`, `week`, `delta`, `reason` (view `ammo_balance`) |
+| `orders` | `id`, `league_id`, `week`, `member_id`, `type`, `target_member_id`, `target_slot`, `order_window`, `cost`, `status`, `created_at`, `resolved_at` (`window` is a reserved word in Postgres: never use it as a column name) |
+| `pacts` | `id`, `league_id`, `week`, `proposer_member_id`, `partner_member_id`, `status` |
+| `scores_live` | (`league_id`, `week`, `member_id`), `pf_live`, `units` jsonb, `updated_at` — **private**: owner only, and only when not jammed |
+| `scores_live_public` | (`league_id`, `week`, `member_id`), `pf_live` (null when jammed), `rank_live` (null when jammed), `jammed`, `units` jsonb (masked), `updated_at` — written **already masked** by the job; no row for a Shadow; this is the table clients subscribe to with Realtime |
+| `scores_final` | (`league_id`, `week`, `member_id`), `pf_total`, `pf_picking`, `breakdown` jsonb, `rank`, `campaign_points` |
+| `badges` | `league_id`, `week`, `member_id`, `code` |
+| `events` | `id`, `league_id`, `week`, `ts`, `kind`, `template_key`, `vars` jsonb, `variant`, `audience` (all / member id) — rendered client-side in the reader's language. An `intel` snapshot is an event with the attacker as audience |
+| `game_config` | key/value generated from `engine/config.py`. **Runtime source for RPC validation** (costs, caps, ammo, swaps…) and for display. A CI test fails if it differs from `engine/config.py` |
+| `market_runs` | unique (`week`, `transition`), `ran_at` — idempotence of global market transitions |
+| `job_runs` | unique (`league_id`, `week`, `transition`), `league_id` **not null**, `ran_at` — idempotence of league transitions |
 
 ## 5. Security model (public repo)
 
 **Clients have no INSERT/UPDATE/DELETE on any game table.** All writes go through RPC
-functions (`security definer`, `search_path` pinned) that check auth, membership, phase,
-deadlines and game rules, then write.
+functions (`security definer`, `set search_path = ''` with schema-qualified names) that
+check auth, membership, deadlines and game rules, then write.
 
-RPC functions: `create_league`, `join_league(code)`, `update_member(pseudo, commander, avatar_color)`,
-`set_ready`, `start_campaign`, `save_squad(units jsonb)`, `swap_unit`, `play_order`,
-`propose_pact`, `accept_pact`.
+RPC functions: `create_league`, `join_league(code)`, `leave_league` (lobby only),
+`update_member(pseudo, commander, avatar_color)`, `set_ready`, `start_campaign`,
+`set_locale(locale)`, `save_squad(units jsonb)`, `swap_unit` / `cancel_swap`,
+`play_order`, `propose_pact`, `accept_pact`, `decline_pact`.
+
+Rules for every database object:
+
+- **Deadlines**: RPCs compare `now()` with `weeks.lock_at`, `resupply_opens_at`,
+  `resupply_closes_at`; `weeks.phase` is informative only (the cron can be late).
+- **Rule values**: RPCs read `game_config`; no number is hardcoded in SQL.
+- **Views** run with their owner's rights and bypass RLS unless created with
+  `security_invoker = true`. Use `security_invoker` by default; a view that must bypass
+  RLS to show masked data (e.g. `orders_public`) filters on league membership of
+  `auth.uid()` itself and is covered by the outsider tests.
+- **Functions**: Supabase grants EXECUTE to `anon` and `authenticated` by default.
+  Internal helpers live in a `private` schema that is not exposed by the API; every
+  function gets `revoke execute … from public, anon` and an explicit grant only when it
+  is a player RPC.
+- **Realtime**: clients subscribe only to tables (`scores_live_public`, `events`,
+  `league_members`, `weeks`, `pacts`), never to views, each protected by RLS.
+
+**Auth**: email magic link with the **PKCE flow** (the code comes back as `?code=…`, which
+does not clash with HashRouter's `#/…` routes; the app exchanges it before the router
+mounts) plus a **6-digit email code** that can be typed in the app (needed for the iOS
+home-screen PWA). Emails go through a custom SMTP provider.
 
 Read rules (RLS or `security_barrier` views):
 
 | Data | Who can read |
 |---|---|
 | League, members, weeks, final scores, badges | Members of that league |
-| Own squad, own orders, own ammo | Owner, always |
-| Other players' squads | Members, from lock (`s1_live`). Shadow's squad: only from `debrief` |
-| Other players' S2 swaps | From `s2_live`. Shadow: from `debrief` |
+| Own squad, own orders, own swaps, own ammo | Owner, always |
+| Other players' squads | Members, from `lock_at`. Shadow's squad: only from `debrief_at` |
+| A target's draft before lock | Only through an `intel` snapshot event, audience = the attacker |
+| Other players' S2 swaps | From `resupply_closes_at`. Shadow: from `debrief_at` |
 | Other players' orders | After resolution, via view `orders_public`: attacker masked when the attacker is a Shadow; `force_field` visible only once triggered |
-| `scores_live` | Members; Shadow rows hidden from others; jammed rows return `pf_live = null` |
+| `scores_live` (private) | Owner only, and not while jammed |
+| `scores_live_public` | Members (rows already masked by the job: no Shadow row, jammed rows without PF or rank) |
 | `events` | Members, filtered by `audience` |
-| `instruments`, prices, `game_config` | Any authenticated user |
+| `profiles` | Own row only |
+| `instruments`, `instrument_weeks`, prices, `game_config` | Any authenticated user |
 
 Tests must prove each line of this table with two users and a third outsider.
 
-Secrets: GitHub Actions secrets `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`. Frontend build
-variables `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY` (public by design) as repository
-variables. Supabase Auth redirect URL = the Pages URL.
+Secrets: GitHub Actions secrets `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, used only by
+the `tick` and `replay` jobs. Workflows never use `pull_request_target` and never expose
+secrets to pull-request runs. Frontend build variables `VITE_SUPABASE_URL`,
+`VITE_SUPABASE_ANON_KEY` (public by design) as repository variables. Supabase Auth
+redirect URL = the Pages URL.
 
 ## 6. Jobs and schedules
 
-`jobs/tick.py` is the single entry point. It loads all active leagues, computes the phase
-each week should be in **now** from the calendars, and performs any missing transition
-(guarded by `job_runs`):
+`jobs/tick.py` is the single entry point. It first runs the **market transitions**
+(global, guarded by `market_runs`), then loads all active leagues, computes the phase
+each week should be in **now** from the stored phase timestamps, and performs any missing
+**league transition** (guarded by `job_runs`).
+
+Market transitions (once per week for all leagues):
 
 | Transition | When | Work |
 |---|---|---|
-| `open_briefing` | After debrief / at start | Ammo income + catch-up, Bounty, Conflict Zone, coefs |
-| `lock` | Sunday 23:59:59 Paris | Lock squads, auto-squads, resolve briefing orders, Drone squad |
-| `capture_p0` | First open of the week + 10 min, per calendar | Store `P0` |
-| `open_resupply` | Wednesday US close + 5 min | Phase change |
-| `close_resupply` | Thursday 08:59:59 | Apply swaps, resolve resupply orders |
-| `capture_p_mid` | First open on/after Thursday + 10 min | Store `P_mid` |
-| `live_scores` | Every tick during sessions | Update `scores_live` from `prices_live` |
-| `debrief` | Friday US close + 5 min (once all `P_end` exist) | Final scoring, ranks, campaign points, feats, badges, Front Dispatch |
-| `dispatch_*` | Monday open + 10 min, Thursday 09:10, debrief | Generate dispatch events (template key + vars) |
+| `capture_p0` | First open of the week + 10 min, per instrument calendar | Store `P0` |
+| `capture_p_mid` | First open on/after Thursday + 10 min, per calendar | Store `P_mid` |
+| `capture_p_end` | Last close of the week + `debrief_delay_min`, per calendar | Store `P_end`, re-read once on the next tick and set `confirmed` (flag a mismatch) |
+| `week_stats` | After the week's last `P_end` is confirmed | Next week's `instrument_weeks`: `vol12w`, `coef`, display class, market cap, earnings date, Conflict Zone, weather |
+| `live_prices` | Every tick during sessions | Batch quotes into `prices_live`, prune > 14 days |
+
+League transitions:
+
+| Transition | When | Work |
+|---|---|---|
+| `open_briefing` | After debrief / at start | Create the week with its phase timestamps, ammo income + catch-up, Bounty |
+| `lock` | `lock_at` | Lock squads, auto-squads, resolve briefing orders, Drone squad |
+| `open_resupply` | `resupply_opens_at` | Phase change |
+| `close_resupply` | `resupply_closes_at` | Apply swaps, resolve resupply orders |
+| `live_scores` | Every tick during sessions (not keyed: recomputed each time) | Write `scores_live` and the masked `scores_live_public` from `prices_live` |
+| `debrief` | `debrief_at`, once every `P_end` is confirmed | Final scoring, ranks, campaign points, feats, badges, Front Dispatch |
+| `dispatch_*` | Monday EU open + 10 min, Thursday 09:10, debrief | Generate dispatch events (template key + vars) |
 
 Workflows:
 
@@ -156,9 +218,11 @@ Workflows:
 - `deploy-pages.yml`: build `web/` and deploy on push to `main`.
 
 **Price source**: `yfinance` batch download for the 100 tickers in one call (live prices)
-and daily bars for official open/close, dividends and splits. Wrap it behind a
-`PriceProvider` interface so a fallback (e.g. a Google Sheets `GOOGLEFINANCE` CSV) can be
-swapped in. Never let a provider failure corrupt reference prices: retry, then mark missing.
+and daily bars for official open/close, dividends and splits, always with
+`auto_adjust=False` (raw prices; the engine applies dividends and splits). Wrap it behind a
+`PriceProvider` interface with a working fallback from milestone 03 (e.g. a Google Sheets
+`GOOGLEFINANCE` CSV), because Yahoo often rate-limits GitHub runners. Never let a provider
+failure corrupt reference prices: retry with backoff, switch provider, then mark missing.
 
 ## 7. Lobby and game flow
 
@@ -168,10 +232,10 @@ stateDiagram-v2
   lobby --> lobby: friends join with code, pick pseudo + commander + avatar, ready
   lobby --> active: host starts (>= 3 ready)
   state active {
-    briefing --> s1_live: Sunday 23:59 lock
-    s1_live --> resupply: Wednesday US close
-    resupply --> s2_live: Thursday 09:00
-    s2_live --> debrief: Friday US close
+    briefing --> s1_live: lock_at (Sunday 23:59:59)
+    s1_live --> resupply: resupply_opens_at (last US close up to Wednesday)
+    resupply --> s2_live: resupply_closes_at (Thursday 08:59:59)
+    s2_live --> debrief: debrief_at (last US close of the week + 30 min)
     debrief --> briefing: next week
   }
   active --> finished: debrief of last week
@@ -186,7 +250,7 @@ Routes are in English for both languages. A language switch sits in the header.
 | Route | Screen |
 |---|---|
 | `#/` | My leagues + create / join |
-| `#/login` | Magic-link login |
+| `#/login` | Magic-link login + 6-digit code entry |
 | `#/join/:code` | Join a league |
 | `#/l/:id/lobby` | Lobby: players, commander, avatar, ready, start |
 | `#/l/:id/briefing` | Squad builder, Conflict Zone, briefing orders, pacts |
@@ -200,7 +264,10 @@ Routes are in English for both languages. A language switch sits in the header.
 
 - `engine/`: unit tests for every formula and every edge case in GAME_RULES §12, plus
   golden weeks (fixed price fixtures → expected breakdown JSON).
-- `supabase/tests`: RLS matrix of §5 and every RPC validation path.
+- `supabase/tests`: RLS matrix of §5, every RPC validation path, RPCs rejected after their
+  deadline even when `weeks.phase` is stale, no function callable by `anon` except the
+  intended ones, and `scores_live_public` never leaking a Shadow or a jammed score.
+- A sync test: `game_config` seed equals `engine/config.py`.
 - `jobs/replay.py`: replays a past week on historical daily bars with a fake clock against a
   dev Supabase project, so a full week can be played in minutes.
 - `web/`: vitest for components with logic, one Playwright smoke test (login → join → squad).
