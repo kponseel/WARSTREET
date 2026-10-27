@@ -16,3 +16,6 @@ export function readSupabaseEnv(): SupabaseEnv | null {
   }
   return { url, anonKey }
 }
+
+// Length of the email login code. Must match Supabase Auth → Email OTP length (default 6).
+export const LOGIN_CODE_LENGTH = 6

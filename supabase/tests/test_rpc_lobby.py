@@ -1,5 +1,6 @@
 """Lobby RPCs: create, join, leave, update, ready, start, locale (GAME_RULES §1)."""
 
+import uuid
 from datetime import UTC, date, datetime
 
 import pytest
@@ -92,6 +93,26 @@ def test_join_league_rejections(db: Db) -> None:
         )
     error = db.rpc_error(user, "join_league", p_code=code, **args)
     assert (error.code, error.vars) == ("LEAGUE_FULL", {"max": 4})
+
+
+def test_league_preview(db: Db) -> None:
+    code, league_id, host = _lobby(db)
+    user = db.create_user()
+    rows = db.rpc_rows(user, "league_preview", p_code=f" {code.lower()}")
+    assert rows == [
+        {
+            "league_id": league_id,
+            "name": BASE["p_name"],
+            "status": "lobby",
+            "host_pseudo": BASE["p_pseudo"],
+            "players": 1,
+            "max_players": BASE["p_max_players"],
+            "is_member": False,
+        }
+    ]
+    assert db.rpc_rows(host, "league_preview", p_code=code)[0]["is_member"] is True
+    assert db.rpc_error(user, "league_preview", p_code="ZZZZZZ").code == "LEAGUE_NOT_FOUND"
+    assert db.rpc_error(None, "league_preview", p_code=code).code == "NOT_AUTHENTICATED"
 
 
 def test_join_is_closed_after_start(db: Db) -> None:
@@ -247,3 +268,15 @@ def test_profile_is_created_and_locale_can_change(db: Db) -> None:
     db.rpc(user, "set_locale", p_locale="fr")
     assert db.select(user, "select locale from public.profiles") == [{"locale": "fr"}]
     assert db.rpc_error(user, "set_locale", p_locale=None).code == "LOCALE_INVALID"
+
+
+@pytest.mark.parametrize(
+    ("metadata", "locale"), [('{"locale": "fr"}', "fr"), ('{"locale": "de"}', "en"), (None, "en")]
+)
+def test_profile_locale_comes_from_sign_up(db: Db, metadata: str | None, locale: str) -> None:
+    user = uuid.uuid4()
+    db.exec_admin(
+        "insert into auth.users (id, email, raw_user_meta_data) values (%s, %s, %s::jsonb)",
+        (user, f"{user.hex[:12]}@example.test", metadata),
+    )
+    assert db.select(user, "select locale::text from public.profiles") == [{"locale": locale}]

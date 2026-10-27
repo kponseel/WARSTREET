@@ -24,6 +24,7 @@ RPCS = {
     "decline_pact",
     "join_league",
     "leave_league",
+    "league_preview",
     "play_order",
     "propose_pact",
     "save_squad",

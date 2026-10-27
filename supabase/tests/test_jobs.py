@@ -220,6 +220,31 @@ def test_lock_waits_for_the_conflict_zone(db: Db) -> None:
     lines = run(db, FakeMarket(), MONDAY_EU)
     assert not any(line.endswith(" lock") for line in lines)
     assert count(db, "select 1 from public.squads where league_id = %s", (league.id,)) == 0
+    # Nothing that follows the lock happens without it, the debrief included.
+    for now in (WEDNESDAY_NIGHT, THURSDAY, FRIDAY_CAPTURE, FRIDAY_CONFIRM):
+        assert [line for line in run(db, FakeMarket(), now) if str(league.id)[:8] in line] == []
+    assert count(db, "select 1 from public.scores_final where league_id = %s", (league.id,)) == 0
+
+
+def test_a_failing_league_does_not_block_the_others(
+    db: Db, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    import jobs.league_jobs as league_jobs
+
+    broken, healthy = make_league(db), make_league(db)
+    real = league_jobs._open_briefing
+
+    def open_briefing(conn: object, data: league_jobs.WeekData) -> None:
+        if data.league_id == str(broken.id):
+            raise RuntimeError("boom")
+        real(conn, data)  # type: ignore[arg-type]
+
+    monkeypatch.setattr(league_jobs, "_open_briefing", open_briefing)
+    with pytest.raises(league_jobs.LeagueTickError) as info:
+        run(db, FakeMarket(), T_BRIEFING)
+    assert info.value.failed == [str(broken.id)[:8]]
+    assert f"{str(healthy.id)[:8]} {WEEK} open_briefing" in info.value.done
+    assert count(db, "select 1 from public.job_runs where league_id = %s", (broken.id,)) == 0
 
 
 def test_replay_of_a_demo_week(db: Db) -> None:
@@ -229,7 +254,10 @@ def test_replay_of_a_demo_week(db: Db) -> None:
     assert parse_week("2026-W46") == WEEK == parse_week("2026-11-12")
     result = replay(db.conn, FakeMarket(), WEEK, "demo")
     assert len(result["scores"]) == 5  # 4 bots and the Drone
-    assert sorted(r["rank"] for r in result["scores"] if r["rank"]) == [1, 2, 3, 4]
+    # Four ranked bots (ties share a rank: 1, 2, 3, 3 is valid), the Drone unranked.
+    ranks = sorted(r["rank"] for r in result["scores"] if r["rank"])
+    assert len(ranks) == 4 and ranks[0] == 1
+    assert all(rank == index + 1 or rank == ranks[index - 1] for index, rank in enumerate(ranks))
     keys = [d["template_key"] for d in result["dispatches"]]
     assert keys[1:] == ["dispatch.thursday", "dispatch.debrief"]
     assert all(d["en"] and d["fr"] and "{" not in d["en"] + d["fr"] for d in result["dispatches"])

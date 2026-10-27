@@ -21,6 +21,9 @@ cd web
 npm install
 npm run dev            # http://localhost:5173
 npm run lint && npm run test && npm run build
+# end-to-end (needs Docker + Supabase CLI): from the repo root `supabase start`, then in web/
+#   VITE_SUPABASE_URL=http://127.0.0.1:54321 VITE_SUPABASE_ANON_KEY=<anon key from `supabase status`> npm run build
+#   npx playwright install chromium && npm run e2e && npm run a11y
 
 # engine + jobs (from the repository root)
 python3.12 -m venv .venv && . .venv/bin/activate
@@ -39,7 +42,8 @@ Supabase CLI: `supabase db start`, then
 With any plain Postgres 15+ superuser URL, omit `WARSTREET_TEST_DB_PREPARED`: the tests create
 a throwaway database with a small stand-in for Supabase's `auth` schema. Without a URL they
 are skipped. After changing `engine/engine/config.py` or `data/instruments.csv`, regenerate
-the seed with `python supabase/scripts/generate_seed.py`.
+the seed (and `web/src/content/gameConfig.generated.ts`, the same values for the public rules
+page) with `python supabase/scripts/generate_seed.py`.
 
 Without Supabase variables the app runs and shows "server connection not configured".
 To connect a dev project, create `web/.env.local` (git-ignored) with `VITE_SUPABASE_URL`

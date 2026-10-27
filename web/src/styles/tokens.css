@@ -1,20 +1,28 @@
-/* Design tokens. Light theme only; dark text on light backgrounds (CLAUDE.md). */
+/* Design tokens. Light theme only; dark text on light backgrounds (CLAUDE.md).
+   Every text/background pair below meets WCAG AA (4.5:1) or better. */
 :root {
-  --color-bg: #f6f7f9;
+  --color-bg: #f3f5f8;
   --color-surface: #ffffff;
+  --color-surface-alt: #e9edf2;
   --color-text: #14181f;
-  --color-text-muted: #4a5361;
-  --color-border: #d5dae1;
+  --color-text-muted: #424b59;
+  --color-border: #c4cbd5;
+  --color-border-strong: #6b7685;
   --color-primary: #1f3a5f;
+  --color-primary-hover: #152a46;
   --color-primary-contrast: #ffffff;
-  --color-accent: #c2410c;
-  --color-ok: #166534;
-  --color-ok-bg: #e7f5ec;
-  --color-warn: #8a4b00;
-  --color-warn-bg: #fff4e0;
+  --color-accent: #b23a0a;
+  --color-ok: #14532d;
+  --color-ok-bg: #e3f3e8;
+  --color-warn: #7a4300;
+  --color-warn-bg: #fff2dc;
+  --color-danger: #9f1c1c;
+  --color-danger-bg: #fdecec;
+  --color-focus: #c2410c;
 
   --font-sans: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
   --font-display: 'Arial Black', 'Segoe UI', system-ui, sans-serif;
+  --font-mono: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
 
   --space-1: 4px;
   --space-2: 8px;
@@ -24,6 +32,9 @@
   --space-8: 32px;
 
   --radius: 10px;
-  --max-width: 720px;
+  --radius-small: 6px;
+  --max-width: 760px;
+  --tap: 44px;
+  --shadow: 0 1px 2px rgb(20 24 31 / 8%), 0 2px 8px rgb(20 24 31 / 6%);
   color-scheme: light;
 }

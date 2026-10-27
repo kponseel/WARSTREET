@@ -1,6 +1,15 @@
-# Supabase CLI configuration for local development and CI (`supabase db start`).
-# Only the database is used locally; hosted settings (auth, SMTP…) live in the dashboard.
+# Supabase CLI configuration for local development and CI.
+# `supabase db start` (database tests) uses [db] only; `supabase start` (end-to-end tests)
+# also runs Auth, the REST API, Realtime and a local mailbox (Mailpit). Hosted settings
+# (SMTP, rate limits, email templates, redirect URLs) live in the dashboard: docs/SETUP.md.
 project_id = "warstreet"
+
+[api]
+enabled = true
+port = 54321
+schemas = ["public"]
+extra_search_path = ["public", "extensions"]
+max_rows = 1000
 
 [db]
 port = 54322
@@ -10,3 +19,50 @@ major_version = 17
 [db.seed]
 enabled = true
 sql_paths = ["./seed.sql"]
+
+[realtime]
+enabled = true
+
+[studio]
+enabled = false
+
+[storage]
+enabled = false
+
+[edge_runtime]
+enabled = false
+
+[analytics]
+enabled = false
+
+# Local mailbox: login emails land here (http://127.0.0.1:54324), the e2e test reads them.
+[inbucket]
+enabled = true
+port = 54324
+
+[auth]
+enabled = true
+# `vite preview` (e2e) and `vite dev`.
+site_url = "http://127.0.0.1:4173"
+additional_redirect_urls = ["http://127.0.0.1:5173", "http://localhost:5173", "http://localhost:4173"]
+jwt_expiry = 3600
+enable_signup = true
+
+[auth.rate_limit]
+email_sent = 100
+
+[auth.email]
+enable_signup = true
+enable_confirmations = false
+otp_length = 6
+otp_expiry = 3600
+max_frequency = "1s"
+
+# Both emails carry the link AND the 6-digit code (the iOS home-screen app needs the code).
+[auth.email.template.magic_link]
+subject = "Your login link and code / Votre lien et code de connexion"
+content_path = "./supabase/templates/magic_link.html"
+
+[auth.email.template.confirmation]
+subject = "Your login link and code / Votre lien et code de connexion"
+content_path = "./supabase/templates/magic_link.html"

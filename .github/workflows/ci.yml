@@ -78,3 +78,42 @@ jobs:
       - run: npm run lint
       - run: npm run test
       - run: npm run build
+
+  e2e:
+    name: End-to-end (local Supabase + Playwright + Lighthouse)
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v5
+      - uses: supabase/setup-cli@v1
+        with:
+          version: latest
+      # Auth, REST, Realtime and the Mailpit mailbox; no secret involved (local demo keys).
+      - run: supabase start -x imgproxy,storage-api,studio,edge-runtime,logflare,vector,supavisor,postgres-meta
+      - name: Point the build at the local Supabase
+        run: |
+          supabase status -o env > "$RUNNER_TEMP/supabase.env"
+          . "$RUNNER_TEMP/supabase.env"
+          echo "VITE_SUPABASE_URL=$API_URL" >> "$GITHUB_ENV"
+          echo "VITE_SUPABASE_ANON_KEY=${ANON_KEY:-$PUBLISHABLE_KEY}" >> "$GITHUB_ENV"
+      - uses: actions/setup-node@v5
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - run: npm ci
+        working-directory: web
+      - run: npx playwright install --with-deps chromium
+        working-directory: web
+      - run: npm run build
+        working-directory: web
+      - run: npm run e2e
+        working-directory: web
+      - run: npm run a11y
+        working-directory: web
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-report
+          path: web/playwright-report
+          retention-days: 7
