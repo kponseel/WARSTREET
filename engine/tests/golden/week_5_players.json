@@ -1,0 +1,977 @@
+{
+ "orders": {
+  "betrayers": [
+   "H"
+  ],
+  "status": {
+   "h1": "blocked",
+   "j1": "applied",
+   "l1": "applied"
+  }
+ },
+ "players": {
+  "Drone": {
+   "badges": [],
+   "breakdown": {
+    "pf_picking": 290,
+    "pf_total": 290,
+    "slots": {
+     "champion": {
+      "clamped": false,
+      "orders": [],
+      "pf": 30,
+      "raw": 30.0,
+      "s1": {
+       "coef": 0.5,
+       "instrument_id": 3,
+       "missing": false,
+       "modifier": 1.0,
+       "multiplier": 2.0,
+       "pf": 30.0,
+       "return": 3.0
+      },
+      "s2": {
+       "coef": 0.5,
+       "instrument_id": 3,
+       "missing": false,
+       "modifier": 1.0,
+       "multiplier": 2.0,
+       "pf": 0.0,
+       "return": 0.0
+      },
+      "swapped_from": null
+     },
+     "marksman": {
+      "clamped": false,
+      "orders": [],
+      "pf": 40,
+      "raw": 40.0,
+      "s1": {
+       "coef": 1.0,
+       "instrument_id": 16,
+       "missing": false,
+       "modifier": 1.0,
+       "multiplier": 1.0,
+       "pf": 20.0,
+       "return": 2.0
+      },
+      "s2": {
+       "coef": 1.0,
+       "instrument_id": 16,
+       "missing": false,
+       "modifier": 1.0,
+       "multiplier": 1.0,
+       "pf": 20.0,
+       "return": 2.0
+      },
+      "swapped_from": null
+     },
+     "priority_target": {
+      "clamped": false,
+      "orders": [],
+      "pf": 120,
+      "raw": 120.0,
+      "s1": {
+       "coef": 1.0,
+       "instrument_id": 13,
+       "missing": false,
+       "modifier": 1.0,
+       "multiplier": 1.2,
+       "pf": 60.0,
+       "return": 5.0
+      },
+      "s2": {
+       "coef": 1.0,
+       "instrument_id": 13,
+       "missing": false,
+       "modifier": 1.0,
+       "multiplier": 1.2,
+       "pf": 60.0,
+       "return": 5.0
+      },
+      "swapped_from": null
+     },
+     "saboteur": {
+      "clamped": false,
+      "orders": [],
+      "pf": 40,
+      "raw": 40.0,
+      "s1": {
+       "coef": 1.0,
+       "instrument_id": 15,
+       "missing": false,
+       "modifier": 1.0,
+       "multiplier": -1.0,
+       "pf": 20.0,
+       "return": -2.0
+      },
+      "s2": {
+       "coef": 1.0,
+       "instrument_id": 15,
+       "missing": false,
+       "modifier": 1.0,
+       "multiplier": -1.0,
+       "pf": 20.0,
+       "return": -2.0
+      },
+      "swapped_from": null
+     },
+     "veteran": {
+      "clamped": false,
+      "orders": [],
+      "pf": 60,
+      "raw": 60.0,
+      "s1": {
+       "coef": 1.0,
+       "instrument_id": 14,
+       "missing": false,
+       "modifier": 1.0,
+       "multiplier": 1.5,
+       "pf": 15.0,
+       "return": 1.0
+      },
+      "s2": {
+       "coef": 1.0,
+       "instrument_id": 14,
+       "missing": false,
+       "modifier": 1.0,
+       "multiplier": 1.5,
+       "pf": 45.0,
+       "return": 3.0
+      },
+      "swapped_from": null
+     }
+    }
+   },
+   "campaign_points": 0.0,
+   "is_drone": true,
+   "member_id": "Drone",
+   "pf_picking": 290,
+   "pf_total": 290,
+   "rank": null
+  },
+  "H": {
+   "badges": [
+    "traitor",
+    "rusty"
+   ],
+   "breakdown": {
+    "bastion": 5,
+    "betrayal": -40,
+    "elite": {
+     "instruments": [],
+     "pf": 0
+    },
+    "feats": [
+     {
+      "code": "perfect_shot",
+      "instrument_id": 13,
+      "pf": 40
+     }
+    ],
+    "hunter": {
+     "pf": 0,
+     "victims": []
+    },
+    "pf_picking": 245,
+    "pf_total": 250,
+    "pillage": [],
+    "slots": {
+     "champion": {
+      "clamped": false,
+      "orders": [],
+      "pf": 60,
+      "raw": 60.0,
+      "s1": {
+       "coef": 1.0,
+       "instrument_id": 11,
+       "missing": false,
+       "modifier": 1.0,
+       "multiplier": 2.0,
+       "pf": 80.0,
+       "return": 4.0
+      },
+      "s2": {
+       "coef": 1.0,
+       "instrument_id": 11,
+       "missing": false,
+       "modifier": 1.0,
+       "multiplier": 2.0,
+       "pf": -20.0,
+       "return": -1.0
+      },
+      "swapped_from": null
+     },
+     "marksman": {
+      "clamped": false,
+      "orders": [],
+      "pf": -10,
+      "raw": -10.0,
+      "s1": {
+       "coef": 1.0,
+       "instrument_id": 12,
+       "missing": false,
+       "modifier": 1.0,
+       "multiplier": 1.0,
+       "pf": -30.0,
+       "return": -3.0
+      },
+      "s2": {
+       "coef": 1.0,
+       "instrument_id": 12,
+       "missing": false,
+       "modifier": 1.0,
+       "multiplier": 1.0,
+       "pf": 20.0,
+       "return": 2.0
+      },
+      "swapped_from": null
+     },
+     "priority_target": {
+      "clamped": false,
+      "orders": [],
+      "pf": 120,
+      "raw": 120.0,
+      "s1": {
+       "coef": 1.0,
+       "instrument_id": 13,
+       "missing": false,
+       "modifier": 1.0,
+       "multiplier": 1.2,
+       "pf": 60.0,
+       "return": 5.0
+      },
+      "s2": {
+       "coef": 1.0,
+       "instrument_id": 13,
+       "missing": false,
+       "modifier": 1.0,
+       "multiplier": 1.2,
+       "pf": 60.0,
+       "return": 5.0
+      },
+      "swapped_from": null
+     },
+     "saboteur": {
+      "clamped": false,
+      "orders": [],
+      "pf": 30,
+      "raw": 30.0,
+      "s1": {
+       "coef": 1.0,
+       "instrument_id": 2,
+       "missing": false,
+       "modifier": 1.0,
+       "multiplier": -1.0,
+       "pf": 10.0,
+       "return": -1.0
+      },
+      "s2": {
+       "coef": 1.0,
+       "instrument_id": 2,
+       "missing": false,
+       "modifier": 1.0,
+       "multiplier": -1.0,
+       "pf": 20.0,
+       "return": -2.0
+      },
+      "swapped_from": null
+     },
+     "veteran": {
+      "clamped": false,
+      "orders": [],
+      "pf": 45,
+      "raw": 45.0,
+      "s1": {
+       "coef": 1.0,
+       "instrument_id": 1,
+       "missing": false,
+       "modifier": 1.0,
+       "multiplier": 1.5,
+       "pf": 30.0,
+       "return": 2.0
+      },
+      "s2": {
+       "coef": 1.0,
+       "instrument_id": 1,
+       "missing": false,
+       "modifier": 1.0,
+       "multiplier": 1.5,
+       "pf": 15.0,
+       "return": 1.0
+      },
+      "swapped_from": null
+     }
+    }
+   },
+   "campaign_points": 1.0,
+   "is_drone": false,
+   "member_id": "H",
+   "pf_picking": 245,
+   "pf_total": 250,
+   "rank": 5
+  },
+  "I": {
+   "badges": [
+    "warlord"
+   ],
+   "breakdown": {
+    "bastion": 0,
+    "betrayal": 0,
+    "elite": {
+     "instruments": [
+      15
+     ],
+     "pf": 10
+    },
+    "feats": [
+     {
+      "code": "total_victory",
+      "pf": 60
+     },
+     {
+      "code": "perfect_shot",
+      "instrument_id": 13,
+      "pf": 40
+     }
+    ],
+    "hunter": {
+     "pf": 0,
+     "victims": []
+    },
+    "pf_picking": 328,
+    "pf_total": 359,
+    "pillage": [
+     {
+      "base": 264.0,
+      "from": "I",
+      "order_id": "j1",
+      "pf": -79,
+      "to": "J"
+     }
+    ],
+    "slots": {
+     "champion": {
+      "clamped": true,
+      "orders": [],
+      "pf": 150,
+      "raw": 300.0,
+      "s1": {
+       "coef": 1.0,
+       "instrument_id": 13,
+       "missing": false,
+       "modifier": 1.0,
+       "multiplier": 3.0,
+       "pf": 150.0,
+       "return": 5.0
+      },
+      "s2": {
+       "coef": 1.0,
+       "instrument_id": 13,
+       "missing": false,
+       "modifier": 1.0,
+       "multiplier": 3.0,
+       "pf": 150.0,
+       "return": 5.0
+      },
+      "swapped_from": null
+     },
+     "marksman": {
+      "clamped": false,
+      "orders": [],
+      "pf": 30,
+      "raw": 30.0,
+      "s1": {
+       "coef": 1.0,
+       "instrument_id": 1,
+       "missing": false,
+       "modifier": 1.0,
+       "multiplier": 1.0,
+       "pf": 20.0,
+       "return": 2.0
+      },
+      "s2": {
+       "coef": 1.0,
+       "instrument_id": 1,
+       "missing": false,
+       "modifier": 1.0,
+       "multiplier": 1.0,
+       "pf": 10.0,
+       "return": 1.0
+      },
+      "swapped_from": null
+     },
+     "priority_target": {
+      "clamped": false,
+      "orders": [],
+      "pf": 48,
+      "raw": 48.0,
+      "s1": {
+       "coef": 1.0,
+       "instrument_id": 16,
+       "missing": false,
+       "modifier": 1.0,
+       "multiplier": 1.2,
+       "pf": 24.0,
+       "return": 2.0
+      },
+      "s2": {
+       "coef": 1.0,
+       "instrument_id": 16,
+       "missing": false,
+       "modifier": 1.0,
+       "multiplier": 1.2,
+       "pf": 24.0,
+       "return": 2.0
+      },
+      "swapped_from": null
+     },
+     "saboteur": {
+      "clamped": false,
+      "orders": [],
+      "pf": 40,
+      "raw": 40.0,
+      "s1": {
+       "coef": 1.0,
+       "instrument_id": 15,
+       "missing": false,
+       "modifier": 1.0,
+       "multiplier": -1.0,
+       "pf": 20.0,
+       "return": -2.0
+      },
+      "s2": {
+       "coef": 1.0,
+       "instrument_id": 15,
+       "missing": false,
+       "modifier": 1.0,
+       "multiplier": -1.0,
+       "pf": 20.0,
+       "return": -2.0
+      },
+      "swapped_from": null
+     },
+     "veteran": {
+      "clamped": false,
+      "orders": [],
+      "pf": 60,
+      "raw": 60.0,
+      "s1": {
+       "coef": 1.0,
+       "instrument_id": 4,
+       "missing": false,
+       "modifier": 1.0,
+       "multiplier": 1.5,
+       "pf": 0.0,
+       "return": 0.0
+      },
+      "s2": {
+       "coef": 1.0,
+       "instrument_id": 4,
+       "missing": false,
+       "modifier": 1.0,
+       "multiplier": 1.5,
+       "pf": 60.0,
+       "return": 4.0
+      },
+      "swapped_from": null
+     }
+    }
+   },
+   "campaign_points": 10.0,
+   "is_drone": false,
+   "member_id": "I",
+   "pf_picking": 328,
+   "pf_total": 359,
+   "rank": 1
+  },
+  "J": {
+   "badges": [
+    "rusty"
+   ],
+   "breakdown": {
+    "bastion": 0,
+    "betrayal": 0,
+    "elite": {
+     "instruments": [],
+     "pf": 0
+    },
+    "feats": [
+     {
+      "code": "total_victory",
+      "pf": 60
+     }
+    ],
+    "hunter": {
+     "pf": 0,
+     "victims": []
+    },
+    "pf_picking": 216,
+    "pf_total": 355,
+    "pillage": [
+     {
+      "base": 264.0,
+      "from": "I",
+      "order_id": "j1",
+      "pf": 79,
+      "to": "J"
+     }
+    ],
+    "slots": {
+     "champion": {
+      "clamped": false,
+      "orders": [],
+      "pf": 80,
+      "raw": 80.0,
+      "s1": {
+       "coef": 1.0,
+       "instrument_id": 4,
+       "missing": false,
+       "modifier": 1.0,
+       "multiplier": 2.0,
+       "pf": 0.0,
+       "return": 0.0
+      },
+      "s2": {
+       "coef": 1.0,
+       "instrument_id": 4,
+       "missing": false,
+       "modifier": 1.0,
+       "multiplier": 2.0,
+       "pf": 80.0,
+       "return": 4.0
+      },
+      "swapped_from": null
+     },
+     "marksman": {
+      "clamped": false,
+      "orders": [],
+      "pf": 20,
+      "raw": 20.0,
+      "s1": {
+       "coef": 1.0,
+       "instrument_id": 5,
+       "missing": false,
+       "modifier": 1.0,
+       "multiplier": 1.0,
+       "pf": 10.0,
+       "return": 1.0
+      },
+      "s2": {
+       "coef": 1.0,
+       "instrument_id": 5,
+       "missing": false,
+       "modifier": 1.0,
+       "multiplier": 1.0,
+       "pf": 10.0,
+       "return": 1.0
+      },
+      "swapped_from": null
+     },
+     "priority_target": {
+      "clamped": false,
+      "orders": [],
+      "pf": 36,
+      "raw": 36.0,
+      "s1": {
+       "coef": 1.0,
+       "instrument_id": 11,
+       "missing": false,
+       "modifier": 1.0,
+       "multiplier": 1.2,
+       "pf": 48.0,
+       "return": 4.0
+      },
+      "s2": {
+       "coef": 1.0,
+       "instrument_id": 11,
+       "missing": false,
+       "modifier": 1.0,
+       "multiplier": 1.2,
+       "pf": -12.0,
+       "return": -1.0
+      },
+      "swapped_from": null
+     },
+     "saboteur": {
+      "clamped": false,
+      "orders": [],
+      "pf": 20,
+      "raw": 20.0,
+      "s1": {
+       "coef": 1.0,
+       "instrument_id": 12,
+       "missing": false,
+       "modifier": 1.0,
+       "multiplier": -2.0,
+       "pf": 60.0,
+       "return": -3.0
+      },
+      "s2": {
+       "coef": 1.0,
+       "instrument_id": 12,
+       "missing": false,
+       "modifier": 1.0,
+       "multiplier": -2.0,
+       "pf": -40.0,
+       "return": 2.0
+      },
+      "swapped_from": null
+     },
+     "veteran": {
+      "clamped": false,
+      "orders": [],
+      "pf": 60,
+      "raw": 60.0,
+      "s1": {
+       "coef": 1.0,
+       "instrument_id": 16,
+       "missing": false,
+       "modifier": 1.0,
+       "multiplier": 1.5,
+       "pf": 30.0,
+       "return": 2.0
+      },
+      "s2": {
+       "coef": 1.0,
+       "instrument_id": 16,
+       "missing": false,
+       "modifier": 1.0,
+       "multiplier": 1.5,
+       "pf": 30.0,
+       "return": 2.0
+      },
+      "swapped_from": null
+     }
+    }
+   },
+   "campaign_points": 7.0,
+   "is_drone": false,
+   "member_id": "J",
+   "pf_picking": 216,
+   "pf_total": 355,
+   "rank": 2
+  },
+  "K": {
+   "badges": [
+    "rusty"
+   ],
+   "breakdown": {
+    "bastion": 0,
+    "betrayal": 0,
+    "elite": {
+     "instruments": [],
+     "pf": 0
+    },
+    "feats": [
+     {
+      "code": "total_victory",
+      "pf": 60
+     }
+    ],
+    "hunter": {
+     "pf": 6,
+     "victims": [
+      "H"
+     ]
+    },
+    "pf_picking": 206,
+    "pf_total": 272,
+    "pillage": [],
+    "slots": {
+     "champion": {
+      "clamped": false,
+      "orders": [],
+      "pf": 80,
+      "raw": 80.0,
+      "s1": {
+       "coef": 1.0,
+       "instrument_id": 4,
+       "missing": false,
+       "modifier": 1.0,
+       "multiplier": 2.0,
+       "pf": 0.0,
+       "return": 0.0
+      },
+      "s2": {
+       "coef": 1.0,
+       "instrument_id": 4,
+       "missing": false,
+       "modifier": 1.0,
+       "multiplier": 2.0,
+       "pf": 80.0,
+       "return": 4.0
+      },
+      "swapped_from": null
+     },
+     "marksman": {
+      "clamped": false,
+      "orders": [],
+      "pf": 20,
+      "raw": 20.0,
+      "s1": {
+       "coef": 1.0,
+       "instrument_id": 5,
+       "missing": false,
+       "modifier": 1.0,
+       "multiplier": 1.0,
+       "pf": 10.0,
+       "return": 1.0
+      },
+      "s2": {
+       "coef": 1.0,
+       "instrument_id": 5,
+       "missing": false,
+       "modifier": 1.0,
+       "multiplier": 1.0,
+       "pf": 10.0,
+       "return": 1.0
+      },
+      "swapped_from": null
+     },
+     "priority_target": {
+      "clamped": false,
+      "orders": [],
+      "pf": 36,
+      "raw": 36.0,
+      "s1": {
+       "coef": 1.0,
+       "instrument_id": 11,
+       "missing": false,
+       "modifier": 1.0,
+       "multiplier": 1.2,
+       "pf": 48.0,
+       "return": 4.0
+      },
+      "s2": {
+       "coef": 1.0,
+       "instrument_id": 11,
+       "missing": false,
+       "modifier": 1.0,
+       "multiplier": 1.2,
+       "pf": -12.0,
+       "return": -1.0
+      },
+      "swapped_from": null
+     },
+     "saboteur": {
+      "clamped": false,
+      "orders": [],
+      "pf": 10,
+      "raw": 10.0,
+      "s1": {
+       "coef": 1.0,
+       "instrument_id": 12,
+       "missing": false,
+       "modifier": 1.0,
+       "multiplier": -1.0,
+       "pf": 30.0,
+       "return": -3.0
+      },
+      "s2": {
+       "coef": 1.0,
+       "instrument_id": 12,
+       "missing": false,
+       "modifier": 1.0,
+       "multiplier": -1.0,
+       "pf": -20.0,
+       "return": 2.0
+      },
+      "swapped_from": null
+     },
+     "veteran": {
+      "clamped": false,
+      "orders": [],
+      "pf": 60,
+      "raw": 60.0,
+      "s1": {
+       "coef": 1.0,
+       "instrument_id": 16,
+       "missing": false,
+       "modifier": 1.0,
+       "multiplier": 1.5,
+       "pf": 30.0,
+       "return": 2.0
+      },
+      "s2": {
+       "coef": 1.0,
+       "instrument_id": 16,
+       "missing": false,
+       "modifier": 1.0,
+       "multiplier": 1.5,
+       "pf": 30.0,
+       "return": 2.0
+      },
+      "swapped_from": null
+     }
+    }
+   },
+   "campaign_points": 3.0,
+   "is_drone": false,
+   "member_id": "K",
+   "pf_picking": 206,
+   "pf_total": 272,
+   "rank": 4
+  },
+  "L": {
+   "badges": [
+    "rusty"
+   ],
+   "breakdown": {
+    "bastion": 0,
+    "betrayal": 0,
+    "elite": {
+     "instruments": [],
+     "pf": 0
+    },
+    "feats": [
+     {
+      "code": "perfect_shot",
+      "instrument_id": 13,
+      "pf": 40
+     }
+    ],
+    "hunter": {
+     "pf": 0,
+     "victims": []
+    },
+    "pf_picking": 255,
+    "pf_total": 295,
+    "pillage": [],
+    "slots": {
+     "champion": {
+      "clamped": false,
+      "orders": [],
+      "pf": 60,
+      "raw": 60.0,
+      "s1": {
+       "coef": 1.0,
+       "instrument_id": 11,
+       "missing": false,
+       "modifier": 1.0,
+       "multiplier": 2.0,
+       "pf": 80.0,
+       "return": 4.0
+      },
+      "s2": {
+       "coef": 1.0,
+       "instrument_id": 11,
+       "missing": false,
+       "modifier": 1.0,
+       "multiplier": 2.0,
+       "pf": -20.0,
+       "return": -1.0
+      },
+      "swapped_from": null
+     },
+     "marksman": {
+      "clamped": false,
+      "orders": [],
+      "pf": 0,
+      "raw": 0.0,
+      "s1": {
+       "coef": 1.0,
+       "instrument_id": 12,
+       "missing": false,
+       "modifier": 1.0,
+       "multiplier": 1.0,
+       "pf": -30.0,
+       "return": -3.0
+      },
+      "s2": {
+       "coef": 1.0,
+       "instrument_id": 14,
+       "missing": false,
+       "modifier": 1.0,
+       "multiplier": 1.0,
+       "pf": 30.0,
+       "return": 3.0
+      },
+      "swapped_from": "reserve_2"
+     },
+     "priority_target": {
+      "clamped": false,
+      "orders": [],
+      "pf": 120,
+      "raw": 120.0,
+      "s1": {
+       "coef": 1.0,
+       "instrument_id": 13,
+       "missing": false,
+       "modifier": 1.0,
+       "multiplier": 1.2,
+       "pf": 60.0,
+       "return": 5.0
+      },
+      "s2": {
+       "coef": 1.0,
+       "instrument_id": 13,
+       "missing": false,
+       "modifier": 1.0,
+       "multiplier": 1.2,
+       "pf": 60.0,
+       "return": 5.0
+      },
+      "swapped_from": null
+     },
+     "saboteur": {
+      "clamped": false,
+      "orders": [],
+      "pf": 30,
+      "raw": 30.0,
+      "s1": {
+       "coef": 1.0,
+       "instrument_id": 2,
+       "missing": false,
+       "modifier": 1.0,
+       "multiplier": -1.0,
+       "pf": 10.0,
+       "return": -1.0
+      },
+      "s2": {
+       "coef": 1.0,
+       "instrument_id": 2,
+       "missing": false,
+       "modifier": 1.0,
+       "multiplier": -1.0,
+       "pf": 20.0,
+       "return": -2.0
+      },
+      "swapped_from": null
+     },
+     "veteran": {
+      "clamped": false,
+      "orders": [],
+      "pf": 45,
+      "raw": 45.0,
+      "s1": {
+       "coef": 1.0,
+       "instrument_id": 1,
+       "missing": false,
+       "modifier": 1.0,
+       "multiplier": 1.5,
+       "pf": 30.0,
+       "return": 2.0
+      },
+      "s2": {
+       "coef": 1.0,
+       "instrument_id": 1,
+       "missing": false,
+       "modifier": 1.0,
+       "multiplier": 1.5,
+       "pf": 15.0,
+       "return": 1.0
+      },
+      "swapped_from": null
+     }
+    }
+   },
+   "campaign_points": 5.0,
+   "is_drone": false,
+   "member_id": "L",
+   "pf_picking": 255,
+   "pf_total": 295,
+   "rank": 3
+  }
+ }
+}

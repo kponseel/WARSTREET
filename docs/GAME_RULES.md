@@ -106,6 +106,11 @@ Every RPC checks `now()` against these timestamps, never against `week.phase` al
 **Segment returns** (in %): `r1 = ((P_mid + D1) / P0 − 1) × 100`,
 `r2 = ((P_end + D2) / P_mid − 1) × 100`.
 
+With a split of ratio `k` (new shares per old share, e.g. 2 for a 2-for-1) inside a segment,
+the segment's end price and its dividend are per new share:
+`r1 = ((P_mid + D1) × k1 / P0 − 1) × 100`, `r2 = ((P_end + D2) × k2 / P_mid − 1) × 100`.
+A segment with a missing price returns 0 and is flagged in the breakdown.
+
 Scoring is additive per segment. The small difference from a compounded weekly return is
 accepted: it lets every mid-week order apply cleanly to S2 only.
 
@@ -137,8 +142,8 @@ valid squad. Flag `auto = true`.
 | `priority_target` | Cible prioritaire | 1.2 |
 
 **Unit coefficient** (frozen at lock for the week):
-`vol12w` = standard deviation of the instrument's last 12 weekly returns (%), computed on
-Friday's data. `coef = clamp(REF_VOL / vol12w, 0.25, 2.0)` with `REF_VOL = 3.5`.
+`vol12w` = sample standard deviation (n − 1) of the instrument's last 12 weekly returns
+(%), computed on Friday's data. With `vol12w = 0`, `coef` is the maximum. `coef = clamp(REF_VOL / vol12w, 0.25, 2.0)` with `REF_VOL = 3.5`.
 
 Display class (cosmetic): `vol12w < 3` Blindé · `< 5` Infanterie · `< 9` Commando ·
 else Kamikaze.
@@ -213,7 +218,7 @@ player with the Drone (`rusty` badge).
 
 | Code | UI (FR) | Passive | Constraint |
 |---|---|---|---|
-| `bastion` | Le Bastion | Largest unit loss of the week reduced by **5 PF** (`min(loss, 5)`) **[calibrate]** | — |
+| `bastion` | Le Bastion | Largest unit loss of the week reduced by **5 PF** (`min(loss, 5)`, on the worst slot PF after the ±150 clamp; 0 if no slot is negative) **[calibrate]** | — |
 | `berserker` | Le Berserker | Champion multiplier **3.0** instead of 2.0 | Cannot play `force_field` or `tactical_retreat` |
 | `prophet` | Le Prophète du déclin | Saboteur multiplier **−2.0** instead of −1.0 | — |
 | `hunter` | Le Chasseur de primes | **+6 PF** per human with strictly more campaign points (before this week) whom the Hunter outscores this week (step 1–8 scores), max **+12** **[calibrate]** | — |
@@ -229,6 +234,7 @@ player with the Drone (`rusty` badge).
   Week 1: income only.
 - **Catch-up**: at briefing opening (week ≥2), humans ranked strictly in the bottom half
   of campaign standings (`rank > ceil(n/2)`) get +1 ammo.
+- The cap applies to the balance after income **and** catch-up; it never lowers a balance.
 - **Bounty**: the strict campaign leader (no tie) carries the Bounty. Attack orders against
   them cost 1 less (minimum 1).
 - **Attack cap**: a player can receive at most **2 attack orders per week**. A third attempt
@@ -296,13 +302,14 @@ Feats (PF, step 5):
 | Code | UI (FR) | PF | Condition |
 |---|---|---|---|
 | `total_victory` | Victoire totale | +60 | All 5 front slots end with unit PF > 0 |
-| `perfect_shot` | Tir parfait | +40 | Holds (front) the instrument with the highest weekly return among all humans' front units. Ties: all holders |
+| `perfect_shot` | Tir parfait | +40 | Holds, in a non-saboteur front slot, the instrument with the highest weekly return among all humans' non-saboteur front units. Ties: all holders (+40 once) |
 | `resurrection` | Résurrection | +40 | Once per week: a non-saboteur front instrument with previous-week return < −6 % and this-week return > +4 % |
 | `heavy_losses` | Pertes lourdes | −40 | Per non-saboteur front unit whose instrument's weekly return < −10 % |
 
 Weekly return for feats = `((P_end + D) / P0 − 1) × 100` of the instrument, where `D`
 is every dividend whose ex-date session is strictly after the `P0` session and on or
-before the `P_end` session.
+before the `P_end` session. With splits: `((P_end + D2) × k2 × k1 + D1 × k1) / P0 − 1`.
+An instrument with a missing `P0` or `P_end` has no weekly return and earns no feat.
 
 **Feats and swaps**: `perfect_shot`, `resurrection` and `heavy_losses` look at the
 instruments in the front **at lock** (like Elite unit), whether or not they were swapped
@@ -493,6 +500,8 @@ changes, so the market job stores it weekly in `instrument_weeks.market_cap`.
 | Betrayal | Per attack, blocked unclear | Blocked counts; −40 PF once per week |
 | Jamming / Shadow | Score hidden | Score and rank hidden; ranks computed without them |
 | Feats with swaps | Unspecified | Front at lock |
+| `perfect_shot` | Any front unit | Non-saboteur front units only |
+| `vol12w`, ammo cap, Bastion | Unspecified details | Sample stdev; cap after catch-up; worst slot after clamp |
 | Pacts | Accept or ignore | Accept, decline or ignore; several pending allowed |
 | Leaving a league | Unspecified | Lobby only |
 | Unit weather, sectors | French labels only, no rules | Codes, EN/FR labels, thresholds |
