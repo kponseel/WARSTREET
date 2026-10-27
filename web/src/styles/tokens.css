@@ -1,0 +1,29 @@
+/* Design tokens. Light theme only; dark text on light backgrounds (CLAUDE.md). */
+:root {
+  --color-bg: #f6f7f9;
+  --color-surface: #ffffff;
+  --color-text: #14181f;
+  --color-text-muted: #4a5361;
+  --color-border: #d5dae1;
+  --color-primary: #1f3a5f;
+  --color-primary-contrast: #ffffff;
+  --color-accent: #c2410c;
+  --color-ok: #166534;
+  --color-ok-bg: #e7f5ec;
+  --color-warn: #8a4b00;
+  --color-warn-bg: #fff4e0;
+
+  --font-sans: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-display: 'Arial Black', 'Segoe UI', system-ui, sans-serif;
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-8: 32px;
+
+  --radius: 10px;
+  --max-width: 720px;
+  color-scheme: light;
+}
