@@ -1,6 +1,6 @@
 import type { SupabaseClient } from '@supabase/supabase-js'
 import { useCallback, useEffect, useState } from 'react'
-import { fetchLeague, type League, type Member } from '../data/leagues'
+import { FALLBACK_POLL_MS, fetchLeague, type League, type Member } from '../data/leagues'
 import { fetchInstruments, fetchWeeks, type Instrument, type Week } from '../data/week'
 import { logEvent } from '../lib/log'
 import type { Session } from './dailyPhase'
@@ -186,7 +186,10 @@ export function useFront(
       if (document.visibilityState === 'visible') refresh()
     }
     document.addEventListener('visibilitychange', onVisible)
+    // Safety net: Realtime can lag or drop (mobile networks, a busy server).
+    const poll = window.setInterval(onVisible, FALLBACK_POLL_MS)
     return () => {
+      window.clearInterval(poll)
       document.removeEventListener('visibilitychange', onVisible)
       void client.removeChannel(channel)
     }

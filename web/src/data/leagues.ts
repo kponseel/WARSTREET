@@ -90,6 +90,9 @@ export function inviteLink(location: Pick<Location, 'origin' | 'pathname'>, code
   return `${location.origin}${location.pathname}#/join/${code}`
 }
 
+/** Reload period when Realtime is silent (it should not be, but networks drop). */
+export const FALLBACK_POLL_MS = 20_000
+
 type LoadState<T> =
   | { status: 'loading' }
   | { status: 'error' }
@@ -168,7 +171,10 @@ export function useLeagueRoom(
       if (document.visibilityState === 'visible') refresh()
     }
     document.addEventListener('visibilitychange', onVisible)
+    // Safety net: Realtime can lag or drop (mobile networks, a busy server).
+    const poll = window.setInterval(onVisible, FALLBACK_POLL_MS)
     return () => {
+      window.clearInterval(poll)
       document.removeEventListener('visibilitychange', onVisible)
       void client.removeChannel(channel)
     }
