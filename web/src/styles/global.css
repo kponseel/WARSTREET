@@ -1283,3 +1283,12 @@ details.card[open] summary {
   margin-top: var(--space-6);
   font-size: 0.875rem;
 }
+
+/* Build stamp: which version is loaded (the PWA cache can lag behind a deploy). */
+.app-footer {
+  padding: var(--space-6) var(--space-4) var(--space-4);
+  color: var(--color-text-muted);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  text-align: center;
+}

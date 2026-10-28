@@ -3,6 +3,7 @@ import { HashRouter, Route, Routes } from 'react-router'
 import { AuthProvider } from '../auth/AuthProvider'
 import { PendingRedirect } from '../auth/PendingRedirect'
 import { RequireAuth } from '../auth/RequireAuth'
+import { BuildStamp } from '../components/BuildStamp'
 import { DevBanner } from '../components/DevBanner'
 import { Header } from '../components/Header'
 import { ClockProvider } from '../data/ClockProvider'
@@ -53,6 +54,7 @@ export function App({ client = getSupabase() }: { client?: SupabaseClient | null
               <Route path="*" element={<NotFound />} />
             </Routes>
           </main>
+          <BuildStamp />
         </HashRouter>
       </ClockProvider>
     </AuthProvider>
