@@ -323,3 +323,74 @@ def test_sessions_and_live_returns_for_the_front(db: Db, week: League) -> None:
     )
     assert len(returns) == 1 and returns[0]["last_price"] is not None
     assert db.select(None, "select 1 from public.market_sessions limit 1") != []
+
+
+class DownMarket(FakeMarket):
+    """FakeMarket that can go down (no history, no quote), like Yahoo on a bad night."""
+
+    down = False
+
+    def history(self, ticker: str, start: date, end: date):  # type: ignore[no-untyped-def]
+        return None if self.down else super().history(ticker, start, end)
+
+    def live_price(self, ticker: str) -> float | None:
+        return None if self.down else super().live_price(ticker)
+
+
+FRIDAY_AFTERNOON = datetime(2026, 11, 13, 15, 30, tzinfo=UTC)  # every exchange open
+
+
+@pytest.mark.parametrize("back_at_confirm", [False, True])
+def test_provider_down_on_friday_night(db: Db, week: League, back_at_confirm: bool) -> None:
+    """The debrief waits, retries, then scores on the last quote, flagged (GAME_RULES §2)."""
+    market = DownMarket()
+    lid = week.id
+    for now in (T_BRIEFING, T_BRIEFING, MONDAY_EU, WEDNESDAY_NIGHT, THURSDAY, FRIDAY_AFTERNOON):
+        db.set_now(now)
+        run(db, market, now)
+    market.down = True
+
+    # The US close: P_end is missing, the capture retries and the debrief waits.
+    lines = run(db, market, FRIDAY_CAPTURE)
+    assert "capture_p_end:XNYS" not in lines and not any("debrief" in x for x in lines)
+    lines = run(db, market, FRIDAY_CONFIRM)
+    assert "capture_p_end:XNYS" not in lines and not any("debrief" in x for x in lines)
+
+    # After the grace period: the last live quote of the week stands for P_end.
+    after_grace = FRIDAY_CAPTURE + timedelta(hours=2)
+    assert "capture_p_end:XNYS" in run(db, market, after_grace)
+    sources = db.fetch_admin(
+        "select distinct source from public.reference_prices where week = %s and kind = 'p_end'",
+        (WEEK,),
+    )
+    assert sources == [{"source": "fallback:last_quote"}]
+    quote = db.fetch_admin(
+        "select r.price = l.price as same from public.reference_prices r "
+        "join public.instruments i on i.id = r.instrument_id "
+        "join public.prices_live l on l.instrument_id = r.instrument_id and l.ts = %s "
+        "where r.week = %s and r.kind = 'p_end' and i.ticker = 'AAPL'",
+        (FRIDAY_AFTERNOON, WEEK),
+    )
+    assert quote == [{"same": True}]
+
+    # The second read: still down, the fallback is kept; back, the real close replaces it.
+    market.down = not back_at_confirm
+    lines = run(db, market, after_grace + timedelta(minutes=15))
+    assert "confirm_p_end:XNYS" in lines
+    assert any(line.endswith(" debrief") for line in lines)
+    us = db.fetch_admin(
+        "select distinct r.source from public.reference_prices r join public.instruments i "
+        "on i.id = r.instrument_id where r.week = %s and r.kind = 'p_end' "
+        "and i.calendar_mic = 'XNYS'",
+        (WEEK,),
+    )
+    assert us == [{"source": "fake" if back_at_confirm else "fallback:last_quote"}]
+    eu = db.fetch_admin(  # confirmed earlier in the evening, while still down
+        "select distinct r.source from public.reference_prices r join public.instruments i "
+        "on i.id = r.instrument_id where r.week = %s and r.kind = 'p_end' "
+        "and i.calendar_mic <> 'XNYS'",
+        (WEEK,),
+    )
+    assert eu == [{"source": "fallback:last_quote"}]
+    final = db.fetch_admin("select pf_total from public.scores_final where league_id = %s", (lid,))
+    assert len(final) == 4

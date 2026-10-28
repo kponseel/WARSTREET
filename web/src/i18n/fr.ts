@@ -381,6 +381,28 @@ export const fr: Record<MessageKey, string> = {
   'badge.rusty.desc': 'Choix d’actions moins bon que le Drone aléatoire.',
   'debrief.bestUnit': 'Meilleure unité : {slot} ({ticker}) {pf}',
   'debrief.worstUnit': 'Pire unité : {slot} ({ticker}) {pf}',
+  'debrief.priceFallback':
+    'La source des cours était en panne vendredi soir : {tickers} ont été comptées sur leur dernier cours de la semaine.',
+  'status.link': 'État du serveur',
+  'status.title': 'État du serveur',
+  'status.health.ok': 'Tout fonctionne : le dernier passage a réussi.',
+  'status.health.failing':
+    'Le dernier passage a échoué. Les tâches réessaient au suivant ; l’hôte reçoit un e-mail dès le deuxième échec d’affilée.',
+  'status.health.late':
+    'Aucun passage depuis longtemps : les tâches planifiées sont peut-être arrêtées.',
+  'status.health.unknown': 'Aucun passage pour l’instant.',
+  'status.lastTick': 'Dernier passage',
+  'status.lastSuccess': 'Dernier passage réussi',
+  'status.failures': 'Échecs d’affilée',
+  'status.prices': 'Dernière capture de cours',
+  'status.devClock': 'Horloge',
+  'status.devClockOn': 'Simulée (mode dev)',
+  'status.never': 'Jamais',
+  'status.help':
+    'Un passage a lieu toutes les 15 minutes en semaine et toutes les heures le week-end ; il capture les cours, change les phases et compte la semaine.',
+  'region.EU': 'Europe (EU)',
+  'region.US': 'États-Unis (US)',
+  'debug.offsetValue': '{ms} ms',
   // RPC error codes (supabase/migrations, private.raise_error). Variables come from the server.
   'error.unknown': 'Un problème est survenu. Réessayez.',
   'error.ALREADY_MEMBER': 'Vous êtes déjà dans cette ligue.',
@@ -404,6 +426,7 @@ export const fr: Record<MessageKey, string> = {
   'error.LOCALE_INVALID': 'Langue inconnue.',
   'error.MAX_PLAYERS_RANGE': 'Une ligue compte de {min} à {max} joueurs.',
   'error.NOT_AUTHENTICATED': 'Reconnectez-vous.',
+  'error.RATE_LIMITED': 'Trop d’actions en une minute (limite {limit}). Attendez un instant et réessayez.',
   'error.NOT_A_MEMBER': 'Vous ne faites pas partie de cette ligue.',
   'error.NOT_ENOUGH_AMMO': 'Pas assez de munitions : cet ordre coûte {cost}, vous avez {balance}.',
   'error.NOT_ENOUGH_READY': '{ready} joueurs prêts, il en faut {min} pour lancer.',

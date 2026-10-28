@@ -11,7 +11,7 @@ export function AuthProvider({
   client: SupabaseClient | null
   children: ReactNode
 }) {
-  const { setLocale } = useI18n()
+  const { setLocale, localeVersion } = useI18n()
   const [session, setSession] = useState<Session | null>(null)
   const [loading, setLoading] = useState(client !== null)
 
@@ -37,15 +37,17 @@ export function AuthProvider({
   useEffect(() => {
     if (!client || !userId) return
     const run = { cancelled: false }
+    const before = localeVersion()
     void (async () => {
       const { data } = await client.from('profiles').select('locale').eq('id', userId).maybeSingle()
       const locale: unknown = (data as { locale?: unknown } | null)?.locale
-      if (!run.cancelled && isLocale(locale)) setLocale(locale)
+      // A language picked while the profile loaded wins (it is being saved by set_locale).
+      if (!run.cancelled && localeVersion() === before && isLocale(locale)) setLocale(locale)
     })()
     return () => {
       run.cancelled = true
     }
-  }, [client, userId, setLocale])
+  }, [client, userId, setLocale, localeVersion])
 
   const signOut = useCallback(async () => {
     if (client) await client.auth.signOut()

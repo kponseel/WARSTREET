@@ -319,9 +319,10 @@ def test_function_exposure(db: Db) -> None:
         )
         return {row["f"] for row in rows}
 
-    assert executable("anon") == set()
+    # The PostgREST pre-request hook (rate limit) runs as the request's role, anon included.
+    assert executable("anon") == {"private.check_request"}
     assert executable("authenticated") == {f"public.{f}" for f in RPCS} | {
-        f"private.{f}" for f in POLICY_HELPERS
+        f"private.{f}" for f in POLICY_HELPERS | {"check_request"}
     }
 
 

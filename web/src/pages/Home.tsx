@@ -220,6 +220,9 @@ function Dashboard() {
       ) : (
         <p aria-busy="true">{t('common.loading')}</p>
       )}
+      <p className="muted page-footer">
+        <Link to="/status">{t('status.link')}</Link>
+      </p>
     </section>
   )
 }

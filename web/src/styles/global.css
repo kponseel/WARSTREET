@@ -1239,3 +1239,47 @@ details.card[open] summary {
   gap: 2px;
   margin-right: var(--space-2);
 }
+
+/* --- milestone 09: status page ------------------------------------------------------- */
+.health-banner {
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius);
+  border-left: 4px solid currentcolor;
+  font-weight: 700;
+}
+
+.health-ok {
+  background: var(--color-ok-bg);
+  color: var(--color-ok);
+}
+
+.health-late,
+.health-unknown {
+  background: var(--color-warn-bg);
+  color: var(--color-warn);
+}
+
+.health-failing {
+  background: var(--color-danger-bg);
+  color: var(--color-danger);
+}
+
+.status-facts {
+  display: grid;
+  grid-template-columns: minmax(0, auto) minmax(0, 1fr);
+  gap: var(--space-2) var(--space-4);
+}
+
+.status-facts dt {
+  font-weight: 700;
+}
+
+.status-facts dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.page-footer {
+  margin-top: var(--space-6);
+  font-size: 0.875rem;
+}

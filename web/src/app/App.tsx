@@ -19,6 +19,7 @@ import { Login } from '../pages/Login'
 import { NotFound } from '../pages/NotFound'
 import { Resupply } from '../pages/Resupply'
 import { Rules } from '../pages/Rules'
+import { Status } from '../pages/Status'
 
 const PRIVATE_ROUTES = [
   { path: '/join/:code', element: <Join /> },
@@ -28,6 +29,7 @@ const PRIVATE_ROUTES = [
   { path: '/l/:id/resupply', element: <Resupply /> },
   { path: '/l/:id/debrief/:week', element: <Debrief /> },
   { path: '/l/:id/campaign', element: <Campaign /> },
+  { path: '/status', element: <Status /> },
 ]
 
 // HashRouter: GitHub Pages has no SPA fallback.

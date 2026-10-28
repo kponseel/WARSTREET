@@ -89,7 +89,8 @@ export function Debug() {
         <div>
           <dt>{t('debug.offset')}</dt>
           <dd>
-            {report.serverOffsetMs} ms{devClock ? ` · ${t('debug.devClock')}` : ''}
+            {t('debug.offsetValue', { ms: report.serverOffsetMs })}
+            {devClock ? ` · ${t('debug.devClock')}` : ''}
           </dd>
         </div>
         <div>

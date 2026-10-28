@@ -70,6 +70,12 @@ scripted, single-week version used for the milestone 04 demo.
   with an error (GitHub's failure email) only from the 2nd failure in a row.
 - On a hosted project: `select * from private.tick_runs order by id desc limit 5;` in the
   SQL editor.
+- In the app, `#/status` ("Server status" at the bottom of the home page) shows the last
+  tick, its result, the failures in a row and the last price capture, for every player.
+- A provider down on Friday night: `capture_p_end` retries for 2 hours, then uses the
+  last live quote of the week (`source = 'fallback:last_quote'`, a warning in the tick
+  log, a notice in the debrief). Rehearse it with `supabase/tests/test_jobs.py -k
+  provider_down`.
 
 ## 4. In the app: `#/debug`
 
@@ -89,7 +95,9 @@ still shows the right deadlines, and the dev mode's simulated time shows in a ba
 
 `web/e2e` runs against the local stack: `lobby.spec.ts` (login, create, join, start),
 `briefing.spec.ts` (squad, orders, pacts, then the lock), `front.spec.ts` (live front and
-resupply) and `debrief.spec.ts` (Friday ranking, breakdown, Drone verdict, share card,
-campaign). The last three create a league of bots with `jobs.dev` and move the clock.
+resupply), `debrief.spec.ts` (Friday ranking, breakdown, Drone verdict, share card,
+campaign) and `french.spec.ts` (every screen of a week in French at 360 px: no overflow,
+no clipped label, no axe violation). The last four create a league of bots with
+`jobs.dev` and move the clock.
 The dev clock is global, so the tests run one at a time (`workers: 1`). CI runs them in
 the `e2e` job.

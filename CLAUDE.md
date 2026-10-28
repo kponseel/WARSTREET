@@ -107,4 +107,6 @@ python -m jobs.dev advance --league <id> --to lock|monday|resupply|thursday|debr
 python -m jobs.dev inspect --league <id>; python -m jobs.dev logs --errors
 # replay a past week end-to-end against a local or dev database
 python -m jobs.replay --league demo --week 2026-W43 --db postgresql://...
+# secrets scan of the whole git history (CI runs it); --staged before a commit
+python tools/scan_history.py
 ```

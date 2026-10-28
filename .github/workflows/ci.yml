@@ -35,6 +35,19 @@ jobs:
       # The engine must stay covered at 90 % or more (prompts/02_engine_scoring.md).
       - run: pytest -q --cov=engine --cov-report=term --cov-fail-under=90
 
+  secrets:
+    name: Secrets scan (whole git history)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0 # every commit, not just the merge
+      - uses: actions/setup-python@v6
+        with:
+          python-version-file: .python-version
+      # Public repository (CLAUDE.md hard rule 1): no credential in any commit, ever.
+      - run: python tools/scan_history.py
+
   database:
     name: Database (Supabase Postgres + RLS/RPC tests)
     runs-on: ubuntu-latest

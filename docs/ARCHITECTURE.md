@@ -168,6 +168,16 @@ Rules for every database object:
   is a player RPC.
 - **Realtime**: clients subscribe only to tables (`scores_live_public`, `events`,
   `league_members`, `weeks`, `pacts`), never to views, each protected by RLS.
+- **Rate limit**: PostgREST calls `private.check_request()` before every API request
+  (`pgrst.db_pre_request` on the `authenticator` role, migration 16). It counts each
+  user's RPC calls that write (read-write transactions on `/rpc/*`) per minute and refuses
+  with `RATE_LIMITED` past `rpc_rate_limit_per_minute`. A refused RPC rolls back with its
+  count (no autonomous transactions in Postgres), so the limit bounds the calls that
+  write; refused calls write nothing and fail fast. It is the only function `anon` can
+  execute (it returns at once without a user).
+- **Parameters**: every refusal is a `raise_error` code, never an internal error; the RPC
+  fuzz tests (`supabase/tests/test_rpc_fuzz.py`) send garbage to every player RPC and
+  fail on any other SQLSTATE.
 
 **Auth**: email magic link with the **PKCE flow** (the code comes back as `?code=…`, which
 does not clash with HashRouter's `#/…` routes; the app exchanges it before the router
@@ -199,7 +209,9 @@ Secrets: one GitHub Actions secret, `SUPABASE_DB_URL` (Supabase session pooler c
 string, IPv4), used only by the `tick` workflow. The jobs talk to Postgres directly
 (psycopg) as the `postgres` role, which bypasses RLS like the service role would, and run
 each transition and its `job_runs` / `market_runs` key in one transaction. The string is
-never logged or written to a file. `replay` runs by hand against a local or dev database. Workflows never use `pull_request_target` and never expose
+never logged or written to a file. `replay` runs by hand against a local or dev database.
+CI scans the whole git history for credentials on every pull request
+(`tools/scan_history.py`). Workflows never use `pull_request_target` and never expose
 secrets to pull-request runs. Frontend build variables `VITE_SUPABASE_URL`,
 `VITE_SUPABASE_ANON_KEY` (public by design) as repository variables. Supabase Auth
 redirect URL = the Pages URL.
@@ -246,7 +258,10 @@ error) and summarised in `public.system_status` (read by the app). See docs/DEV.
 rolls both back and the next tick retries. A transition whose inputs are not there yet
 (no Conflict Zone at lock, `P_end` not confirmed at debrief, prices missing at a capture)
 raises `RetryLater`: nothing is written, the next tick tries again. A missing price is
-retried for 2 hours, then left missing and logged. `capture_p_end` and `confirm_p_end`
+retried for 2 hours, then left missing and logged, except `P_end`: if the provider is down
+on Friday night, the last live quote of the week (`prices_live`, an observed price) stands
+for it, stored with `source = 'fallback:last_quote'` and shown in the debrief; a
+`confirm_p_end` that reads a real close replaces it. `capture_p_end` and `confirm_p_end`
 always run on two different ticks. The next week's `open_briefing` runs on the tick after
 the debrief.
 
@@ -309,7 +324,9 @@ Routes are in English for both languages. A language switch sits in the header.
   golden weeks (fixed price fixtures → expected breakdown JSON).
 - `supabase/tests`: RLS matrix of §5, every RPC validation path, RPCs rejected after their
   deadline even when `weeks.phase` is stale, no function callable by `anon` except the
-  intended ones, and `scores_live_public` never leaking a Shadow or a jammed score.
+  intended ones, and `scores_live_public` never leaking a Shadow or a jammed score. RPC
+  fuzzing (no identity, outsiders, cross-league targets, garbage parameters, every action
+  outside its window) and the rate limit hook.
 - A sync test: `game_config` seed equals `engine/config.py`.
 - `jobs/replay.py`: replays a past week on historical daily bars with a fake clock against a
   dev Supabase project, so a full week can be played in minutes.
