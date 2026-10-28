@@ -1292,3 +1292,100 @@ details.card[open] summary {
   font-size: 0.75rem;
   text-align: center;
 }
+
+/* Commander cards: the clickable part is the label; the example sits beside it. */
+.choice-card-main {
+  display: grid;
+  gap: var(--space-1);
+  cursor: pointer;
+}
+
+.commander-hint {
+  grid-column: 1 / -1;
+  margin: 0;
+}
+
+.choice-card-example summary {
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  color: var(--color-link);
+  font-weight: 600;
+}
+
+.choice-card-example p {
+  margin: 0;
+  font-size: 0.9375rem;
+}
+
+/* Tutorial (first launch and Help) */
+.tutorial-progress {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: 0.875rem;
+}
+
+.tutorial-body {
+  max-width: 40rem;
+}
+
+.tutorial-example,
+.tutorial-commanders {
+  list-style: none;
+  padding: 0;
+}
+
+.tutorial-example li {
+  padding: var(--space-1) 0;
+  border-bottom: 1px solid var(--color-border);
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+}
+
+.tutorial-example .tutorial-total {
+  border-bottom: 0;
+  font-weight: 700;
+}
+
+.tutorial-commanders li {
+  padding: var(--space-3) 0;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.tutorial-commanders p {
+  margin: var(--space-1) 0;
+}
+
+.tutorial-commander-head {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.tutorial-commanders summary {
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  color: var(--color-link);
+  font-weight: 600;
+}
+
+.tutorial-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin-top: var(--space-6);
+}
+
+.tutorial-dont-show {
+  display: flex;
+  gap: var(--space-2);
+  align-items: flex-start;
+  margin-top: var(--space-4);
+}
+
+.tutorial-skip {
+  margin-top: var(--space-3);
+}

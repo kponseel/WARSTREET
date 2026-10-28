@@ -483,6 +483,92 @@ export const en = {
     'Friday night, the smoke clears: {winner} holds the hill with {pf} ₩. {best} carried the squad ({best_move} %), {worst} sank ({worst_move} %). Drone: {drone_pf} ₩, {rusty} player(s) beaten by a random draft.',
   'dispatch.debrief.2':
     "Week over. Medal to {winner} ({pf} ₩). Best unit {best} at {best_move} %, worst {worst} at {worst_move} %. The Drone's {drone_pf} ₩ embarrassed {rusty} commander(s).",
+  // Tutorial (first launch, and the Help link). English only while French is off.
+  'nav.help': 'Help',
+  'tutorial.label': 'How to play',
+  'tutorial.step': 'Step {n} of {total}',
+  'tutorial.back': 'Back',
+  'tutorial.next': 'Next',
+  'tutorial.finish': 'Start playing',
+  'tutorial.skip': 'Skip the tutorial',
+  'tutorial.dontShow': 'Don’t show this automatically again (it stays under Help)',
+  'tutorial.welcome.title': 'Welcome to {game}',
+  'tutorial.welcome.1':
+    'A weekly stock-market war game between friends. No real money and no trading knowledge needed: about 10 minutes a week.',
+  'tutorial.welcome.2':
+    'Each week you field a squad of 5 real stocks from Europe and the United States. When they move on the market, they score War Points (₩).',
+  'tutorial.welcome.3':
+    'The best score on Friday night wins the week. The most campaign points after {weeks} weeks wins the war.',
+  'tutorial.pf.title': 'War Points (₩)',
+  'tutorial.pf.1': '₩ is your score for the week. It is not money.',
+  'tutorial.pf.2': 'Every 1 % a unit moves is worth {per} ₩ × the multiplier of its slot.',
+  'tutorial.pf.example': 'Example week',
+  'tutorial.pf.line': '{slot} ×{mult} · {name} {move}: {pf} ₩',
+  'tutorial.pf.total': 'Units: {total} ₩',
+  'tutorial.pf.3':
+    'Bonuses on top: +{elite} ₩ for each unit no other player picked, and feats such as Total Victory (+{victory} ₩ when all 5 slots end positive).',
+  'tutorial.pf.4': 'Everybody has bad weeks: a negative score is normal. Only your rank counts.',
+  'tutorial.squad.title': 'Your squad',
+  'tutorial.squad.1':
+    '5 front slots, each with a multiplier: Champion ×{champion}, Veteran ×{veteran}, Priority Target ×{priority}, Marksman ×{marksman} and Saboteur ×{saboteur}.',
+  'tutorial.squad.2':
+    'The Saboteur is your bet against a stock: it scores when its stock falls, and loses when it rises.',
+  'tutorial.squad.3':
+    'At least {front} European and {front} American units in the front, plus {reserve} units in reserve for a swap on Thursday.',
+  'tutorial.squad.4':
+    'Calm stocks count a bit more and wild ones a bit less (each unit has a coefficient), so a quiet pick can win too.',
+  'tutorial.squad.5': 'No idea what to pick? The “{suggest}” button builds a valid squad for you.',
+  'tutorial.week.title': 'Your week (Paris time)',
+  'tutorial.week.briefing': 'Weekend — Briefing: set your squad before Sunday {lock}.',
+  'tutorial.week.s1': 'Monday to Wednesday — Markets: your score moves live.',
+  'tutorial.week.resupply':
+    'Wednesday evening to Thursday {close} — Resupply: you may swap one front unit for a reserve unit.',
+  'tutorial.week.s2': 'Thursday and Friday — Markets again: the new unit scores from Thursday.',
+  'tutorial.week.debrief': 'Friday night — Debrief: ranking, campaign points and the Front Dispatch.',
+  'tutorial.week.example':
+    'Example: on Thursday {out} keeps falling. Swapping it for {in} turns that slot from {before} ₩ into {after} ₩.',
+  'tutorial.credits.title': 'Credits and orders (optional)',
+  'tutorial.credits.1': 'You receive {income} credits each week and can keep up to {cap}.',
+  'tutorial.credits.2':
+    'Spend them on orders: attacks on a rival’s squad, defences and tricks. Each order shows its cost and effect before you play it.',
+  'tutorial.credits.3':
+    'A player can receive at most {attacks} attacks a week, and attacks on the campaign leader cost {bounty} credit less.',
+  'tutorial.credits.4': 'Orders are optional: you can win without playing any.',
+  'tutorial.campaign.title': 'Campaign points: who wins',
+  'tutorial.campaign.1': 'Your Friday rank earns campaign points. With 4 players: {points}.',
+  'tutorial.campaign.2': 'The last week of the campaign counts ×{final}.',
+  'tutorial.campaign.3': 'Most campaign points at the end wins the war.',
+  'tutorial.campaign.4':
+    'A Random Drone plays a random squad each week. It scores but is not ranked: finish below it and you earn the “{rusty}” badge.',
+  'tutorial.commanders.title': 'Commanders',
+  'tutorial.commanders.1':
+    'When you join a league you pick a commander: a bonus for the whole campaign. You can change it in the lobby until the campaign starts, and several players may pick the same one.',
+  'tutorial.commanders.2': 'Open an example to see what each one changes, with real numbers.',
+  'commander.example': 'See an example',
+  'commander.pfHint':
+    '₩ (War Points) is your weekly score: every 1 % a unit moves is worth {per} ₩ × its slot multiplier.',
+  'commander.pfHintLink': 'How to play',
+  'commander.bastion.summary': 'Softens your worst loss of the week.',
+  'commander.bastion.example':
+    '{unit} falls {move} in your Marksman slot: {before} ₩ becomes {after} ₩. The reduction is never more than {max} ₩, and nothing if no unit loses.',
+  'commander.berserker.summary': 'A stronger Champion, both ways.',
+  'commander.berserker.example':
+    '{unit} rises {move} in your Champion slot: {before} ₩ becomes {after} ₩. If it falls as much: {downBefore} ₩ becomes {downAfter} ₩.',
+  'commander.prophet.summary': 'A stronger Saboteur: bigger wins when its stock falls.',
+  'commander.prophet.example':
+    '{unit} falls {move} in your Saboteur slot: {before} ₩ becomes {after} ₩. If it rises as much instead: {upBefore} ₩ becomes {upAfter} ₩.',
+  'commander.hunter.summary': 'A bonus for beating the players ahead of you in the campaign.',
+  'commander.hunter.example':
+    'You are 3rd in the campaign and beat both leaders this week: +{both} ₩. Beat only one: +{one} ₩. Nothing in week 1 or while you lead.',
+  'commander.shadow.summary': 'Invisible until Friday night.',
+  'commander.shadow.example':
+    'No ₩ bonus. Rivals see neither your squad, nor your live score, nor your swap until the debrief: they attack you blind, and Intel cannot spy on you.',
+  'commander.technomancer.summary': 'More credits for orders.',
+  'commander.technomancer.example':
+    '+{extra} credit every week on top of the usual {baseIncome}, and up to {cap} saved instead of {baseCap}.',
+  'commander.quartermaster.summary': 'A bigger reserve and a second swap on Thursday.',
+  'commander.quartermaster.example':
+    'On Thursday {out} starts falling: a second swap for {in} turns that slot from {before} ₩ into {after} ₩. Others can make only one swap.',
 } as const satisfies Record<string, string>
 
 export type MessageKey = keyof typeof en

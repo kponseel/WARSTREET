@@ -56,3 +56,8 @@ export function formatSignedPercent(locale: Locale, value: number): string {
     signDisplay: 'exceptZero',
   }).format(value) + ' %'
 }
+
+/** "+80", "−30", "0": a War Points amount with its sign. */
+export function formatSigned(locale: Locale, value: number): string {
+  return new Intl.NumberFormat(locale, { maximumFractionDigits: 1, signDisplay: 'exceptZero' }).format(value)
+}

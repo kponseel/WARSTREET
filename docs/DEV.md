@@ -97,7 +97,9 @@ still shows the right deadlines, and the dev mode's simulated time shows in a ba
 `briefing.spec.ts` (squad, orders, pacts, then the lock), `front.spec.ts` (live front and
 resupply), `debrief.spec.ts` (Friday ranking, breakdown, Drone verdict, share card,
 campaign) and `narrow.spec.ts` (every screen of a week at 360 px: no overflow, no clipped
-label, no axe violation; in English while French is off, in French once it is back). The last four create a league of bots with
+label, no axe violation; in English while French is off, in French once it is back) and
+`tutorial.spec.ts` (the first-launch tutorial, its "don't show again" box and the Help
+link). The others log in with the tutorial already dismissed (`logIn` in `e2e/session.ts`). The last four create a league of bots with
 `jobs.dev` and move the clock.
 The dev clock is global, so the tests run one at a time (`workers: 1`). CI runs them in
 the `e2e` job.

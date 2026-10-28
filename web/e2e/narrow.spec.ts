@@ -52,6 +52,7 @@ test('every screen of a week fits at 360 px', async ({ page }) => {
     [`/#/l/${id}/lobby`, 'lobby'],
     [`/#/l/${id}/briefing`, 'briefing'],
     ['/#/rules', 'rules'],
+    ['/#/tutorial', 'tutorial'],
     ['/#/status', 'status'],
   ]
   for (const [path, name] of screens) {
