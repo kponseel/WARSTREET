@@ -32,6 +32,13 @@ Everything Claude Code needs to build the game in a public GitHub repo, mileston
      another device) can type the code instead. Keep the email OTP length at 6.
    - Send yourself a test login before inviting anyone.
    The SMTP password is entered in the Supabase dashboard only, never in the repo.
+   - **Brevo**: use an *SMTP key* (`xsmtpsib-…`, not an API key) and the SMTP login shown
+     next to it (`…@smtp-brevo.com`). Then Security → Authorized IPs → **Deactivate for
+     SMTP keys**: Supabase sends from changing IPs, and with the block on, every login
+     email fails with `525 5.7.1 Unauthorized IP address` (the app only says "Login
+     failed"; Supabase → Logs → Auth shows the SMTP error).
+   - A sender on a free address (Gmail…) works but may land in spam; a domain of your
+     own authenticated in Brevo (DKIM, DMARC) fixes that.
 4. **GitHub secrets** (Settings → Secrets and variables → Actions):
    secret `SUPABASE_DB_URL` (the session pooler connection string, used by `tick.yml`);
    variables `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`.
