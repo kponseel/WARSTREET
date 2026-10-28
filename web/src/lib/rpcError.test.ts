@@ -9,9 +9,9 @@ describe('rpcErrorMessage', () => {
       details: '{"cost": 3, "balance": 1}',
     })
     expect(key).toBe('error.NOT_ENOUGH_AMMO')
-    expect(translate('en', key, vars)).toBe('Not enough ammo: this order costs 3, you have 1.')
+    expect(translate('en', key, vars)).toBe('Not enough credits: this order costs 3, you have 1.')
     expect(translate('fr', key, vars)).toBe(
-      'Pas assez de munitions : cet ordre coûte 3, vous avez 1.',
+      'Pas assez de crédits : cet ordre coûte 3, vous avez 1.',
     )
   })
 

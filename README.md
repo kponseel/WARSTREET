@@ -3,7 +3,7 @@
 Weekly fantasy stock-market war game for a private league of 3 to 5 friends. EN/FR.
 
 - Every weekend, draft a squad of 5 real EU and US stocks into slots with multipliers.
-- Mid-week, spend ammo on orders: strike a rival's unit, plunder their gains, jam their score.
+- Mid-week, spend credits on orders: strike a rival's unit, plunder their gains, jam their score.
 - Real market prices score every unit; a futuristic-army theme, free-for-all.
 - Every Friday night, the week is ranked and campaign points decide the season winner.
 - Mobile-first web app (PWA), zero running cost: GitHub Pages + Supabase + GitHub Actions.

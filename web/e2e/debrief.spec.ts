@@ -19,7 +19,7 @@ test('Friday night: ranking, breakdown, Drone verdict, share card, campaign', as
 
   await page.goto(`/#/l/${league.league_id}/debrief/latest`)
   await expect(page.getByRole('heading', { name: 'Debrief — week 1' })).toBeVisible()
-  await expect(page.locator('.dispatch')).toContainText(/FP|PF/)
+  await expect(page.locator('.dispatch')).toContainText('₩')
   const rows = page.locator('.board .board-row')
   await expect(rows).toHaveCount(4) // 4 humans (the Drone is in its own verdict)
   await rows.first().locator('.board-line').click()

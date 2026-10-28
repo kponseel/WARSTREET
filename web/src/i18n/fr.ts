@@ -63,7 +63,7 @@ export const fr: Record<MessageKey, string> = {
   'commander.noConstraint': 'aucune.',
   'commander.drone': 'Drone aléatoire',
   'commander.bastion': 'Le Bastion',
-  'commander.bastion.passive': 'votre plus grosse perte d’unité de la semaine est réduite de {pf} PF.',
+  'commander.bastion.passive': 'votre plus grosse perte d’unité de la semaine est réduite de {pf} ₩.',
   'commander.berserker': 'Le Berserker',
   'commander.berserker.passive': 'multiplicateur du Champion {mult} au lieu de {base}.',
   'commander.berserker.constraint': 'ne peut pas jouer {orders}.',
@@ -71,12 +71,12 @@ export const fr: Record<MessageKey, string> = {
   'commander.prophet.passive': 'multiplicateur du Saboteur {mult} au lieu de {base}.',
   'commander.hunter': 'Le Chasseur de primes',
   'commander.hunter.passive':
-    '+{pf} PF pour chaque joueur devant vous au classement de campagne que vous battez cette semaine (max +{max}).',
+    '+{pf} ₩ pour chaque joueur devant vous au classement de campagne que vous battez cette semaine (max +{max}).',
   'commander.shadow': 'L’Ombre',
   'commander.shadow.passive':
     'votre escouade, votre score en direct et votre échange restent cachés jusqu’au bilan ; vos ordres sont anonymes ; le Renseignement ne peut pas vous viser.',
   'commander.technomancer': 'Le Technomancien',
-  'commander.technomancer.passive': '+{extra} munition par semaine ; plafond de {cap} au lieu de {baseCap}.',
+  'commander.technomancer.passive': '+{extra} crédit par semaine ; plafond de {cap} au lieu de {baseCap}.',
   'commander.quartermaster': 'L’Intendant',
   'commander.quartermaster.passive':
     'réserve de {reserve} unités au lieu de {baseReserve} ; jusqu’à {swaps} échanges au ravitaillement au lieu de {baseSwaps}.',
@@ -116,10 +116,10 @@ export const fr: Record<MessageKey, string> = {
   'term.league': 'Ligue',
   'term.campaign': 'Campagne',
   'term.squad': 'Escouade',
-  'term.pf': 'PF (Points Fantasy)',
+  'term.pf': 'War Points (₩)',
   'term.campaign_points': 'Points de campagne',
   'term.conflict_zone': 'Zone de conflit',
-  'term.ammo': 'Munitions',
+  'term.ammo': 'Crédits',
   'term.bounty': 'La Prime',
   'term.pact': 'Pacte',
   'term.drone': 'Drone aléatoire',
@@ -215,20 +215,20 @@ export const fr: Record<MessageKey, string> = {
   'briefing.deploy': 'Déployer',
   'briefing.deployAs': 'Déployer {ticker} au poste {slot}',
   'orders.title': 'Ordres',
-  'orders.ammo': 'Munitions :',
+  'orders.ammo': 'Crédits :',
   'orders.kind.attack': 'attaque',
   'orders.kind.defense': 'défense',
   'orders.kind.maneuver': 'manœuvre',
-  'orders.cost': '{n} munition(s)',
-  'orders.costRange': '{min}–{max} munitions',
+  'orders.cost': '{n} crédit(s)',
+  'orders.costRange': '{min}–{max} crédits',
   'orders.hidden': 'Caché : les autres ne l’apprennent que s’il bloque une attaque.',
   'orders.prepare': 'Préparer',
   'orders.target': 'Cible',
   'orders.slot': 'Unité',
   'orders.bounty': 'La Prime : moins cher',
-  'orders.review': 'Vérifier ({cost} munitions)',
+  'orders.review': 'Vérifier ({cost} crédit(s))',
   'orders.confirmTitle': 'Confirmer l’ordre',
-  'orders.confirm': 'Jouer {order} pour {cost} munitions ? Un ordre ne peut pas être annulé.',
+  'orders.confirm': 'Jouer {order} pour {cost} crédit(s) ? Un ordre ne peut pas être annulé.',
   'orders.play': 'Jouer l’ordre',
   'orders.mine': 'Mes ordres de la semaine',
   'orders.status.pending': 'en attente',
@@ -283,11 +283,11 @@ export const fr: Record<MessageKey, string> = {
   'front.noScores':
     'Pas encore de score en direct : ils apparaissent à l’ouverture des marchés après le verrouillage.',
   'front.droneTag': 'Drone',
-  'front.pf': '{pf} PF',
+  'front.pf': '{pf} ₩',
   'front.inShadows': 'Dans l’ombre (caché jusqu’au bilan) : {names}',
   'front.squadHidden': 'Escouade cachée.',
   'front.mySquad': 'Mon escouade',
-  'front.myPf': 'Mon score en direct : {pf} PF',
+  'front.myPf': 'Mon score en direct : {pf} ₩',
   'front.jammed':
     'Vous êtes brouillé : votre score est caché (???) jusqu’au bilan, même pour vous.',
   'front.noSquad': 'Pas d’escouade cette semaine.',
@@ -355,8 +355,8 @@ export const fr: Record<MessageKey, string> = {
   'campaign.standings': 'Classement',
   'campaign.player': 'Joueur',
   'campaign.wins': 'Victoires',
-  'campaign.pfTotal': 'PF cumulés',
-  'campaign.tiebreak': 'Égalité : le plus de victoires hebdomadaires, puis le plus de PF cumulés.',
+  'campaign.pfTotal': '₩ cumulés',
+  'campaign.tiebreak': 'Égalité : le plus de victoires hebdomadaires, puis le plus de War Points cumulés.',
   'campaign.chart': 'Les points semaine après semaine',
   'campaign.chartTitle': 'Points de campagne cumulés par semaine',
   'campaign.weekShort': 'S{n}',
@@ -428,7 +428,7 @@ export const fr: Record<MessageKey, string> = {
   'error.NOT_AUTHENTICATED': 'Reconnectez-vous.',
   'error.RATE_LIMITED': 'Trop d’actions en une minute (limite {limit}). Attendez un instant et réessayez.',
   'error.NOT_A_MEMBER': 'Vous ne faites pas partie de cette ligue.',
-  'error.NOT_ENOUGH_AMMO': 'Pas assez de munitions : cet ordre coûte {cost}, vous avez {balance}.',
+  'error.NOT_ENOUGH_AMMO': 'Pas assez de crédits : cet ordre coûte {cost}, vous avez {balance}.',
   'error.NOT_ENOUGH_READY': '{ready} joueurs prêts, il en faut {min} pour lancer.',
   'error.NOT_HOST': "Seul l'hôte peut faire cela.",
   'error.NOT_PACT_PARTNER': 'Seul le joueur invité peut répondre à ce pacte.',
@@ -469,11 +469,11 @@ export const fr: Record<MessageKey, string> = {
   'error.VETERAN_SAME_REGION': "Votre Vétéran doit venir d'une autre région que votre Champion.",
   // Front Dispatch (jobs/dispatch.py): template_key + '.' + variant; same variant in EN and FR.
   'dispatch.monday.0':
-    'Communiqué du Front, lundi : premiers tirs. {mover} ouvre les hostilités à {move} %. {leader} prend la tête avec {pf} PF.',
+    'Communiqué du Front, lundi : premiers tirs. {mover} ouvre les hostilités à {move} %. {leader} prend la tête avec {pf} ₩.',
   'dispatch.monday.1':
-    "Rapport de l'aube : {mover} a bougé de {move} % avant la fin du café. Premier maître du terrain : {leader} ({pf} PF).",
+    "Rapport de l'aube : {mover} a bougé de {move} % avant la fin du café. Premier maître du terrain : {leader} ({pf} ₩).",
   'dispatch.monday.2':
-    'Les marchés se réveillent et {mover} est déjà à {move} %. {leader} plante le drapeau le premier : {pf} PF.',
+    'Les marchés se réveillent et {mover} est déjà à {move} %. {leader} plante le drapeau le premier : {pf} ₩.',
   'dispatch.monday_fog.0':
     'Communiqué du Front, lundi : {mover} ouvre à {move} %. Le brouillard de guerre cache le meneur.',
   'dispatch.monday_fog.1':
@@ -487,9 +487,9 @@ export const fr: Record<MessageKey, string> = {
   'dispatch.thursday.2':
     'Renseignement de mi-semaine : {attacks} frappe(s) passée(s), {blocked} arrêtée(s) par un bouclier, {swaps} échange(s) au dépôt, {pacts} pacte(s) signé(s).',
   'dispatch.debrief.0':
-    'Bilan : {winner} remporte la semaine avec {pf} PF. Unité héroïque : {best} ({best_move} %). Perte de la semaine : {worst} ({worst_move} %). Le Drone a marqué {drone_pf} PF et rouillé {rusty} commandant(s).',
+    'Bilan : {winner} remporte la semaine avec {pf} ₩. Unité héroïque : {best} ({best_move} %). Perte de la semaine : {worst} ({worst_move} %). Le Drone a marqué {drone_pf} ₩ et rouillé {rusty} commandant(s).',
   'dispatch.debrief.1':
-    "Vendredi soir, la fumée se dissipe : {winner} tient la colline avec {pf} PF. {best} a porté l'escouade ({best_move} %), {worst} a coulé ({worst_move} %). Drone : {drone_pf} PF, {rusty} joueur(s) battu(s) par un tirage au sort.",
+    "Vendredi soir, la fumée se dissipe : {winner} tient la colline avec {pf} ₩. {best} a porté l'escouade ({best_move} %), {worst} a coulé ({worst_move} %). Drone : {drone_pf} ₩, {rusty} joueur(s) battu(s) par un tirage au sort.",
   'dispatch.debrief.2':
-    'Semaine terminée. Médaille pour {winner} ({pf} PF). Meilleure unité {best} à {best_move} %, pire {worst} à {worst_move} %. Les {drone_pf} PF du Drone ont humilié {rusty} commandant(s).',
+    'Semaine terminée. Médaille pour {winner} ({pf} ₩). Meilleure unité {best} à {best_move} %, pire {worst} à {worst_move} %. Les {drone_pf} ₩ du Drone ont humilié {rusty} commandant(s).',
 }

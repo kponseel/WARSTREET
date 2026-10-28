@@ -45,7 +45,7 @@ test('briefing: build a squad, see why it is invalid, play orders, answer a pact
   await field.getByRole('button', { name: 'Prepare' }).click()
   await field.getByRole('button', { name: /Review/ }).click()
   await field.getByRole('button', { name: 'Play the order' }).click()
-  await expect(page.getByText(/Force Field · 1 ammo · waiting/)).toBeVisible()
+  await expect(page.getByText(/Force Field · 1 credit\(s\) · waiting/)).toBeVisible()
   const intel = page.locator('.order', { hasText: 'Intel' })
   await intel.getByRole('button', { name: 'Prepare' }).click()
   await intel.getByRole('button', { name: /Review/ }).click()

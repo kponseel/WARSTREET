@@ -120,7 +120,7 @@ Enums: `league_status(lobby, active, finished)`,
 | `scores_final` | (`league_id`, `week`, `member_id`), `pf_total`, `pf_picking`, `breakdown` jsonb, `rank`, `campaign_points` |
 | `badges` | `league_id`, `week`, `member_id`, `code` |
 | `events` | `id`, `league_id`, `week`, `ts`, `kind`, `template_key`, `vars` jsonb, `variant`, `audience` (all / member id) — rendered client-side in the reader's language. An `intel` snapshot is an event with the attacker as audience |
-| `game_config` | key/value generated from `engine/config.py`. **Runtime source for RPC validation** (costs, caps, ammo, swaps…) and for display. A CI test fails if it differs from `engine/config.py` |
+| `game_config` | key/value generated from `engine/config.py`. **Runtime source for RPC validation** (costs, caps, credits, swaps…) and for display. A CI test fails if it differs from `engine/config.py` |
 | `market_runs` | unique (`week`, `transition`), `ran_at` — idempotence of global market transitions |
 | `job_runs` | unique (`league_id`, `week`, `transition`), `league_id` **not null**, `ran_at` — idempotence of league transitions |
 | `market_sessions` | (`mic`, `session`), `open_at`, `close_at` — the week's sessions from `exchange_calendars`, written by the market job; the app's daily phase banner reads them (no market hours in the frontend) |
@@ -192,13 +192,13 @@ Read rules (RLS or `security_barrier` views):
 | Data | Who can read |
 |---|---|
 | League, members, weeks, final scores, badges | Members of that league |
-| Own squad, own orders, own swaps, own ammo | Owner, always |
+| Own squad, own orders, own swaps, own credits (`ammo_ledger`) | Owner, always |
 | Other players' squads | Members, from `lock_at`. Shadow's squad: only from `debrief_at` |
 | A target's draft before lock | Only through an `intel` snapshot event, audience = the attacker |
 | Other players' S2 swaps | From `resupply_closes_at`. Shadow: from `debrief_at` |
 | Other players' orders | After resolution, via view `orders_public`: attacker masked when the attacker is a Shadow; `force_field` visible only once triggered |
 | `scores_live` (private) | Owner only, and not while jammed |
-| `scores_live_public` | Members (rows already masked by the job: no Shadow row, jammed rows without PF or rank) |
+| `scores_live_public` | Members (rows already masked by the job: no Shadow row, jammed rows without War Points or rank) |
 | `events` | Members, filtered by `audience` |
 | `profiles` | Own row only |
 | `instruments`, `instrument_weeks`, prices, `game_config` | Any authenticated user |
@@ -237,7 +237,7 @@ League transitions:
 
 | Transition | When | Work |
 |---|---|---|
-| `open_briefing` | After debrief / at start | Create the week with its phase timestamps, ammo income + catch-up, Bounty |
+| `open_briefing` | After debrief / at start | Create the week with its phase timestamps, credit income + catch-up, Bounty |
 | `lock` | `lock_at` | Lock squads, auto-squads, resolve briefing orders, Drone squad |
 | `open_resupply` | `resupply_opens_at` | Phase change |
 | `close_resupply` | `resupply_closes_at` | Apply swaps, resolve resupply orders |
@@ -313,7 +313,7 @@ Routes are in English for both languages. A language switch sits in the header.
 | `#/l/:id/lobby` | Lobby: players, commander, avatar, ready, start |
 | `#/l/:id/briefing` | Squad builder, Conflict Zone, briefing orders, pacts |
 | `#/l/:id/front` | Live leaderboard, my squad, daily phase, event feed |
-| `#/l/:id/resupply` | Swap, resupply orders, ammo |
+| `#/l/:id/resupply` | Swap, resupply orders, credits |
 | `#/l/:id/debrief/:week` | Weekly ranking, feats, badges, Front Dispatch |
 | `#/l/:id/campaign` | Campaign standings, history |
 | `#/rules` | Rules and glossary |
