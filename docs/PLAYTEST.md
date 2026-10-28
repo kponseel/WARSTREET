@@ -10,6 +10,9 @@ rehearse is in [DEV.md](DEV.md).
    SMTP, the login email template (link **and** 6-digit code) in both "Magic link" and
    "Confirm signup", redirect URL = the Pages URL, GitHub secret `SUPABASE_DB_URL`,
    repository variables `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY`.
+   Whenever `engine/config.py` changes (a balance decision, a new limit), run
+   `supabase/seed.sql` again on the project (SQL editor; it is idempotent): the jobs score
+   with `engine/config.py`, the app and the RPCs read the `game_config` table.
 2. **Rehearse locally** with the dev mode: `supabase start`, then
    `python -m jobs.dev league --me you@example.test --bots 4` and
    `python -m jobs.dev advance --league <id> --to end`. Open the app at each phase.
@@ -105,7 +108,8 @@ Covered by the tests on every pull request (no action):
 per commander against the fair share (`1/N`). The simulator drafts with a popularity
 bias and plays a random order policy (no pacts, no bluff), so it measures the raw value
 of each commander's rule, not how well people use it. One run's noise is about ±3 points
-(relative); figures below were checked on three seeds (1, 11, 21).
+(relative); figures below were checked on three seeds (1, 11, 21), with the values of
+milestone 08 (Bastion 5).
 
 | Commander | 3 players | 4 players | 5 players | Across seeds |
 |---|---|---|---|---|
@@ -120,11 +124,13 @@ of each commander's rule, not how well people use it. One run's noise is about �
 Elite unit bonus: 30–37 FP per player and week on average; `rusty` (beaten by the Drone)
 about half the player-weeks, as expected from random drafts.
 
-**Proposal** (not applied: it changes the golden weeks and is a game-design call):
+**Decision** (taken by the owner after milestone 09):
 
-1. `BASTION_LOSS_REDUCTION` 5 → **4**. The one consistent outlier; at 4 the Bastion lands
-   at +5 / −1 / +7 % (3 / 4 / 5 players), at 3 at +3 / −3 / +5 %.
-2. Keep the others for the first campaign. Shadow's hidden score and Technomancer's
-   extra ammo are worth more with people than with a random policy (the simulator cannot
-   see bluff or well-timed orders); re-check after the playtest with the real orders
-   (`private.tick_runs` and `public.orders`).
+1. `BASTION_LOSS_REDUCTION` 5 → **4**, applied. Bastion was the one consistent outlier;
+   at 4 it lands at +5 / −1 / +7 % (3 / 4 / 5 players, seed 21, 8000 campaigns), at 3 it
+   would land at +3 / −3 / +5 %. The two golden weeks with a Bastion shield moved by 1 FP
+   (255 → 254 and 250 → 249), checked by hand in `engine/tests/test_golden.py`.
+2. The others stay as they are for the first campaign. Shadow's hidden score and
+   Technomancer's extra ammo are worth more with people than with a random policy (the
+   simulator cannot see bluff or well-timed orders); re-check after the playtest with
+   the real orders (`private.tick_runs` and `public.orders`).

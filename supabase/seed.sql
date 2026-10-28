@@ -116,7 +116,7 @@ values
   ('ammo_income', '3'::jsonb),
   ('attack_cap_per_week', '2'::jsonb),
   ('avatar_colors', '["#1f3a5f", "#c2410c", "#166534", "#7c3aed", "#b91c1c", "#0e7490", "#a16207", "#be185d"]'::jsonb),
-  ('bastion_loss_reduction', '5'::jsonb),
+  ('bastion_loss_reduction', '4'::jsonb),
   ('berserker_champion_multiplier', '3.0'::jsonb),
   ('berserker_forbidden_orders', '["force_field", "tactical_retreat"]'::jsonb),
   ('betrayal_penalty', '-40'::jsonb),

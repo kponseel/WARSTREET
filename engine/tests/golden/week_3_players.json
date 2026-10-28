@@ -16,7 +16,7 @@
     "traitor"
    ],
    "breakdown": {
-    "bastion": 5,
+    "bastion": 4,
     "betrayal": -40,
     "elite": {
      "instruments": [
@@ -36,7 +36,7 @@
      "victims": []
     },
     "pf_picking": 240,
-    "pf_total": 255,
+    "pf_total": 254,
     "pillage": [],
     "slots": {
      "champion": {
@@ -172,7 +172,7 @@
    "is_drone": false,
    "member_id": "A",
    "pf_picking": 240,
-   "pf_total": 255,
+   "pf_total": 254,
    "rank": 3
   },
   "B": {

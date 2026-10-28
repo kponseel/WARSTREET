@@ -156,7 +156,7 @@
     "rusty"
    ],
    "breakdown": {
-    "bastion": 5,
+    "bastion": 4,
     "betrayal": -40,
     "elite": {
      "instruments": [],
@@ -174,7 +174,7 @@
      "victims": []
     },
     "pf_picking": 245,
-    "pf_total": 250,
+    "pf_total": 249,
     "pillage": [],
     "slots": {
      "champion": {
@@ -308,7 +308,7 @@
    "is_drone": false,
    "member_id": "H",
    "pf_picking": 245,
-   "pf_total": 250,
+   "pf_total": 249,
    "rank": 5
   },
   "I": {

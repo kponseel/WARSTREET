@@ -14,7 +14,7 @@ export const GAME_CONFIG_VALUES = {
     "#a16207",
     "#be185d"
   ],
-  "bastion_loss_reduction": 5,
+  "bastion_loss_reduction": 4,
   "berserker_champion_multiplier": 3.0,
   "berserker_forbidden_orders": [
     "force_field",

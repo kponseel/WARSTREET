@@ -2,6 +2,7 @@
 
 from scenario import order
 
+from engine import config
 from engine.commanders import bastion_bonus, hunter_bonus, slot_multipliers
 from engine.models import OrderResolution
 from engine.orders import blockaded, is_attack, resolve_orders, s2_modifiers
@@ -127,8 +128,8 @@ def test_commander_multipliers() -> None:
 
 
 def test_bastion() -> None:
-    assert bastion_bonus({"a": 10, "b": -3}) == 3
-    assert bastion_bonus({"a": 10, "b": -150, "c": -20}) == 5
+    assert bastion_bonus({"a": 10, "b": -3}) == 3  # a loss smaller than the shield
+    assert bastion_bonus({"a": 10, "b": -150, "c": -20}) == config.BASTION_LOSS_REDUCTION
     assert bastion_bonus({"a": 0, "b": 4}) == 0
 
 
