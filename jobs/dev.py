@@ -72,6 +72,8 @@ def set_clock(conn: Connection, at: datetime | None) -> None:
         conn.execute("delete from private.dev_clock")
         if at is not None:
             conn.execute("insert into private.dev_clock (fake_now) values (%s)", (at,))
+        # The app's dev banner reads this flag; the next tick would set it, but late.
+        conn.execute("update public.system_status set dev_clock = %s where id", (at is not None,))
     set_fake_now(conn, None)  # this session follows the dev clock too
 
 

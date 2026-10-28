@@ -61,6 +61,9 @@ test('create, join by code, everyone ready, the host starts the campaign', async
   expect(new URL(charlie.url()).search).toBe('')
   await charlie.getByLabel('Invite code').fill(code.toLowerCase())
   await charlie.getByRole('button', { name: 'Continue' }).click()
+  // The home page has its own "Your pseudo" field (create a league): wait for the join
+  // page, or a slow navigation lets the pseudo land in the old page's field.
+  await expect(charlie.getByRole('heading', { name: 'Join a league', level: 1 })).toBeVisible()
   await fillMember(charlie, 'Charlie', 'The Berserker')
   await charlie.getByRole('button', { name: 'Join the league' }).click()
   // Charlie is in the lobby before the host looks for him (or his refusal is reported).

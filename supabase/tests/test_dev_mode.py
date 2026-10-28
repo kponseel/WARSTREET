@@ -51,6 +51,15 @@ def test_bots_draft_then_the_week_plays_out(db: Db, league: str) -> None:
     assert all(t["ok"] for t in dev.tick_logs(db.conn, 50, errors_only=False))
 
 
+def test_the_app_banner_follows_the_clock_at_once(db: Db) -> None:
+    db.exec_admin("delete from public.system_status")
+    db.exec_admin("insert into public.system_status (id, dev_clock) values (true, false)")
+    dev.set_clock(db.conn, dev.now_of(db.conn))
+    assert db.fetch_admin("select dev_clock from public.system_status")[0]["dev_clock"] is True
+    dev.set_clock(db.conn, None)  # e2e tests clear it: the banner must go without a tick
+    assert db.fetch_admin("select dev_clock from public.system_status")[0]["dev_clock"] is False
+
+
 def test_the_clock_cannot_go_back(db: Db, league: str) -> None:
     with pytest.raises(SystemExit):
         dev.advance(db.conn, league, dev.now_of(db.conn), prices="synthetic")
