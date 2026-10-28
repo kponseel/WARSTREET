@@ -30,6 +30,13 @@ describe('App', () => {
     expect(document.documentElement.lang).toBe('fr')
   })
 
+  it('shows the build version and time at the bottom of the page', () => {
+    renderApp('fr')
+    expect(screen.getByRole('contentinfo')).toHaveTextContent(
+      new RegExp(`^Version ${__BUILD_SHA__} · mise à jour : .+`),
+    )
+  })
+
   it('switches language from the header and remembers it', () => {
     renderApp('en')
     fireEvent.click(screen.getByRole('button', { name: 'FR' }))

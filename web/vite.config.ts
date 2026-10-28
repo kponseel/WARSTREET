@@ -1,3 +1,4 @@
+import { execSync } from 'node:child_process'
 import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
 import { defineConfig, type Plugin } from 'vitest/config'
@@ -12,8 +13,24 @@ const gameNameInHtml: Plugin = {
   transformIndexHtml: (html) => html.replaceAll('%GAME_NAME%', GAME_NAME),
 }
 
+// Build stamp shown at the bottom of every page, so a player can check which version
+// they run (the PWA may still serve an old cache): the commit and the build time.
+function commitSha(): string {
+  const fromCi = process.env.GITHUB_SHA
+  if (fromCi) return fromCi.slice(0, 7)
+  try {
+    return execSync('git rev-parse --short=7 HEAD', { encoding: 'utf8' }).trim()
+  } catch {
+    return 'dev'
+  }
+}
+
 export default defineConfig({
   base,
+  define: {
+    __BUILD_SHA__: JSON.stringify(commitSha()),
+    __BUILD_TIME__: JSON.stringify(new Date().toISOString()),
+  },
   plugins: [
     react(),
     gameNameInHtml,

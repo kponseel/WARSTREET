@@ -1,6 +1,7 @@
 // Reference language. Every key must also exist in fr.ts (enforced by the type and a test).
 // Variables use {name} placeholders.
 export const en = {
+  'app.build': 'Version {sha} · updated {date}',
   'app.tagline': 'Weekly fantasy stock-market war game for friends.',
   'header.language': 'Language',
   'language.en': 'English',
