@@ -95,11 +95,6 @@ test('create, join by code, everyone ready, the host starts the campaign', async
   }
   await expect(members.getByText('Random Drone')).toBeVisible({ timeout: 30_000 })
 
-  // The language choice is saved in the profile: a fresh English browser logs in in French.
-  await bravo.getByRole('button', { name: 'FR' }).click()
-  await expect(bravo.getByRole('heading', { name: 'Joueurs' })).toBeVisible()
-  const elsewhere = await newPlayer(browser)
-  await elsewhere.goto('/#/login')
-  await logIn(elsewhere, email('bravo'))
-  await expect(elsewhere.getByRole('heading', { name: 'Mes ligues' })).toBeVisible()
+  // French is switched off during development: no language switch in the header.
+  await expect(bravo.getByRole('group', { name: 'Language' })).toHaveCount(0)
 })

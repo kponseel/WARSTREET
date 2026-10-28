@@ -1,6 +1,7 @@
 import type { MessageKey } from './en'
 
-export const fr: Record<MessageKey, string> = {
+// Incomplete while French is off (ENABLED_LOCALES in translate.ts): missing keys show the English text.
+export const fr: Partial<Record<MessageKey, string>> = {
   'app.build': 'Version {sha} · mise à jour : {date}',
   'app.tagline': 'Jeu de bourse fantasy et de guerre entre amis, chaque semaine.',
   'header.language': 'Langue',

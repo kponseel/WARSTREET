@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import { beforeEach, describe, expect, it } from 'vitest'
 import { GAME_NAME } from '../config'
 import { I18nProvider } from '../i18n/I18nProvider'
@@ -37,12 +37,11 @@ describe('App', () => {
     )
   })
 
-  it('switches language from the header and remembers it', () => {
-    renderApp('en')
-    fireEvent.click(screen.getByRole('button', { name: 'FR' }))
-    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Bienvenue')
-    expect(screen.getByRole('button', { name: 'FR' })).toHaveAttribute('aria-pressed', 'true')
-    expect(window.localStorage.getItem('locale')).toBe('fr')
+  it('has no language switch and stays in English while French is off', () => {
+    window.localStorage.setItem('locale', 'fr')
+    renderApp()
+    expect(screen.queryByRole('button', { name: 'FR' })).not.toBeInTheDocument()
+    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(`Welcome to ${GAME_NAME}`)
   })
 
   it('shows the not-found page for unknown routes', () => {
