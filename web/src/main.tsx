@@ -5,8 +5,12 @@ import { I18nProvider } from './i18n/I18nProvider'
 import { completeLoginFromUrl } from './lib/auth'
 import { captureGlobalErrors, readDebugFlag } from './lib/log'
 import { getSupabase } from './lib/supabase'
+import '@fontsource/saira-stencil-one/400.css'
+import '@fontsource/chakra-petch/600.css'
+import '@fontsource/chakra-petch/700.css'
 import './styles/tokens.css'
 import './styles/global.css'
+import './styles/theme.css'
 
 const root = document.getElementById('root')
 if (!root) throw new Error('Missing #root element')

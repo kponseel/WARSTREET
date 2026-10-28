@@ -7,7 +7,7 @@ import { Avatar } from '../components/MemberList'
 import { GAME_NAME } from '../config'
 import { BreakdownTable } from '../debrief/BreakdownTable'
 import { useCampaign } from '../debrief/data'
-import { drawShareCard, shareOrDownload } from '../debrief/shareCard'
+import { drawShareCard, loadCardFonts, shareOrDownload } from '../debrief/shareCard'
 import { useI18n } from '../i18n/context'
 import type { MessageKey } from '../i18n/en'
 import { formatDay, formatNumber } from '../lib/format'
@@ -59,8 +59,10 @@ export function Debrief() {
   const points = (value: number) => t('debrief.points', { n: formatNumber(locale, value) })
 
   const share = async () => {
-    if (!canvas.current) return
-    drawShareCard(canvas.current, {
+    const target = canvas.current
+    if (!target) return
+    await loadCardFonts()
+    drawShareCard(target, {
       game: GAME_NAME,
       title: t('debrief.cardTitle', { n: weekRow.number }),
       subtitle: data.league.name,
@@ -72,7 +74,7 @@ export function Debrief() {
         points: points(s.campaign_points),
       })),
     })
-    const result = await shareOrDownload(canvas.current, `podium-week-${String(weekRow.number)}.png`)
+    const result = await shareOrDownload(target, `podium-week-${String(weekRow.number)}.png`)
     setShared(result)
   }
 
