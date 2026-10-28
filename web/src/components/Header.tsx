@@ -1,5 +1,4 @@
 import { Link } from 'react-router'
-import { useAuth } from '../auth/context'
 import { GAME_NAME } from '../config'
 import { useI18n } from '../i18n/context'
 import { isDebug } from '../lib/log'
@@ -7,7 +6,6 @@ import { LanguageSwitch } from './LanguageSwitch'
 
 export function Header() {
   const { t } = useI18n()
-  const { session, signOut } = useAuth()
   return (
     <header className="app-header">
       <a className="skip-link" href="#main" onClick={(e) => {
@@ -21,13 +19,9 @@ export function Header() {
         <span>{GAME_NAME}</span>
       </Link>
       <nav className="header-nav" aria-label={t('nav.main')}>
+        <Link to="/tutorial">{t('nav.help')}</Link>
         <Link to="/rules">{t('nav.rules')}</Link>
         {isDebug() && <Link to="/debug">{t('nav.debug')}</Link>}
-        {session && (
-          <button type="button" className="header-button" onClick={() => void signOut()}>
-            {t('nav.logout')}
-          </button>
-        )}
         <LanguageSwitch />
       </nav>
     </header>

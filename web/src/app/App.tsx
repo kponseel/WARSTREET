@@ -21,6 +21,8 @@ import { NotFound } from '../pages/NotFound'
 import { Resupply } from '../pages/Resupply'
 import { Rules } from '../pages/Rules'
 import { Status } from '../pages/Status'
+import { TutorialGate } from '../tutorial/TutorialGate'
+import { TutorialPage } from '../tutorial/TutorialPage'
 
 const PRIVATE_ROUTES = [
   { path: '/join/:code', element: <Join /> },
@@ -43,8 +45,10 @@ export function App({ client = getSupabase() }: { client?: SupabaseClient | null
           <Header />
           <DevBanner />
           <main id="main" tabIndex={-1}>
+            <TutorialGate>
             <Routes>
               <Route path="/" element={<Home />} />
+              <Route path="/tutorial" element={<TutorialPage />} />
               <Route path="/login" element={<Login />} />
               <Route path="/rules" element={<Rules />} />
               <Route path="/debug" element={<Debug />} />
@@ -53,6 +57,7 @@ export function App({ client = getSupabase() }: { client?: SupabaseClient | null
               ))}
               <Route path="*" element={<NotFound />} />
             </Routes>
+            </TutorialGate>
           </main>
           <BuildStamp />
         </HashRouter>

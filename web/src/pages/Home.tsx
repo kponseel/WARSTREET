@@ -190,7 +190,7 @@ function JoinByCode({ config }: { config: GameConfig }) {
 
 function Dashboard() {
   const { t } = useI18n()
-  const { client } = useAuth()
+  const { client, signOut } = useAuth()
   const config = useGameConfig(client)
   const leagues = useMyLeagues(client)
   return (
@@ -222,6 +222,10 @@ function Dashboard() {
       )}
       <p className="muted page-footer">
         <Link to="/status">{t('status.link')}</Link>
+        {' · '}
+        <button type="button" className="button-link" onClick={() => void signOut()}>
+          {t('nav.logout')}
+        </button>
       </p>
     </section>
   )

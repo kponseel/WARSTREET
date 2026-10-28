@@ -53,6 +53,9 @@ test('create, join by code, everyone ready, the host starts the campaign', async
   // then types the invite code on the home page.
   const charlie = await newPlayer(browser)
   await charlie.goto('/#/login')
+  await charlie.evaluate(() => {
+    window.localStorage.setItem('tutorial.dismissed', '1')
+  })
   await charlie.getByLabel('Email').fill(email('charlie'))
   await charlie.getByRole('button', { name: 'Send me a login email' }).click()
   await expect(charlie.getByText(`Email sent to ${email('charlie')}`)).toBeVisible()
