@@ -10,6 +10,10 @@ ONE place: `web/src/config.ts` (`GAME_NAME`) and `engine/config.py` (`GAME_NAME`
 Never hardcode it elsewhere.
 
 The game is **bilingual: English and French**. English is the reference language.
+**During development French is switched off** (owner's decision, 2026-10-28): the app runs in
+English only (`ENABLED_LOCALES` in `web/src/i18n/translate.ts`), new messages go in `en.ts`
+only and `fr.ts` may lag. French comes back after the first games, with a translation pass;
+the i18n test then requires `fr.ts` to be complete again.
 
 ## Source of truth
 
@@ -63,7 +67,8 @@ ambiguous, stop and ask instead of guessing.
 
 - Code, identifiers, commits and docs: English.
 - UI strings: never inline. One key set in `web/src/i18n/en.ts` (reference) and
-  `web/src/i18n/fr.ts`; a test fails if a key is missing in either file. Labels for game
+  `web/src/i18n/fr.ts`; a test fails if a key is missing in either file (in `fr.ts` only once
+  French is enabled again). Labels for game
   terms come from `docs/GAME_RULES.md` §13. Language = `profiles.locale`, defaulting to the
   browser language (fr* → French, else English), switchable in the header.
 - Server messages (RPC errors, Front Dispatch, events) are stored as a message key + variables,

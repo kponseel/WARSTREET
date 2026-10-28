@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import type { MessageKey } from './en'
 import { I18nContext, type I18nValue } from './context'
-import { detectLocale, isLocale, translate, type Locale, type Vars } from './translate'
+import { activeLocale, detectLocale, isLocale, translate, type Locale, type Vars } from './translate'
 
 // Per-browser convenience until profiles.locale is wired (milestone 05, set_locale RPC).
 const STORAGE_KEY = 'locale'
@@ -16,7 +16,7 @@ function readStoredLocale(): Locale | null {
 }
 
 function initialLocale(): Locale {
-  return readStoredLocale() ?? detectLocale(navigator.languages)
+  return activeLocale(readStoredLocale() ?? detectLocale(navigator.languages))
 }
 
 export function I18nProvider({
@@ -31,7 +31,8 @@ export function I18nProvider({
   const changes = useRef(0)
   const localeVersion = useCallback(() => changes.current, [])
 
-  const setLocale = useCallback((next: Locale) => {
+  const setLocale = useCallback((requested: Locale) => {
+    const next = activeLocale(requested)
     changes.current += 1
     setLocaleState(next)
     try {

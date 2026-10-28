@@ -96,8 +96,8 @@ still shows the right deadlines, and the dev mode's simulated time shows in a ba
 `web/e2e` runs against the local stack: `lobby.spec.ts` (login, create, join, start),
 `briefing.spec.ts` (squad, orders, pacts, then the lock), `front.spec.ts` (live front and
 resupply), `debrief.spec.ts` (Friday ranking, breakdown, Drone verdict, share card,
-campaign) and `french.spec.ts` (every screen of a week in French at 360 px: no overflow,
-no clipped label, no axe violation). The last four create a league of bots with
+campaign) and `narrow.spec.ts` (every screen of a week at 360 px: no overflow, no clipped
+label, no axe violation; in English while French is off, in French once it is back). The last four create a league of bots with
 `jobs.dev` and move the clock.
 The dev clock is global, so the tests run one at a time (`workers: 1`). CI runs them in
 the `e2e` job.

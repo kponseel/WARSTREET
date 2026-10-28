@@ -1,4 +1,5 @@
-// Reference language. Every key must also exist in fr.ts (enforced by the type and a test).
+// Reference language. Every key must also exist in fr.ts once French is enabled again
+// (ENABLED_LOCALES in translate.ts; enforced by a test).
 // Variables use {name} placeholders.
 export const en = {
   'app.build': 'Version {sha} · updated {date}',
