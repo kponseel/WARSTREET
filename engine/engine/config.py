@@ -91,7 +91,7 @@ COMMANDERS: Final = (
     "technomancer",
     "quartermaster",
 )
-BASTION_LOSS_REDUCTION: Final = 5  # [calibrate]
+BASTION_LOSS_REDUCTION: Final = 4  # calibrated in milestone 09 (docs/PLAYTEST.md §6)
 BERSERKER_CHAMPION_MULTIPLIER: Final = 3.0
 BERSERKER_FORBIDDEN_ORDERS: Final = ("force_field", "tactical_retreat")
 PROPHET_SABOTEUR_MULTIPLIER: Final = -2.0

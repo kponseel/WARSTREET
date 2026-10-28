@@ -224,7 +224,7 @@ player with the Drone (`rusty` badge).
 
 | Code | UI (FR) | Passive | Constraint |
 |---|---|---|---|
-| `bastion` | Le Bastion | Largest unit loss of the week reduced by **5 PF** (`min(loss, 5)`, on the worst slot PF after the ±150 clamp; 0 if no slot is negative) **[calibrate]** | — |
+| `bastion` | Le Bastion | Largest unit loss of the week reduced by **4 PF** (`min(loss, 4)`, on the worst slot PF after the ±150 clamp; 0 if no slot is negative); 5 before the milestone 09 balance check (docs/PLAYTEST.md §6) | — |
 | `berserker` | Le Berserker | Champion multiplier **3.0** instead of 2.0 | Cannot play `force_field` or `tactical_retreat` |
 | `prophet` | Le Prophète du déclin | Saboteur multiplier **−2.0** instead of −1.0 | — |
 | `hunter` | Le Chasseur de primes | **+6 PF** per human with strictly more campaign points (before this week) whom the Hunter outscores this week (step 1–8 scores), max **+12** **[calibrate]** | — |

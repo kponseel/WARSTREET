@@ -128,7 +128,7 @@ def test_golden_3_players_by_hand() -> None:
     # marksman: S1 unit 12: -30, S2 swapped-in 14 under a strike: 10*1*3*0.5 = 15 -> -15;
     # saboteur 2: 10 + 20 = 30; priority target 13: 60 + 60 = 120. Picking 240.
     # Elite: only A holds 2 -> +10. Perfect shot: 13 (10.25 %) held by A and B -> +40.
-    # Bastion: worst slot -15 -> +5. Betrayal -40. Total 240 + 10 + 40 + 5 - 40 = 255.
+    # Bastion: worst slot -15 -> +4. Betrayal -40. Total 240 + 10 + 40 + 4 - 40 = 254.
     # B: champion 13: 100 + 100 = 200 -> clamped 150; veteran 4: 0 + 60; marksman 1: 20 + 10;
     # saboteur 15: 20 + 20; priority 16: 24 + 24. Picking 328. Elite 15 +10, perfect shot +40,
     # total victory +60. Pillage by C: S2 sum 100+60+10+20+24 = 214 -> round(64.2) = 64.
@@ -137,7 +137,7 @@ def test_golden_3_players_by_hand() -> None:
     # saboteur 12: 60 - 40 = 20; priority 11: 48 - 12 = 36. Picking 216. Elite 5 +10,
     # total victory +60, pillage +64 -> 350.
     # Drone: 30 + 60 - 40 - 20 + 120 = 150.
-    assert _totals(result) == {"A": 255, "B": 380, "C": 350, "Drone": 150}
+    assert _totals(result) == {"A": 254, "B": 380, "C": 350, "Drone": 150}
     assert {m: r.pf_picking for m, r in result.players.items()} == {
         "A": 240,
         "B": 328,
@@ -196,8 +196,8 @@ def test_golden_4_players_by_hand() -> None:
 
 def test_golden_5_players_by_hand() -> None:
     result = score_week(week_5_players())
-    # H: 60 + 45 + (-30 + 20) + 30 + 120 = 245; perfect shot +40, bastion +5, betrayal -40
-    # -> 250.
+    # H: 60 + 45 + (-30 + 20) + 30 + 120 = 245; perfect shot +40, bastion +4 (worst slot
+    # -10), betrayal -40 -> 249.
     # I (champion x3): 13: 150 + 150 -> 150; then 60 + 30 + 40 + 48 = 328; elite 15 +10,
     # perfect shot +40, total victory +60; plundered: S2 150+60+10+20+24 = 264 ->
     # round(79.2) = 79 -> 359.
@@ -206,7 +206,7 @@ def test_golden_5_players_by_hand() -> None:
     # more points than K: H, I, J; K outscores only H -> +6 = 272.
     # L: 60 + 45 + (-30 + 30) + 30 + 120 = 255 (marksman swapped to 14), perfect shot +40 -> 295.
     # Drone: 30 + 60 + 40 + 40 + 120 = 290 -> rusty for H, J, K, L.
-    assert _totals(result) == {"H": 250, "I": 359, "J": 355, "K": 272, "L": 295, "Drone": 290}
+    assert _totals(result) == {"H": 249, "I": 359, "J": 355, "K": 272, "L": 295, "Drone": 290}
     assert {m: r.campaign_points for m, r in result.players.items() if m != "Drone"} == {
         "I": 10.0,
         "J": 7.0,
