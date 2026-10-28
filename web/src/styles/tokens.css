@@ -1,27 +1,35 @@
 /* Design tokens. Light theme only; dark text on light backgrounds (CLAUDE.md).
    Every text/background pair below meets WCAG AA (4.5:1) or better. */
 :root {
-  --color-bg: #f3f5f8;
-  --color-surface: #ffffff;
-  --color-surface-alt: #e9edf2;
-  --color-text: #14181f;
-  --color-text-muted: #424b59;
-  --color-border: #c4cbd5;
-  --color-border-strong: #6b7685;
-  --color-primary: #1f3a5f;
-  --color-primary-hover: #152a46;
+  /* "Tactical HUD", light: khaki paper, steel ink, signal orange for actions. */
+  --color-bg: #e9ebe1;
+  --color-surface: #f8f8f2;
+  --color-surface-alt: #e1e4d6;
+  --color-text: #171b13;
+  --color-text-muted: #474f40;
+  --color-border: #b4bba4;
+  --color-border-strong: #5c6650;
+  --color-ink: #1c2318;
+  --color-ink-contrast: #eef0e4;
+  --color-ink-muted: #c8ceb8;
+  --color-primary: #a63a0a;
+  --color-primary-hover: #7f2c07;
   --color-primary-contrast: #ffffff;
-  --color-accent: #b23a0a;
-  --color-ok: #14532d;
-  --color-ok-bg: #e3f3e8;
+  --color-link: #2f4a24;
+  --color-accent: #a63a0a;
+  --color-ok: #166534;
+  --color-ok-bg: #dcefdf;
   --color-warn: #7a4300;
-  --color-warn-bg: #fff2dc;
+  --color-warn-bg: #f6ead2;
   --color-danger: #9f1c1c;
-  --color-danger-bg: #fdecec;
-  --color-focus: #c2410c;
+  --color-danger-bg: #f7e1dc;
+  --color-focus: #0e7490;
+  --color-grid: rgb(60 70 45 / 7%);
 
+  /* Fonts are bundled (OFL, @fontsource): they work offline and call no third party. */
   --font-sans: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-  --font-display: 'Arial Black', 'Segoe UI', system-ui, sans-serif;
+  --font-display: 'Saira Stencil One', 'Chakra Petch', 'Arial Black', system-ui, sans-serif;
+  --font-hud: 'Chakra Petch', 'Segoe UI', system-ui, sans-serif;
   --font-mono: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
 
   --space-1: 4px;
@@ -31,10 +39,11 @@
   --space-6: 24px;
   --space-8: 32px;
 
-  --radius: 10px;
-  --radius-small: 6px;
+  --radius: 2px;
+  --radius-small: 2px;
+  --bevel: 12px;
   --max-width: 760px;
   --tap: 44px;
-  --shadow: 0 1px 2px rgb(20 24 31 / 8%), 0 2px 8px rgb(20 24 31 / 6%);
+  --shadow: 0 1px 0 rgb(28 35 24 / 12%);
   color-scheme: light;
 }

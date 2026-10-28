@@ -1,0 +1,305 @@
+/* "Tactical HUD", light theme. Loaded after global.css: it restyles the same classes
+   (no markup change), so tests and screen readers see the same page.
+   Decorations are drawn with backgrounds and clip-paths, never with text content. */
+
+/* --- Ground: khaki paper with a faint radar grid -------------------------------------- */
+body {
+  background-color: var(--color-bg);
+  background-image:
+    linear-gradient(var(--color-grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--color-grid) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+a {
+  color: var(--color-link);
+}
+
+:focus-visible {
+  outline-color: var(--color-focus);
+}
+
+/* --- Command bar ---------------------------------------------------------------------- */
+.app-header {
+  background: var(--color-ink);
+  color: var(--color-ink-contrast);
+  border-bottom: 3px solid var(--color-primary);
+}
+
+.app-header a {
+  color: var(--color-ink-contrast);
+}
+
+.brand {
+  font-family: var(--font-display);
+  font-size: 1.375rem;
+  letter-spacing: 0.12em;
+}
+
+.header-nav {
+  font-family: var(--font-hud);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.language-switch {
+  border-color: var(--color-ink-muted);
+  border-radius: var(--radius);
+}
+
+.language-switch button[aria-pressed='true'] {
+  background: var(--color-primary);
+  color: var(--color-primary-contrast);
+}
+
+.dev-banner {
+  font-family: var(--font-hud);
+  letter-spacing: 0.03em;
+}
+
+/* --- Titles --------------------------------------------------------------------------- */
+.page h1 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+h2,
+.card h3,
+.league-card h3 {
+  font-family: var(--font-hud);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+/* The ◢ marker of section titles: a shape, not a character (screen readers skip it). */
+h2::before {
+  content: '';
+  display: inline-block;
+  width: 0.7em;
+  height: 0.7em;
+  margin-right: 0.45em;
+  background: var(--color-primary);
+  clip-path: polygon(100% 0, 100% 100%, 0 100%);
+}
+
+.lead,
+.muted {
+  color: var(--color-text-muted);
+}
+
+/* --- Panels with bevelled corners (top-left, bottom-right) ----------------------------- */
+.card,
+.league-card,
+.board-row,
+.unit-card,
+.choice-card,
+.order {
+  --cut: var(--bevel);
+  border: 1px solid var(--color-border-strong);
+  border-radius: 0;
+  box-shadow: none;
+  background:
+    linear-gradient(135deg, transparent calc(var(--cut) * 0.7071 - 1px), var(--color-border-strong) calc(var(--cut) * 0.7071 - 1px), var(--color-border-strong) calc(var(--cut) * 0.7071), transparent calc(var(--cut) * 0.7071)),
+    linear-gradient(315deg, transparent calc(var(--cut) * 0.7071 - 1px), var(--color-border-strong) calc(var(--cut) * 0.7071 - 1px), var(--color-border-strong) calc(var(--cut) * 0.7071), transparent calc(var(--cut) * 0.7071)),
+    var(--color-surface);
+  clip-path: polygon(var(--cut) 0, 100% 0, 100% calc(100% - var(--cut)), calc(100% - var(--cut)) 100%, 0 100%, 0 var(--cut));
+}
+
+.unit-card,
+.choice-card,
+.order {
+  --cut: 8px;
+}
+
+/* Inside a clipped panel, focus rings sit inside so they are never cut. */
+.board-line:focus-visible,
+.card :focus-visible {
+  outline-offset: -3px;
+}
+
+.choice-card:has(input:checked) {
+  border-color: var(--color-primary);
+  background:
+    linear-gradient(135deg, transparent calc(var(--cut) * 0.7071 - 1px), var(--color-primary) calc(var(--cut) * 0.7071 - 1px), var(--color-primary) calc(var(--cut) * 0.7071), transparent calc(var(--cut) * 0.7071)),
+    linear-gradient(315deg, transparent calc(var(--cut) * 0.7071 - 1px), var(--color-primary) calc(var(--cut) * 0.7071 - 1px), var(--color-primary) calc(var(--cut) * 0.7071), transparent calc(var(--cut) * 0.7071)),
+    var(--color-surface);
+  box-shadow: inset 4px 0 0 var(--color-primary);
+}
+
+.notice,
+.dispatch,
+.feed li {
+  border-radius: 0;
+  border-left-width: 4px;
+  background: var(--color-surface);
+}
+
+/* --- Buttons and tabs ----------------------------------------------------------------- */
+.button {
+  border-radius: var(--radius);
+  font-family: var(--font-hud);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.button-link {
+  font-family: inherit;
+  letter-spacing: normal;
+  text-transform: none;
+  color: var(--color-link);
+}
+
+.league-nav {
+  gap: 0;
+  border-bottom: 2px solid var(--color-ink);
+}
+
+.league-nav a {
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--color-text);
+  font-family: var(--font-hud);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.league-nav a[aria-current='page'] {
+  background: var(--color-ink);
+  color: var(--color-ink-contrast);
+  box-shadow: inset 0 -3px 0 var(--color-primary);
+}
+
+/* --- Banners -------------------------------------------------------------------------- */
+.phase-banner,
+.final-banner,
+.countdown {
+  font-family: var(--font-hud);
+  letter-spacing: 0.03em;
+}
+
+.phase-banner {
+  border-left: 6px solid currentcolor;
+  border-radius: 0;
+  font-weight: 600;
+}
+
+.phase-eu {
+  background: #dde6ee;
+  color: #1f3d5c;
+}
+
+.phase-crossfire {
+  background: #f4e0d3;
+  color: #7c2d0a;
+}
+
+.phase-us {
+  background: #e6e1ef;
+  color: #4b2c7f;
+}
+
+.final-banner {
+  border-radius: 0;
+  background: var(--color-ink);
+  color: var(--color-ink-contrast);
+  box-shadow: inset 6px 0 0 var(--color-primary);
+  text-transform: uppercase;
+}
+
+/* --- Leaderboard ---------------------------------------------------------------------- */
+.board-rank {
+  display: inline-grid;
+  place-items: center;
+  width: 2em;
+  min-height: 2em;
+  background: var(--color-ink);
+  color: var(--color-ink-contrast);
+  font-family: var(--font-hud);
+  clip-path: polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px);
+}
+
+.board-me {
+  box-shadow: inset 4px 0 0 var(--color-primary);
+}
+
+.board-pf,
+.live-pf,
+.my-total,
+.breakdown .num {
+  font-family: var(--font-mono);
+  letter-spacing: -0.02em;
+}
+
+.member-commander,
+.board-name small {
+  font-family: var(--font-hud);
+  letter-spacing: 0.02em;
+}
+
+.avatar {
+  border-radius: 2px;
+  font-family: var(--font-hud);
+}
+
+.tag,
+.badge,
+.status {
+  border-radius: 0;
+  font-family: var(--font-hud);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+/* --- Dispatch: a field report -------------------------------------------------------- */
+.dispatch {
+  border-left-color: var(--color-primary);
+  background:
+    repeating-linear-gradient(0deg, transparent 0 27px, var(--color-grid) 27px 28px),
+    var(--color-surface);
+}
+
+.dispatch-label {
+  font-family: var(--font-hud);
+  letter-spacing: 0.08em;
+}
+
+/* --- Small fixes after the first pass ------------------------------------------------- */
+.header-button {
+  font-family: var(--font-hud);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.league-nav a {
+  padding: 0 var(--space-2);
+  font-size: 0.875rem;
+}
+
+.my-total {
+  font-family: var(--font-hud);
+  letter-spacing: 0.02em;
+}
+
+.board-row .extremes {
+  padding: 0 var(--space-3) var(--space-3);
+}
+
+.slot-pick {
+  border-radius: 0;
+}
+
+.slot-pick[aria-pressed='true'] {
+  background: #f6e5da;
+  box-shadow: inset 4px 0 0 var(--color-primary);
+}
+
+.slot-name {
+  font-family: var(--font-hud);
+  letter-spacing: 0.03em;
+}
