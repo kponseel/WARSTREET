@@ -46,3 +46,21 @@ describe('detectLocale', () => {
     expect(detectLocale(languages)).toBe(expected)
   })
 })
+
+describe('game terms', () => {
+  // The weekly score is "War Points" (₩) and the order currency is "Credits" / "Crédits"
+  // in both languages; the old names must not come back in anything a player reads.
+  const OLD = /\b(FP|PF)\b|Fantasy Points|Points Fantasy|\bammo\b|\bmunitions?\b/i
+
+  it('uses War Points and Credits in every message', async () => {
+    const { rulesEn } = await import('../content/rules.en')
+    const { rulesFr } = await import('../content/rules.fr')
+    const texts = [...Object.values(en), ...Object.values(fr), JSON.stringify(rulesEn), JSON.stringify(rulesFr)]
+    // Placeholders and ids keep their internal names ({ammo_cap}, term.ammo): only words count.
+    const words = (text: string) => text.replace(/\{\w+\}/g, '').replace(/"(term|id)":"[^"]*"/g, '')
+    const offending = texts.filter((text) => OLD.test(words(text)))
+    expect(offending).toEqual([])
+    expect(en['term.pf']).toBe('War Points (₩)')
+    expect(fr['term.pf']).toBe('War Points (₩)')
+  })
+})

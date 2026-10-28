@@ -22,7 +22,7 @@ test('a week unfolds: live front, resupply swap and order, Thursday dispatch', a
   await expect(page.getByRole('heading', { name: 'The front — week 1' })).toBeVisible()
   await expect(page.getByText('European Assault')).toBeVisible()
   await expect(page.getByRole('heading', { name: 'Live leaderboard' })).toBeVisible()
-  await expect(page.getByText(/My live score: -?\d+ FP/)).toBeVisible()
+  await expect(page.getByText(/My live score: -?\d+ ₩/)).toBeVisible()
   await expect(page.locator('.feed-dispatch')).toHaveCount(1)
   const axe = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa']).analyze()
   expect(axe.violations.map((v) => v.id)).toEqual([])
@@ -57,7 +57,7 @@ test('a week unfolds: live front, resupply swap and order, Thursday dispatch', a
   await strike.getByRole('button', { name: 'Prepare' }).click()
   await strike.getByRole('button', { name: /Review/ }).click()
   await strike.getByRole('button', { name: 'Play the order' }).click()
-  await expect(page.getByText(/Orbital Strike → .* · 2 ammo · waiting/)).toBeVisible()
+  await expect(page.getByText(/Orbital Strike → .* · 2 credit\(s\) · waiting/)).toBeVisible()
 
   // Thursday: the swap applies (the incoming unit plays Segment 2 only), the Dispatch.
   devAdvance(league.league_id, 'thursday', false)

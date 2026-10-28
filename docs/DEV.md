@@ -35,7 +35,7 @@ python -m jobs.dev advance --league <id> --to next        # next week's briefing
 python -m jobs.dev advance --league <id> --to end         # the rest of the campaign
 python -m jobs.dev advance --league <id> --to 2026-11-04T18:00Z
 
-python -m jobs.dev inspect --league <id>   # phase, ammo, squads, orders, pacts, runs, events
+python -m jobs.dev inspect --league <id>   # phase, credits, squads, orders, pacts, runs, events
 python -m jobs.dev logs --last 5           # the last ticks with their log lines
 python -m jobs.dev logs --errors           # failed ticks, warnings and errors only
 python -m jobs.dev clock                   # show; --at ISO to set; --clear for real time

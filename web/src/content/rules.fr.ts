@@ -8,7 +8,7 @@ export const rulesFr: RulesContent = {
       id: 'campaign',
       title: 'La campagne',
       paragraphs: [
-        'Une campagne dure de {campaign_weeks_min} à {campaign_weeks_max} semaines ({campaign_weeks_default} par défaut). Chaque semaine, les joueurs sont classés selon leurs Points Fantasy (PF) et le rang donne des points de campagne. Celui qui en a le plus à la fin gagne.',
+        'Une campagne dure de {campaign_weeks_min} à {campaign_weeks_max} semaines ({campaign_weeks_default} par défaut). Chaque semaine, les joueurs sont classés selon leurs War Points (₩) et le rang donne des points de campagne. Celui qui en a le plus à la fin gagne.',
         'La dernière semaine est l’Assaut final : ses points de campagne comptent ×{final_week_multiplier}.',
       ],
     },
@@ -35,8 +35,8 @@ export const rulesFr: RulesContent = {
       id: 'scoring',
       title: 'Le score',
       paragraphs: [
-        'Une unité marque sa performance de la semaine en % × {pf_per_percent} × le multiplicateur de son poste × son coefficient (les actions calmes ont un coefficient plus élevé), plafonné à ±{unit_pf_clamp} PF par poste.',
-        'Bonus : +{elite_unit_bonus} PF pour chaque unité du front que personne d’autre n’a choisie, les exploits, et le passif de votre commandant.',
+        'Une unité marque sa performance de la semaine en % × {pf_per_percent} × le multiplicateur de son poste × son coefficient (les actions calmes ont un coefficient plus élevé), plafonné à ±{unit_pf_clamp} ₩ par poste.',
+        'Bonus : +{elite_unit_bonus} ₩ pour chaque unité du front que personne d’autre n’a choisie, les exploits, et le passif de votre commandant.',
       ],
     },
     {
@@ -48,9 +48,9 @@ export const rulesFr: RulesContent = {
     },
     {
       id: 'orders',
-      title: 'Munitions et ordres',
+      title: 'Crédits et ordres',
       paragraphs: [
-        'Vous recevez {ammo_income} munitions par semaine, jusqu’à {ammo_cap}. Elles paient les ordres : attaques (Frappe orbitale, Pillage, Blocus, Brouillage), défenses (Champ de force, Repli tactique) et manœuvres (Promotion sur le terrain, Retournement, Renseignement).',
+        'Vous recevez {ammo_income} crédits par semaine, jusqu’à {ammo_cap}. Ils paient les ordres : attaques (Frappe orbitale, Pillage, Blocus, Brouillage), défenses (Champ de force, Repli tactique) et manœuvres (Promotion sur le terrain, Retournement, Renseignement).',
         'Un joueur reçoit au plus {attack_cap_per_week} attaques par semaine. Le meneur de la campagne porte la Prime : l’attaquer coûte moins cher.',
       ],
     },
@@ -58,7 +58,7 @@ export const rulesFr: RulesContent = {
       id: 'pacts',
       title: 'Les pactes',
       paragraphs: [
-        'Pendant le briefing, deux joueurs peuvent signer un pacte de non-agression d’une semaine. Attaquer son allié est une trahison : {betrayal_penalty} PF et le badge Traître.',
+        'Pendant le briefing, deux joueurs peuvent signer un pacte de non-agression d’une semaine. Attaquer son allié est une trahison : {betrayal_penalty} ₩ et le badge Traître.',
       ],
     },
     {
@@ -73,7 +73,7 @@ export const rulesFr: RulesContent = {
     { term: 'term.league', text: 'Une partie privée entre amis.' },
     { term: 'term.campaign', text: 'La saison, faite de plusieurs semaines de marché.' },
     { term: 'term.squad', text: 'Vos cinq unités au front et votre réserve pour une semaine.' },
-    { term: 'term.pf', text: 'Points Fantasy, le score de la semaine.' },
+    { term: 'term.pf', text: 'War Points, le score de la semaine.' },
     { term: 'term.campaign_points', text: 'Points donnés par le rang de la semaine. Ils désignent le vainqueur.' },
     { term: 'term.conflict_zone', text: 'Les actions autorisées au poste de Cible prioritaire cette semaine.' },
     { term: 'term.ammo', text: 'La monnaie des ordres.' },

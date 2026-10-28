@@ -329,7 +329,7 @@ def run(players: int, weeks: int, runs: int, seed: int) -> str:
         flag = "  <-- outside ±30 %" if abs(ratio) > 0.30 else ""
         lines.append(f"{commander:<14}{games:>7}{rate:>10.1%}{ratio:>+9.0%}{flag}")
     lines.append(
-        f"average Elite unit bonus per player-week: {totals.elite_pf / totals.player_weeks:.1f} PF"
+        f"average Elite unit bonus per player-week: {totals.elite_pf / totals.player_weeks:.1f} ₩"
     )
     lines.append(f"rusty badge frequency per player-week: {totals.rusty / totals.player_weeks:.1%}")
     return "\n".join(lines)

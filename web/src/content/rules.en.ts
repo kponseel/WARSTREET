@@ -8,7 +8,7 @@ export const rulesEn: RulesContent = {
       id: 'campaign',
       title: 'The campaign',
       paragraphs: [
-        'A campaign lasts {campaign_weeks_min} to {campaign_weeks_max} weeks ({campaign_weeks_default} by default). Each week, players are ranked by their Fantasy Points (FP) and the rank gives campaign points. The player with the most campaign points at the end wins.',
+        'A campaign lasts {campaign_weeks_min} to {campaign_weeks_max} weeks ({campaign_weeks_default} by default). Each week, players are ranked by their War Points (₩) and the rank gives campaign points. The player with the most campaign points at the end wins.',
         'The last week is the Final Assault: its campaign points count ×{final_week_multiplier}.',
       ],
     },
@@ -35,8 +35,8 @@ export const rulesEn: RulesContent = {
       id: 'scoring',
       title: 'Scoring',
       paragraphs: [
-        'A unit scores its weekly return in % × {pf_per_percent} × its slot multiplier × its coefficient (calmer stocks get a higher coefficient), capped at ±{unit_pf_clamp} FP per slot.',
-        'Bonuses: +{elite_unit_bonus} FP for each front unit nobody else picked, feats, and your commander’s passive.',
+        'A unit scores its weekly return in % × {pf_per_percent} × its slot multiplier × its coefficient (calmer stocks get a higher coefficient), capped at ±{unit_pf_clamp} ₩ per slot.',
+        'Bonuses: +{elite_unit_bonus} ₩ for each front unit nobody else picked, feats, and your commander’s passive.',
       ],
     },
     {
@@ -48,9 +48,9 @@ export const rulesEn: RulesContent = {
     },
     {
       id: 'orders',
-      title: 'Ammo and orders',
+      title: 'Credits and orders',
       paragraphs: [
-        'You get {ammo_income} ammo each week, up to {ammo_cap}. Spend it on orders: attacks (Orbital Strike, Plunder, Blockade, Jamming), defenses (Force Field, Tactical Retreat) and maneuvers (Field Promotion, Reversal, Intel).',
+        'You get {ammo_income} credits each week, up to {ammo_cap}. Spend them on orders: attacks (Orbital Strike, Plunder, Blockade, Jamming), defenses (Force Field, Tactical Retreat) and maneuvers (Field Promotion, Reversal, Intel).',
         'A player can receive at most {attack_cap_per_week} attacks per week. The campaign leader carries the Bounty: attacks against them are cheaper.',
       ],
     },
@@ -58,7 +58,7 @@ export const rulesEn: RulesContent = {
       id: 'pacts',
       title: 'Pacts',
       paragraphs: [
-        'During the briefing, two players can sign a one-week non-aggression pact. Attacking your ally is a betrayal: {betrayal_penalty} FP and the Traitor badge.',
+        'During the briefing, two players can sign a one-week non-aggression pact. Attacking your ally is a betrayal: {betrayal_penalty} ₩ and the Traitor badge.',
       ],
     },
     {
@@ -73,7 +73,7 @@ export const rulesEn: RulesContent = {
     { term: 'term.league', text: 'A private game between friends.' },
     { term: 'term.campaign', text: 'The season, made of several market weeks.' },
     { term: 'term.squad', text: 'Your five front units and your reserve for one week.' },
-    { term: 'term.pf', text: 'Fantasy Points, the weekly score.' },
+    { term: 'term.pf', text: 'War Points, the weekly score.' },
     { term: 'term.campaign_points', text: 'Points given by the weekly rank. They decide the winner.' },
     { term: 'term.conflict_zone', text: 'The stocks allowed in the Priority Target slot this week.' },
     { term: 'term.ammo', text: 'The currency you spend on orders.' },

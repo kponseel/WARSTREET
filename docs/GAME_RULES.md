@@ -24,15 +24,17 @@ re-checked for 3–5 players before the first real campaign.
 | `squad` | Escouade | A player's 5 front units + reserve for one week |
 | `unit` | Unité | One stock placed in a slot |
 | `slot` | Poste | champion, veteran, marksman, saboteur, priority_target, reserve_1..3 |
-| `pf` | PF (Points Fantasy) | Weekly score points |
+| `pf` | War Points (₩) | Weekly score points (shown as ₩ in both languages) |
 | `campaign_points` | Points de campagne | Points from the weekly rank; decide the winner |
-| `ammo` | Munitions | Currency for orders |
+| `ammo` | Crédits | Currency for orders (Credits) |
 | `order` | Ordre | An action card: attack, defense or maneuver |
 | `commander` | Commandant | A player's class for the whole campaign (passive ability) |
 | `bounty` | La Prime | Marks the campaign leader: cheaper to attack |
 | `pact` | Pacte | One-week non-aggression pact between two players |
 | `drone` | Drone aléatoire | Ghost player with a random squad, scored but not ranked |
 | `conflict_zone` | Zone de conflit | The 8 stocks allowed in the priority_target slot this week |
+
+The code keeps its short names (`pf`, `pf_total`, `ammo`, `ammo_ledger`, error `NOT_ENOUGH_AMMO`); players only ever read **War Points (₩)** and **Credits / Crédits**.
 
 ---
 
@@ -185,14 +187,14 @@ provider, stored in `instrument_weeks.market_cap`), then the largest absolute we
 
 Compute in this order. Round half away from zero only where stated.
 
-1. **Unit segment PF**: for each unit active in a segment,
+1. **Unit segment War Points**: for each unit active in a segment,
    `pf_seg = r_seg × 10 × m_slot × coef × order_mod_seg`.
    Commander multipliers replace `m_slot` (§5). Orders only modify S2 (§6).
 2. **Swaps**: a unit swapped out at resupply scores S1 only; the incoming reserve unit
    takes the same slot and scores S2 only.
-3. **Unit weekly PF** = `round(pf_s1 + pf_s2)`, then clamp to **±150** per slot
+3. **Unit weekly War Points** = `round(pf_s1 + pf_s2)`, then clamp to **±150** per slot
    (a swapped slot is clamped as one slot).
-4. **Elite unit**: +10 PF **[calibrate]** for each front unit (at lock) that no other
+4. **Elite unit**: +10 ₩ **[calibrate]** for each front unit (at lock) that no other
    human deployed in their front this week.
 5. **Feats** (see §8).
 6. **Bastion** passive.
@@ -216,7 +218,7 @@ player with the Drone (`rusty` badge).
 **[calibrate]** Ties share the average of the tied ranks' points (e.g. two 2nd places with
 4 humans → (6+3)/2 = 4.5 each). Final week: ×2.
 
-**Campaign tiebreak**: most weekly 1st places, then highest cumulative PF.
+**Campaign tiebreak**: most weekly 1st places, then highest cumulative War Points.
 
 ---
 
@@ -224,27 +226,27 @@ player with the Drone (`rusty` badge).
 
 | Code | UI (FR) | Passive | Constraint |
 |---|---|---|---|
-| `bastion` | Le Bastion | Largest unit loss of the week reduced by **4 PF** (`min(loss, 4)`, on the worst slot PF after the ±150 clamp; 0 if no slot is negative); 5 before the milestone 09 balance check (docs/PLAYTEST.md §6) | — |
+| `bastion` | Le Bastion | Largest unit loss of the week reduced by **4 ₩** (`min(loss, 4)`, on the worst slot War Points after the ±150 clamp; 0 if no slot is negative); 5 before the milestone 09 balance check (docs/PLAYTEST.md §6) | — |
 | `berserker` | Le Berserker | Champion multiplier **3.0** instead of 2.0 | Cannot play `force_field` or `tactical_retreat` |
 | `prophet` | Le Prophète du déclin | Saboteur multiplier **−2.0** instead of −1.0 | — |
-| `hunter` | Le Chasseur de primes | **+6 PF** per human with strictly more campaign points (before this week) whom the Hunter outscores this week (step 1–8 scores), max **+12** **[calibrate]** | — |
+| `hunter` | Le Chasseur de primes | **+6 ₩** per human with strictly more campaign points (before this week) whom the Hunter outscores this week (step 1–8 scores), max **+12** **[calibrate]** | — |
 | `shadow` | L'Ombre | Squad, live score and S2 swap hidden from others until debrief; absent from the live leaderboard (others' live ranks are computed without the Shadow); own orders anonymous; cannot be targeted by `intel` | — |
-| `technomancer` | Le Technomancien | +1 ammo per week; ammo cap 6 | — |
+| `technomancer` | Le Technomancien | +1 credit per week; credit cap 6 | — |
 | `quartermaster` | L'Intendant | Reserve of 3; up to 2 swaps at resupply (others: 1) | — |
 
 ---
 
-## 6. Ammo and orders
+## 6. Credits and orders
 
-- **Income**: at each briefing opening, +3 ammo (Technomancer +4). Cap 5 (Technomancer 6).
+- **Income**: at each briefing opening, +3 credits (Technomancer +4). Cap 5 (Technomancer 6).
   Week 1: income only.
 - **Catch-up**: at briefing opening (week ≥2), humans ranked strictly in the bottom half
-  of campaign standings (`rank > ceil(n/2)`) get +1 ammo.
+  of campaign standings (`rank > ceil(n/2)`) get +1 credit.
 - The cap applies to the balance after income **and** catch-up; it never lowers a balance.
 - **Bounty**: the strict campaign leader (no tie) carries the Bounty. Attack orders against
   them cost 1 less (minimum 1).
 - **Attack cap**: a player can receive at most **2 attack orders per week**. A third attempt
-  is rejected at play time; no ammo is spent.
+  is rejected at play time; no credits are spent.
 - Orders are validated and paid at play time by RPC and cannot be cancelled. They resolve
   when their window closes (briefing orders at `lock_at`, resupply orders at
   `resupply_closes_at`), in play-timestamp order. **Exception**: `intel` resolves
@@ -259,11 +261,11 @@ player with the Drone (`rusty` badge).
 
 | Code | UI (FR) | Type | Cost | Window | Effect |
 |---|---|---|---|---|---|
-| `orbital_strike` | Frappe orbitale | attack | 2 | resupply | Target's chosen front unit: S2 PF ×0.5 (gains and losses) |
-| `pillage` | Pillage | attack | 3 | resupply | If target's S2 unit PF sum > 0: transfer `round(30%)` of it from target to attacker (details below) |
+| `orbital_strike` | Frappe orbitale | attack | 2 | resupply | Target's chosen front unit: S2 War Points ×0.5 (gains and losses) |
+| `pillage` | Pillage | attack | 3 | resupply | If target's S2 unit War Points sum > 0: transfer `round(30%)` of it from target to attacker (details below) |
 | `blockade` | Blocus | attack | 2 | briefing | Target cannot swap nor play resupply orders this week |
-| `jamming` | Brouillage | attack | 1 | briefing or resupply | Target's live PF and live rank hidden (`???`) from everyone, target included, until debrief (details below) |
-| `force_field` | Champ de force | defense | 1 | briefing or resupply (hidden) | Cancels the first attack received after it (by play time, see above). The attacker's ammo is lost and they are told "blocked" |
+| `jamming` | Brouillage | attack | 1 | briefing or resupply | Target's live War Points and live rank hidden (`???`) from everyone, target included, until debrief (details below) |
+| `force_field` | Champ de force | defense | 1 | briefing or resupply (hidden) | Cancels the first attack received after it (by play time, see above). The attacker's credits are lost and they are told "blocked" |
 | `tactical_retreat` | Repli tactique | defense | 1 | resupply | One own front unit scores 0 on S2 |
 | `field_promotion` | Promotion sur le terrain | maneuver | 2 | resupply | Swap the S2 multipliers of the champion and one other own front unit |
 | `reversal` | Retournement | maneuver | 2 | resupply | Marksman multiplier becomes −1.0 for S2 |
@@ -272,7 +274,7 @@ player with the Drone (`rusty` badge).
 Attack-type orders: `orbital_strike`, `pillage`, `blockade`, `jamming`.
 Multiple `orbital_strike` on the same unit stack (×0.25).
 
-**Pillage details**: the base is the target's S2 unit PF sum after all S2 order effects
+**Pillage details**: the base is the target's S2 unit War Points sum after all S2 order effects
 (orbital strike, retreat, promotion, reversal) and **before** the ±150 slot clamp. Two
 pillages on the same target each take `round(30%)` of the **same** base (not of what is
 left). The transfer happens at step 7 and is not clamped.
@@ -281,7 +283,7 @@ left). The transfer happens at step 7 and is not clamped.
 (%) stay visible; a determined player could recompute a score by hand, and that is
 accepted (it is a game effect, not a secret). A jammed player is listed at the bottom of
 the live leaderboard as `???`, without a rank; the others' live ranks are computed
-without them. The target's own per-unit live PF are also shown as `???`.
+without them. The target's own per-unit live War Points are also shown as `???`.
 
 **Hidden information accepted as visible**: an attack rejected by the attack cap reveals
 that the target already received 2 attacks this week.
@@ -297,17 +299,17 @@ that the target already received 2 attacks this week.
   until debrief. Max 1 active pact per player per week. It cannot be cancelled.
 - **Betrayal**: any attack-type order played against your ally counts as betrayal, even if
   a force field blocks it. The attack still works (unless blocked), but the attacker gets
-  **−40 PF once per week** (step 8), however many attacks, and the `traitor` badge.
+  **−40 ₩ once per week** (step 8), however many attacks, and the `traitor` badge.
 
 ---
 
 ## 8. Feats and badges
 
-Feats (PF, step 5):
+Feats (War Points, step 5):
 
-| Code | UI (FR) | PF | Condition |
+| Code | UI (FR) | ₩ | Condition |
 |---|---|---|---|
-| `total_victory` | Victoire totale | +60 | All 5 front slots end with unit PF > 0 |
+| `total_victory` | Victoire totale | +60 | All 5 front slots end with unit War Points > 0 |
 | `perfect_shot` | Tir parfait | +40 | Holds, in a non-saboteur front slot, the instrument with the highest weekly return among all humans' non-saboteur front units. Ties: all holders (+40 once) |
 | `resurrection` | Résurrection | +40 | Once per week: a non-saboteur front instrument with previous-week return < −6 % and this-week return > +4 % |
 | `heavy_losses` | Pertes lourdes | −40 | Per non-saboteur front unit whose instrument's weekly return < −10 % |
@@ -327,9 +329,9 @@ Badges (computed at debrief, displayed next to the pseudo during the following w
 | Code | UI (FR) | Condition |
 |---|---|---|
 | `warlord` | Seigneur de guerre | Weekly rank 1 |
-| `oracle` | Oracle | Saboteur unit PF ≥ +50 |
+| `oracle` | Oracle | Saboteur unit War Points ≥ +50 |
 | `cannon_fodder` | Chair à canon | A long unit with previous-week return < −6 % and this-week return < −5 % |
-| `friendly_fire` | Tir ami | All 5 front unit PF < 0 |
+| `friendly_fire` | Tir ami | All 5 front unit War Points < 0 |
 | `traitor` | Traître | Betrayed an ally this week |
 | `rusty` | Rouillé | `pf_picking` (steps 1–3 only) below the Drone's score |
 
@@ -431,7 +433,7 @@ changes, so the market job stores it weekly in `instrument_weeks.market_cap`.
 
 | Code | English | Français |
 |---|---|---|
-| `pf` | FP (Fantasy Points) | PF (Points Fantasy) |
+| `pf` | War Points (₩) | War Points (₩) |
 | `campaign_points` | Campaign points | Points de campagne |
 | `campaign` | Campaign | Campagne |
 | `squad` | Squad | Escouade |
@@ -453,7 +455,7 @@ changes, so the market job stores it weekly in `instrument_weeks.market_cap`.
 | unit weather | On Fire / Frozen / Earnings this week / Roller Coaster | En feu / Surgelée / Résultats cette semaine / Montagnes russes |
 | sectors | see §11 | voir §11 |
 | `is_final` | Final Assault | Assaut final |
-| `ammo` | Ammo | Munitions |
+| `ammo` | Credits | Crédits |
 | `order` | Order | Ordre |
 | `bounty` | Bounty | La Prime |
 | `pact` | Pact | Pacte |
@@ -498,16 +500,16 @@ changes, so the market job stores it weekly in `instrument_weeks.market_cap`.
 | Phase boundaries | Fixed "Wednesday / Friday US close" | Last `XNYS` session close (holiday-proof), debrief + 30 min |
 | Dividends | "ex-date inside a segment" | Exact session rule; prices fetched unadjusted |
 | Swaps | Count and validity unspecified | 1 swap (Quartermaster 2); squad rules still apply after swaps |
-| Elite unit | +25 PF | +10 PF **[calibrate]** |
+| Elite unit | +25 ₩ | +10 ₩ **[calibrate]** |
 | `rusty` | Below the Drone | `pf_picking` (steps 1–3) below the Drone |
 | `intel` | Resolved at lock (useless) | Resolves immediately, one-time snapshot |
 | Force field | "first" vs "next" ambiguous | Blocks the first attack played after it |
 | Pillage | Base and stacking unspecified | S2 sum after orders, before clamp; same base for each |
-| Betrayal | Per attack, blocked unclear | Blocked counts; −40 PF once per week |
+| Betrayal | Per attack, blocked unclear | Blocked counts; −40 ₩ once per week |
 | Jamming / Shadow | Score hidden | Score and rank hidden; ranks computed without them |
 | Feats with swaps | Unspecified | Front at lock |
 | `perfect_shot` | Any front unit | Non-saboteur front units only |
-| `vol12w`, ammo cap, Bastion | Unspecified details | Sample stdev; cap after catch-up; worst slot after clamp |
+| `vol12w`, credit cap, Bastion | Unspecified details | Sample stdev; cap after catch-up; worst slot after clamp |
 | Pacts | Accept or ignore | Accept, decline or ignore; several pending allowed |
 | Leaving a league | Unspecified | Lobby only |
 | Unit weather, sectors | French labels only, no rules | Codes, EN/FR labels, thresholds |

@@ -41,7 +41,7 @@ rehearse is in [DEV.md](DEV.md).
 
 | When (Paris) | Check |
 |---|---|
-| Saturday | Ammo arrived (+3 each). The Conflict Zone shows in the briefing (Priority Target filter). |
+| Saturday | Credits arrived (+3 each). The Conflict Zone shows in the briefing (Priority Target filter). |
 | Sunday evening | Everyone saved a squad (or knows the auto squad). Briefing orders paid. |
 | Monday after 09:10 | Squads locked; live leaderboard moving; the Monday Front Dispatch is in the feed; the Shadow is not on the board; a jammed player shows `???`. |
 | Wednesday night | Resupply open after the US close; swaps and resupply orders work; a Blockaded player sees why not. |
@@ -118,19 +118,19 @@ milestone 08 (Bastion 5).
 | Prophet | −2 % | −1 % | −1 % | fair |
 | Hunter | +3 % | +5 % | +5 % | fair to slightly above (−2 to +5 %) |
 | Shadow | −0 % | +1 % | −8 % | low at 5 players (−6 to −10 %) |
-| Technomancer | −2 % | −3 % | −1 % | slightly low; extra ammo changes nothing here |
+| Technomancer | −2 % | −3 % | −1 % | slightly low; extra credits change nothing here |
 | Quartermaster | −3 % | −3 % | −6 % | slightly low at 5 |
 
-Elite unit bonus: 30–37 FP per player and week on average; `rusty` (beaten by the Drone)
+Elite unit bonus: 30–37 ₩ per player and week on average; `rusty` (beaten by the Drone)
 about half the player-weeks, as expected from random drafts.
 
 **Decision** (taken by the owner after milestone 09):
 
 1. `BASTION_LOSS_REDUCTION` 5 → **4**, applied. Bastion was the one consistent outlier;
    at 4 it lands at +5 / −1 / +7 % (3 / 4 / 5 players, seed 21, 8000 campaigns), at 3 it
-   would land at +3 / −3 / +5 %. The two golden weeks with a Bastion shield moved by 1 FP
+   would land at +3 / −3 / +5 %. The two golden weeks with a Bastion shield moved by 1 ₩
    (255 → 254 and 250 → 249), checked by hand in `engine/tests/test_golden.py`.
 2. The others stay as they are for the first campaign. Shadow's hidden score and
-   Technomancer's extra ammo are worth more with people than with a random policy (the
+   Technomancer's extra credits are worth more with people than with a random policy (the
    simulator cannot see bluff or well-timed orders); re-check after the playtest with
    the real orders (`private.tick_runs` and `public.orders`).

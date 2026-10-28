@@ -254,7 +254,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     for row in result["scores"]:
         print(
             f"#{row['rank'] or '-'} {row['pseudo']:<8} {row['commander'] or 'drone':<12} "
-            f"PF {row['pf_total']:>5}  CP {row['campaign_points']:g}"
+            f"₩ {row['pf_total']:>5}  CP {row['campaign_points']:g}"
         )
     for item in result["dispatches"]:
         print(f"\n[{item['template_key']}]\nEN: {item['en']}\nFR: {item['fr']}")

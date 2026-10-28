@@ -63,7 +63,7 @@ export const en = {
   'commander.noConstraint': 'none.',
   'commander.drone': 'Random Drone',
   'commander.bastion': 'The Bastion',
-  'commander.bastion.passive': 'your biggest unit loss of the week is reduced by {pf} FP.',
+  'commander.bastion.passive': 'your biggest unit loss of the week is reduced by {pf} ₩.',
   'commander.berserker': 'The Berserker',
   'commander.berserker.passive': 'Champion multiplier {mult} instead of {base}.',
   'commander.berserker.constraint': 'cannot play {orders}.',
@@ -71,12 +71,12 @@ export const en = {
   'commander.prophet.passive': 'Saboteur multiplier {mult} instead of {base}.',
   'commander.hunter': 'The Bounty Hunter',
   'commander.hunter.passive':
-    '+{pf} FP for each player ahead of you in the campaign whom you outscore this week (max +{max}).',
+    '+{pf} ₩ for each player ahead of you in the campaign whom you outscore this week (max +{max}).',
   'commander.shadow': 'The Shadow',
   'commander.shadow.passive':
     'your squad, live score and swap stay hidden until the debrief; your orders are anonymous; Intel cannot target you.',
   'commander.technomancer': 'The Technomancer',
-  'commander.technomancer.passive': '+{extra} ammo per week; ammo cap {cap} instead of {baseCap}.',
+  'commander.technomancer.passive': '+{extra} credit per week; credit cap {cap} instead of {baseCap}.',
   'commander.quartermaster': 'The Quartermaster',
   'commander.quartermaster.passive':
     'reserve of {reserve} units instead of {baseReserve}; up to {swaps} swaps at resupply instead of {baseSwaps}.',
@@ -116,10 +116,10 @@ export const en = {
   'term.league': 'League',
   'term.campaign': 'Campaign',
   'term.squad': 'Squad',
-  'term.pf': 'FP (Fantasy Points)',
+  'term.pf': 'War Points (₩)',
   'term.campaign_points': 'Campaign points',
   'term.conflict_zone': 'Conflict Zone',
-  'term.ammo': 'Ammo',
+  'term.ammo': 'Credits',
   'term.bounty': 'Bounty',
   'term.pact': 'Pact',
   'term.drone': 'Random Drone',
@@ -213,20 +213,20 @@ export const en = {
   'briefing.deploy': 'Deploy',
   'briefing.deployAs': 'Deploy {ticker} as {slot}',
   'orders.title': 'Orders',
-  'orders.ammo': 'Ammo:',
+  'orders.ammo': 'Credits:',
   'orders.kind.attack': 'attack',
   'orders.kind.defense': 'defense',
   'orders.kind.maneuver': 'maneuver',
-  'orders.cost': '{n} ammo',
-  'orders.costRange': '{min}–{max} ammo',
+  'orders.cost': '{n} credit(s)',
+  'orders.costRange': '{min}–{max} credits',
   'orders.hidden': 'Hidden: the others only learn about it if it blocks an attack.',
   'orders.prepare': 'Prepare',
   'orders.target': 'Target',
   'orders.slot': 'Unit',
   'orders.bounty': 'Bounty: cheaper',
-  'orders.review': 'Review ({cost} ammo)',
+  'orders.review': 'Review ({cost} credit(s))',
   'orders.confirmTitle': 'Confirm the order',
-  'orders.confirm': 'Play {order} for {cost} ammo? Orders cannot be cancelled.',
+  'orders.confirm': 'Play {order} for {cost} credit(s)? Orders cannot be cancelled.',
   'orders.play': 'Play the order',
   'orders.mine': 'My orders this week',
   'orders.status.pending': 'waiting',
@@ -278,11 +278,11 @@ export const en = {
   'front.updated': 'Updated at {time}',
   'front.noScores': 'No live score yet: they appear once the markets open after the lock.',
   'front.droneTag': 'Drone',
-  'front.pf': '{pf} FP',
+  'front.pf': '{pf} ₩',
   'front.inShadows': 'In the shadows (hidden until the debrief): {names}',
   'front.squadHidden': 'Squad hidden.',
   'front.mySquad': 'My squad',
-  'front.myPf': 'My live score: {pf} FP',
+  'front.myPf': 'My live score: {pf} ₩',
   'front.jammed': 'You are jammed: your score is hidden (???) until the debrief, even from you.',
   'front.noSquad': 'No squad this week.',
   'front.s1Only': 'Segment 1 only',
@@ -349,8 +349,8 @@ export const en = {
   'campaign.standings': 'Standings',
   'campaign.player': 'Player',
   'campaign.wins': 'Weekly wins',
-  'campaign.pfTotal': 'Total FP',
-  'campaign.tiebreak': 'Ties: most weekly wins, then most total FP.',
+  'campaign.pfTotal': 'Total ₩',
+  'campaign.tiebreak': 'Ties: most weekly wins, then most total War Points.',
   'campaign.chart': 'Points week after week',
   'campaign.chartTitle': 'Cumulative campaign points per week',
   'campaign.weekShort': 'W{n}',
@@ -419,7 +419,7 @@ export const en = {
   'error.NOT_AUTHENTICATED': 'Please log in again.',
   'error.RATE_LIMITED': 'Too many actions in a minute (limit {limit}). Wait a moment and try again.',
   'error.NOT_A_MEMBER': 'You are not a member of this league.',
-  'error.NOT_ENOUGH_AMMO': 'Not enough ammo: this order costs {cost}, you have {balance}.',
+  'error.NOT_ENOUGH_AMMO': 'Not enough credits: this order costs {cost}, you have {balance}.',
   'error.NOT_ENOUGH_READY': '{ready} players ready, {min} needed to start.',
   'error.NOT_HOST': 'Only the host can do this.',
   'error.NOT_PACT_PARTNER': 'Only the invited player can answer this pact.',
@@ -458,11 +458,11 @@ export const en = {
   'error.VETERAN_SAME_REGION': 'Your Veteran must come from a different region than your Champion.',
   // Front Dispatch (jobs/dispatch.py): template_key + '.' + variant; same variant in EN and FR.
   'dispatch.monday.0':
-    'Front Dispatch, Monday: first shots fired. {mover} opens the war at {move} %. {leader} takes the early lead with {pf} FP.',
+    'Front Dispatch, Monday: first shots fired. {mover} opens the war at {move} %. {leader} takes the early lead with {pf} ₩.',
   'dispatch.monday.1':
-    'Dawn report: {mover} moved {move} % before the coffee was cold. Early commander of the field: {leader} ({pf} FP).',
+    'Dawn report: {mover} moved {move} % before the coffee was cold. Early commander of the field: {leader} ({pf} ₩).',
   'dispatch.monday.2':
-    'The markets wake up and {mover} is already at {move} %. {leader} plants the flag first: {pf} FP.',
+    'The markets wake up and {mover} is already at {move} %. {leader} plants the flag first: {pf} ₩.',
   'dispatch.monday_fog.0':
     'Front Dispatch, Monday: {mover} opens at {move} %. The fog of war hides the leader.',
   'dispatch.monday_fog.1':
@@ -476,11 +476,11 @@ export const en = {
   'dispatch.thursday.2':
     'Mid-week intel: {attacks} strike(s) went through, {blocked} bounced off a shield, {swaps} swap(s) at the depot, {pacts} pact(s) signed.',
   'dispatch.debrief.0':
-    'Debrief: {winner} wins the week with {pf} FP. Hero unit: {best} ({best_move} %). Casualty of the week: {worst} ({worst_move} %). The Drone scored {drone_pf} and rusted {rusty} commander(s).',
+    'Debrief: {winner} wins the week with {pf} ₩. Hero unit: {best} ({best_move} %). Casualty of the week: {worst} ({worst_move} %). The Drone scored {drone_pf} ₩ and rusted {rusty} commander(s).',
   'dispatch.debrief.1':
-    'Friday night, the smoke clears: {winner} holds the hill with {pf} FP. {best} carried the squad ({best_move} %), {worst} sank ({worst_move} %). Drone: {drone_pf} FP, {rusty} player(s) beaten by a random draft.',
+    'Friday night, the smoke clears: {winner} holds the hill with {pf} ₩. {best} carried the squad ({best_move} %), {worst} sank ({worst_move} %). Drone: {drone_pf} ₩, {rusty} player(s) beaten by a random draft.',
   'dispatch.debrief.2':
-    "Week over. Medal to {winner} ({pf} FP). Best unit {best} at {best_move} %, worst {worst} at {worst_move} %. The Drone's {drone_pf} FP embarrassed {rusty} commander(s).",
+    "Week over. Medal to {winner} ({pf} ₩). Best unit {best} at {best_move} %, worst {worst} at {worst_move} %. The Drone's {drone_pf} ₩ embarrassed {rusty} commander(s).",
 } as const satisfies Record<string, string>
 
 export type MessageKey = keyof typeof en
