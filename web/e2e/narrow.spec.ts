@@ -34,6 +34,11 @@ async function fits(page: Page, name: string): Promise<void> {
   await expect(page.locator('main h1').first()).toBeVisible()
   expect(await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth), name).toBe(0)
   expect(await clipped(page), name).toEqual([])
+  // Every league tab visible at once: the tab bar never scrolls sideways.
+  const tabBarScrolls = await page.evaluate(() =>
+    [...document.querySelectorAll<HTMLElement>('.league-nav')].some((nav) => nav.scrollWidth > nav.clientWidth + 1),
+  )
+  expect(tabBarScrolls, `${name}: league tabs cut off`).toBe(false)
   const axe = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa']).analyze()
   expect(axe.violations.map((v) => `${name}: ${v.id}`)).toEqual([])
 }
