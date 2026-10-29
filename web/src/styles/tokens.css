@@ -1,35 +1,36 @@
 /* Design tokens. Light theme only; dark text on light backgrounds (CLAUDE.md).
    Every text/background pair below meets WCAG AA (4.5:1) or better. */
 :root {
-  /* "Tactical HUD", light: khaki paper, steel ink, signal orange for actions. */
-  --color-bg: #e9ebe1;
-  --color-surface: #f8f8f2;
-  --color-surface-alt: #e1e4d6;
-  --color-text: #171b13;
-  --color-text-muted: #474f40;
-  --color-border: #b4bba4;
-  --color-border-strong: #5c6650;
-  --color-ink: #1c2318;
-  --color-ink-contrast: #eef0e4;
-  --color-ink-muted: #c8ceb8;
-  --color-primary: #a63a0a;
-  --color-primary-hover: #7f2c07;
+  /* "White armour", light: steel-blue ground, white panels, electric blue for actions. */
+  --color-bg: #eef2f6;
+  --color-surface: #ffffff;
+  --color-surface-alt: #e4eaf1;
+  --color-text: #0d1b2a;
+  --color-text-muted: #44546a;
+  --color-border: #c6d1dd;
+  --color-border-strong: #6b7f96;
+  --color-ink: #0d1b2a;
+  --color-ink-contrast: #ffffff;
+  --color-ink-muted: #b8c6d6;
+  --color-primary: #0050c8;
+  --color-primary-hover: #003d99;
   --color-primary-contrast: #ffffff;
-  --color-link: #2f4a24;
-  --color-accent: #a63a0a;
+  --color-link: #0050c8;
+  --color-accent: #0050c8;
   --color-ok: #166534;
-  --color-ok-bg: #dcefdf;
+  --color-ok-bg: #dcefe3;
   --color-warn: #7a4300;
   --color-warn-bg: #f6ead2;
   --color-danger: #9f1c1c;
-  --color-danger-bg: #f7e1dc;
+  --color-danger-bg: #f9e3e3;
   --color-focus: #0e7490;
-  --color-grid: rgb(60 70 45 / 7%);
+  --color-grid: #c6d1dd;
+  --color-selected: #eaf1fd;
 
   /* Fonts are bundled (OFL, @fontsource): they work offline and call no third party. */
   --font-sans: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-  --font-display: 'Saira Stencil One', 'Chakra Petch', 'Arial Black', system-ui, sans-serif;
-  --font-hud: 'Chakra Petch', 'Segoe UI', system-ui, sans-serif;
+  --font-display: Orbitron, 'Arial Black', system-ui, sans-serif;
+  --font-hud: Rajdhani, 'Segoe UI', system-ui, sans-serif;
   --font-mono: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
 
   --space-1: 4px;
@@ -39,11 +40,11 @@
   --space-6: 24px;
   --space-8: 32px;
 
-  --radius: 2px;
+  --radius: 3px;
   --radius-small: 2px;
-  --bevel: 12px;
+  --bracket: 16px;
   --max-width: 760px;
   --tap: 44px;
-  --shadow: 0 1px 0 rgb(28 35 24 / 12%);
+  --shadow: 0 2px 12px rgb(13 27 42 / 6%);
   color-scheme: light;
 }
