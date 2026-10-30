@@ -24,7 +24,8 @@ const MUTED = '#44546a'
 const BLUE = '#0050c8'
 const DOT = '#c6d1dd'
 const DISPLAY = 'Orbitron, "Arial Black", system-ui, sans-serif'
-const HUD = 'Rajdhani, system-ui, sans-serif'
+// Text in the phone's own font, like the app (only the title uses the bundled Orbitron).
+const HUD = 'system-ui, -apple-system, "Segoe UI", Roboto, sans-serif'
 
 /** A hexagon centred on (cx, cy), like the app's rank plates. */
 function hexPath(ctx: CanvasRenderingContext2D, cx: number, cy: number, w: number, h: number): void {
@@ -50,7 +51,7 @@ function brackets(ctx: CanvasRenderingContext2D, x: number, y: number, w: number
 /** The bundled fonts, so the canvas does not fall back to a system font on first use. */
 export async function loadCardFonts(): Promise<void> {
   try {
-    await Promise.all([document.fonts.load(`700 84px ${DISPLAY}`), document.fonts.load(`700 56px ${HUD}`)])
+    await document.fonts.load(`700 84px ${DISPLAY}`)
   } catch {
     // Without the fonts the card is still drawn, with the fallbacks.
   }
@@ -81,7 +82,7 @@ export function drawShareCard(canvas: HTMLCanvasElement, text: CardText): void {
   ctx.fillStyle = NAVY
   ctx.font = `700 52px ${HUD}`
   ctx.fillText(text.title.toUpperCase(), SIZE / 2, 240)
-  ctx.font = `600 36px ${HUD}`
+  ctx.font = `400 36px ${HUD}`
   ctx.fillStyle = MUTED
   ctx.fillText(text.subtitle, SIZE / 2, 300)
   text.entries.slice(0, 3).forEach((entry, i) => {
@@ -102,7 +103,7 @@ export function drawShareCard(canvas: HTMLCanvasElement, text: CardText): void {
     ctx.fillStyle = NAVY
     ctx.font = `700 56px ${HUD}`
     ctx.fillText(entry.pseudo, 290, y + 5)
-    ctx.font = `600 36px ${HUD}`
+    ctx.font = `400 36px ${HUD}`
     ctx.fillStyle = MUTED
     ctx.fillText(`${entry.pf} · ${entry.points}`, 290, y + 60)
     ctx.textAlign = 'center'

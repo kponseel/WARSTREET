@@ -39,7 +39,7 @@ a {
 .brand {
   font-family: var(--font-display);
   font-weight: 700;
-  font-size: 1.2rem;
+  font-size: var(--text-lg);
   letter-spacing: 0.18em;
 }
 
@@ -50,10 +50,9 @@ a {
 .header-nav {
   justify-content: center;
   margin-left: 0;
-  font-family: var(--font-hud);
-  font-size: 1.0625rem;
+  font-size: var(--text-sm);
   font-weight: 700;
-  letter-spacing: 0.06em;
+  letter-spacing: var(--tracking);
   text-transform: uppercase;
 }
 
@@ -82,28 +81,38 @@ a {
   color: var(--color-primary-contrast);
 }
 
-.dev-banner {
-  font-family: var(--font-hud);
-  font-weight: 600;
-  letter-spacing: 0.03em;
-}
-
 /* --- Titles ---------------------------------------------------------------------------- */
 .page h1 {
   font-family: var(--font-display);
   font-weight: 700;
-  font-size: 1.45rem;
-  letter-spacing: 0.08em;
+  font-size: var(--text-xl);
+  letter-spacing: 0.04em;
   text-transform: uppercase;
+}
+
+/* Phone: page titles centred, like a game screen (text below stays left-aligned to read). */
+@media (max-width: 719px) {
+  .page h1,
+  .tutorial-progress {
+    text-align: center;
+  }
+}
+
+h2 {
+  font-size: var(--text-lg);
 }
 
 h2,
 .card h3,
 .league-card h3 {
-  font-family: var(--font-hud);
   font-weight: 700;
-  letter-spacing: 0.1em;
+  letter-spacing: var(--tracking);
   text-transform: uppercase;
+}
+
+.card h3,
+.league-card h3 {
+  font-size: var(--text-md);
 }
 
 /* The ◆ marker of section titles: a shape, not a character (screen readers skip it). */
@@ -165,10 +174,9 @@ h2::before {
 /* --- Buttons and tabs ----------------------------------------------------------------- */
 .button {
   border-radius: var(--radius);
-  font-family: var(--font-hud);
-  font-size: 1.0625rem;
+  font-size: var(--text-md);
   font-weight: 700;
-  letter-spacing: 0.08em;
+  letter-spacing: var(--tracking);
   text-transform: uppercase;
 }
 
@@ -203,10 +211,9 @@ h2::before {
   border-radius: 0;
   background: transparent;
   color: var(--color-text);
-  font-family: var(--font-hud);
-  font-size: 1rem;
+  font-size: var(--text-sm);
   font-weight: 700;
-  letter-spacing: 0.06em;
+  letter-spacing: var(--tracking);
   text-transform: uppercase;
 }
 
@@ -217,9 +224,9 @@ h2::before {
 }
 
 .header-button {
-  font-family: var(--font-hud);
+  font-size: var(--text-sm);
   font-weight: 700;
-  letter-spacing: 0.06em;
+  letter-spacing: var(--tracking);
   text-transform: uppercase;
 }
 
@@ -227,9 +234,7 @@ h2::before {
 .phase-banner,
 .final-banner,
 .countdown {
-  font-family: var(--font-hud);
-  font-weight: 600;
-  letter-spacing: 0.03em;
+  font-weight: 700;
 }
 
 .phase-banner {
@@ -267,7 +272,6 @@ h2::before {
   min-height: 2em;
   background: var(--color-primary);
   color: var(--color-primary-contrast);
-  font-family: var(--font-hud);
   font-weight: 700;
   clip-path: polygon(25% 0, 75% 0, 100% 50%, 75% 100%, 25% 100%, 0 50%);
 }
@@ -276,29 +280,13 @@ h2::before {
   box-shadow: inset 4px 0 0 var(--color-primary), 0 2px 12px rgb(0 80 200 / 14%);
 }
 
-.board-pf,
-.live-pf,
-.breakdown .num {
-  font-family: var(--font-mono);
-  letter-spacing: -0.02em;
-}
-
 .my-total {
-  font-family: var(--font-hud);
+  font-size: var(--text-lg);
   font-weight: 700;
-  letter-spacing: 0.02em;
-}
-
-.member-commander,
-.board-name small {
-  font-family: var(--font-hud);
-  font-weight: 600;
-  letter-spacing: 0.02em;
 }
 
 .avatar {
   border-radius: 3px;
-  font-family: var(--font-hud);
   font-weight: 700;
 }
 
@@ -306,9 +294,9 @@ h2::before {
 .badge,
 .status {
   border-radius: 2px;
-  font-family: var(--font-hud);
+  font-size: var(--text-sm);
   font-weight: 700;
-  letter-spacing: 0.04em;
+  letter-spacing: var(--tracking);
   text-transform: uppercase;
 }
 
@@ -322,9 +310,9 @@ h2::before {
 }
 
 .dispatch-label {
-  font-family: var(--font-hud);
+  font-size: var(--text-sm);
   font-weight: 700;
-  letter-spacing: 0.08em;
+  letter-spacing: var(--tracking);
   color: var(--color-primary);
 }
 
@@ -339,15 +327,82 @@ h2::before {
 }
 
 .slot-name {
-  font-family: var(--font-hud);
   font-weight: 700;
-  letter-spacing: 0.03em;
 }
 
 /* --- Tutorial ------------------------------------------------------------------------- */
 .tutorial-progress {
-  font-family: var(--font-hud);
-  font-weight: 600;
-  letter-spacing: 0.04em;
+  font-size: var(--text-sm);
+  font-weight: 700;
+  letter-spacing: var(--tracking);
   text-transform: uppercase;
+}
+
+/* --- Landing (logged out): a centred game title screen, built for phones ---------------- */
+.landing {
+  display: grid;
+  justify-items: center;
+  text-align: center;
+}
+
+.landing-logo {
+  margin-bottom: var(--space-3);
+}
+
+.landing h1 {
+  font-size: var(--text-2xl);
+  text-align: center;
+}
+
+.landing .lead {
+  margin-bottom: var(--space-6);
+}
+
+.landing-steps {
+  display: grid;
+  gap: var(--space-3);
+  width: 100%;
+  max-width: 28rem;
+  margin: 0 0 var(--space-6);
+  padding: 0;
+  list-style: none;
+  text-align: left;
+}
+
+.landing-step {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: var(--space-3);
+  align-items: center;
+  margin: 0;
+  padding: var(--space-3) var(--space-4);
+}
+
+.landing-step strong {
+  display: block;
+  font-size: var(--text-md);
+  letter-spacing: var(--tracking);
+  text-transform: uppercase;
+}
+
+.landing-step strong + span {
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+}
+
+.landing-icon {
+  color: var(--color-primary);
+}
+
+.landing-actions {
+  display: grid;
+  gap: var(--space-3);
+  justify-items: center;
+  width: 100%;
+  max-width: 28rem;
+}
+
+.landing-actions .button {
+  width: 100%;
+  justify-content: center;
 }

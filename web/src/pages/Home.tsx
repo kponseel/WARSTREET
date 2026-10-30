@@ -2,6 +2,7 @@ import { useState, type SyntheticEvent } from 'react'
 import { Link, useNavigate } from 'react-router'
 import { useAuth } from '../auth/context'
 import { ErrorMessage } from '../components/ErrorMessage'
+import { LandingIcon } from '../components/LandingIcon'
 import { MemberFields } from '../components/MemberFields'
 import { emptyDraft, type MemberDraft } from '../components/memberDraft'
 import { GAME_NAME } from '../config'
@@ -17,23 +18,39 @@ function range(min: number, max: number): number[] {
 
 function Landing() {
   const { t } = useI18n()
+  const steps = [
+    { kind: 'draft', title: 'landing.step1.title', text: 'landing.step1.text' },
+    { kind: 'attack', title: 'landing.step2.title', text: 'landing.step2.text' },
+    { kind: 'win', title: 'landing.step3.title', text: 'landing.step3.text' },
+  ] as const
   return (
-    <section className="page">
+    <section className="page landing">
+      <img className="landing-logo" src={`${import.meta.env.BASE_URL}icon.svg`} alt="" width={88} height={88} />
       <h1>{t('home.title', { game: GAME_NAME })}</h1>
       <p className="lead">{t('app.tagline')}</p>
-      <p>{t('home.intro')}</p>
-      <div className="row">
+      <ol className="landing-steps">
+        {steps.map((step) => (
+          <li key={step.kind} className="card landing-step">
+            <LandingIcon kind={step.kind} />
+            <span>
+              <strong>{t(step.title)}</strong>
+              <span>{t(step.text)}</span>
+            </span>
+          </li>
+        ))}
+      </ol>
+      <div className="landing-actions">
         <Link className="button" to="/login">
           {t('home.login')}
         </Link>
-        <Link className="button button-secondary" to="/rules">
-          {t('nav.rules')}
+        <Link className="button button-secondary" to="/tutorial">
+          {t('tutorial.label')}
         </Link>
+        <Link to="/rules">{t('nav.rules')}</Link>
       </div>
     </section>
   )
 }
-
 function LeagueCard({ league }: { league: League }) {
   const { t } = useI18n()
   return (
