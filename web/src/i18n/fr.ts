@@ -8,8 +8,6 @@ export const fr: Partial<Record<MessageKey, string>> = {
   'language.en': 'English',
   'language.fr': 'Français',
   'home.title': 'Bienvenue sur {game}',
-  'home.intro':
-    'Recrutez 5 vraies actions européennes et américaines chaque week-end, attaquez vos rivaux avec des ordres en milieu de semaine et grimpez au classement chaque vendredi soir.',
   'home.backend.missing': 'Connexion au serveur pas encore configurée.',
   'notFound.title': 'Page introuvable',
   'notFound.back': "Retour à l'accueil",

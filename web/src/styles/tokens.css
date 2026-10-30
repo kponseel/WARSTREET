@@ -27,11 +27,20 @@
   --color-grid: #c6d1dd;
   --color-selected: #eaf1fd;
 
-  /* Fonts are bundled (OFL, @fontsource): they work offline and call no third party. */
+  /* Two typefaces only: the phone's own font for all text (most readable, nothing to
+     download) and Orbitron, bundled (OFL, @fontsource), for the logo and titles. */
   --font-sans: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
   --font-display: Orbitron, 'Arial Black', system-ui, sans-serif;
-  --font-hud: Rajdhani, 'Segoe UI', system-ui, sans-serif;
   --font-mono: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+
+  /* Five text sizes, used everywhere: notes, text, buttons/card titles, sections, page titles. */
+  --text-sm: 0.875rem;
+  --text-md: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.375rem;
+  --text-2xl: 1.75rem;
+  /* One letter spacing for words in capitals (buttons, tabs, labels). */
+  --tracking: 0.06em;
 
   --space-1: 4px;
   --space-2: 8px;

@@ -33,6 +33,9 @@ async function clipped(page: Page): Promise<string[]> {
 async function fits(page: Page, name: string): Promise<void> {
   await expect(page.locator('main h1').first()).toBeVisible()
   expect(await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth), name).toBe(0)
+  // On a phone a too-wide element widens the layout itself (the page is zoomed out and every
+  // text gets smaller), so the scroll check above passes: the window must stay 360 px wide.
+  expect(await page.evaluate(() => window.innerWidth), `${name}: page wider than the phone`).toBe(360)
   expect(await clipped(page), name).toEqual([])
   // Every league tab visible at once: the tab bar never scrolls sideways.
   const tabBarScrolls = await page.evaluate(() =>
