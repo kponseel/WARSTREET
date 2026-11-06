@@ -15,12 +15,21 @@ export class GameConfig {
     return new GameConfig(Object.entries(values).map(([key, value]) => ({ key, value })))
   }
 
-  /** Every numeric value by key, and slot multipliers as `slot_<slot>` (text placeholders). */
+  /** Every numeric value by key, slot multipliers as `slot_<slot>` and feats as `feat_<code>` (text placeholders). */
   numbers(): Record<string, number> {
     const result: Record<string, number> = {}
     for (const [key, value] of this.values) {
       if (typeof value === 'number') result[key] = value
     }
+    // Feats as `feat_<code>`, and Plunder's share as a percentage (0.3 → 30), for the rules text.
+    const feats = this.values.get('feats')
+    if (typeof feats === 'object' && feats !== null) {
+      for (const [code, value] of Object.entries(feats)) {
+        if (typeof value === 'number') result[`feat_${code}`] = value
+      }
+    }
+    const share = this.values.get('pillage_share')
+    if (typeof share === 'number') result.pillage_share_pct = Math.round(share * 100)
     const slots = this.values.get('slot_multipliers')
     if (typeof slots === 'object' && slots !== null) {
       for (const [slot, value] of Object.entries(slots)) {

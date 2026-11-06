@@ -29,12 +29,21 @@ export function EventFeed({ data }: { data: FrontData }) {
       id: `o${o.id}`,
       ts: o.resolved_at,
       kind: o.status === 'blocked' ? 'blocked' : 'order',
-      text: t(o.status === 'blocked' ? 'feed.blocked' : o.type === 'force_field' ? 'feed.shield' : 'feed.order', {
+      text: t(
+        o.status === 'blocked'
+          ? 'feed.blocked'
+          : o.type === 'force_field'
+            ? 'feed.shield'
+            : o.target_member_id
+              ? 'feed.order'
+              : 'feed.selfOrder',
+        {
         attacker: o.member_id ? pseudo(o.member_id) : t('feed.anonymous'),
         order: t(`order.${o.type}` as MessageKey),
         target: o.target_member_id ? pseudo(o.target_member_id) : pseudo(o.member_id),
         slot: o.target_slot ? t(slotKey(o.target_slot)) : '',
-      }),
+        },
+      ),
     })),
   ].sort((a, b) => b.ts.localeCompare(a.ts))
 

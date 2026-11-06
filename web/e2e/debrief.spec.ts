@@ -23,7 +23,7 @@ test('Friday night: ranking, breakdown, Drone verdict, share card, campaign', as
   const rows = page.locator('.board .board-row')
   await expect(rows).toHaveCount(4) // 4 humans (the Drone is in its own verdict)
   await rows.first().locator('.board-line').click()
-  await expect(page.getByRole('table')).toContainText('Stock picking')
+  await expect(page.getByRole('table')).toContainText('Units total')
   await expect(page.getByRole('table')).toContainText('Total')
   await expect(page.locator('.extremes')).toContainText(/Best unit: .+ Worst unit: /)
   await expect(page.getByRole('heading', { name: "The Drone's verdict" })).toBeVisible()

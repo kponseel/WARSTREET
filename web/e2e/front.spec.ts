@@ -57,7 +57,7 @@ test('a week unfolds: live front, resupply swap and order, Thursday dispatch', a
   await strike.getByRole('button', { name: 'Prepare' }).click()
   await strike.getByRole('button', { name: /Review/ }).click()
   await strike.getByRole('button', { name: 'Play the order' }).click()
-  await expect(page.getByText(/Orbital Strike → .* · 2 credit\(s\) · waiting/)).toBeVisible()
+  await expect(page.getByText(/Orbital Strike → .* · Cost: 2 · waiting for the deadline/)).toBeVisible()
 
   // Thursday: the swap applies (the incoming unit plays Segment 2 only), the Dispatch.
   devAdvance(league.league_id, 'thursday', false)

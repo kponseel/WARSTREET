@@ -52,10 +52,12 @@ export function CommanderPicker({
               <span className="choice-card-line">
                 <span className="choice-card-label">{t('commander.passive')}</span> {text.passive}
               </span>
-              <span className="choice-card-line">
-                <span className="choice-card-label">{t('commander.constraint')}</span>{' '}
-                {text.constraint}
-              </span>
+              {text.constraint && (
+                <span className="choice-card-line">
+                  <span className="choice-card-label">{t('commander.constraint')}</span>{' '}
+                  {text.constraint}
+                </span>
+              )}
             </label>
             <details className="choice-card-example">
               <summary>{t('commander.example')}</summary>

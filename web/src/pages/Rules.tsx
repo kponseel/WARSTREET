@@ -5,7 +5,10 @@ import { rulesEn } from '../content/rules.en'
 import { rulesFr } from '../content/rules.fr'
 import { fillRuleText } from '../content/fillRuleText'
 import { GameConfig } from '../data/gameConfig'
+import { orderDescription } from '../briefing/orderText'
 import { useI18n } from '../i18n/context'
+import type { MessageKey } from '../i18n/en'
+import { formatList, formatNumber } from '../lib/format'
 import { GuideI18n, type T } from '../i18n/guide'
 import type { ReactNode } from 'react'
 
@@ -13,6 +16,12 @@ const CONTENT = { en: rulesEn, fr: rulesFr }
 // Public page: the values come from the build-time copy of engine/config.py.
 const CONFIG = GameConfig.fromValues(GAME_CONFIG_VALUES)
 const NUMBERS = CONFIG.numbers()
+// Every order with its kind, cost and windows (game_config), attacks first.
+const KIND_ORDER = ['attack', 'defense', 'maneuver']
+type OrderInfo = { kind: string; cost: number; windows: string[] }
+const ORDERS = Object.entries((CONFIG.raw('orders') ?? {}) as Record<string, OrderInfo>).sort(
+  ([a, x], [b, y]) => KIND_ORDER.indexOf(x.kind) - KIND_ORDER.indexOf(y.kind) || a.localeCompare(b),
+)
 
 /** The rules, in the guides' language (EN/FR switch at the top, like Help). */
 export function Rules() {
@@ -52,7 +61,7 @@ function RulesView({ ui, languageSwitch }: { ui: T; languageSwitch: ReactNode })
           {section.id === 'commanders' && (
             <ul className="commander-list">
               {CONFIG.strings('commanders').map((code) => {
-                const text = commanderText(t, locale, CONFIG, code)
+                const text = commanderText(t, locale, CONFIG, code, ui)
                 return (
                   <li key={code} className="card">
                     <h3 className="choice-card-head">
@@ -63,13 +72,36 @@ function RulesView({ ui, languageSwitch }: { ui: T; languageSwitch: ReactNode })
                       <span className="choice-card-label">{t('commander.passive')}</span>{' '}
                       {text.passive}
                     </p>
-                    <p>
-                      <span className="choice-card-label">{t('commander.constraint')}</span>{' '}
-                      {text.constraint}
-                    </p>
+                    {text.constraint && (
+                      <p>
+                        <span className="choice-card-label">{t('commander.constraint')}</span>{' '}
+                        {text.constraint}
+                      </p>
+                    )}
                   </li>
                 )
               })}
+            </ul>
+          )}
+          {section.id === 'orders' && (
+            <ul className="commander-list">
+              {ORDERS.map(([code, order]) => (
+                <li key={code} className="card">
+                  <h3>{ui(`order.${code}` as MessageKey)}</h3>
+                  <p className="muted">
+                    {t('rules.orderFacts', {
+                      kind: t(`orders.kind.${order.kind}` as MessageKey),
+                      cost: formatNumber(locale, order.cost),
+                      when: formatList(
+                        locale,
+                        order.windows.map((w) => ui(`nav.league.${w}` as MessageKey)),
+                        'disjunction',
+                      ),
+                    })}
+                  </p>
+                  <p>{orderDescription(t, CONFIG, code)}</p>
+                </li>
+              ))}
             </ul>
           )}
         </section>

@@ -42,12 +42,14 @@ describe('commanders', () => {
       translate('en', key, vars)
     const berserker = commanderText(t, 'en', config, 'berserker')
     expect(berserker.passive).toBe(
-      `Champion multiplier ×${String(config.num('berserker_champion_multiplier'))} instead of ×2.`,
+      `your Champion counts ×${String(config.num('berserker_champion_multiplier'))} instead of ×2, for gains and losses.`,
     )
     expect(berserker.constraint).toBe('cannot play Force Field or Tactical Retreat.')
+    // No limit line for commanders without one.
+    expect(commanderText(t, 'en', config, 'bastion').constraint).toBeNull()
     for (const code of config.strings('commanders')) {
       const text = commanderText(t, 'en', config, code)
-      expect(`${text.name} ${text.passive} ${text.constraint}`).not.toMatch(/\{\w+\}|undefined/)
+      expect(`${text.name} ${text.passive} ${text.constraint ?? ''}`).not.toMatch(/\{\w+\}|undefined/)
     }
   })
 })
