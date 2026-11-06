@@ -55,7 +55,8 @@ jobs:
       - uses: actions/checkout@v5
       - uses: supabase/setup-cli@v1
         with:
-          version: latest
+          # Pinned: a new major CLI (3.0) broke config.toml without warning. Upgrade on purpose.
+          version: 2.122.0
       # The real Supabase Postgres image: API roles, auth schema, Realtime publication.
       - run: supabase db start
       - uses: actions/setup-python@v6
@@ -100,7 +101,8 @@ jobs:
       - uses: actions/checkout@v5
       - uses: supabase/setup-cli@v1
         with:
-          version: latest
+          # Pinned: a new major CLI (3.0) broke config.toml without warning. Upgrade on purpose.
+          version: 2.122.0
       # Auth, REST, Realtime and the Mailpit mailbox; no secret involved (local demo keys).
       - run: supabase start -x imgproxy,storage-api,studio,edge-runtime,logflare,vector,supavisor,postgres-meta
       - name: Point the build at the local Supabase
