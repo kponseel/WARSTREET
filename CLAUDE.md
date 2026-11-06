@@ -14,6 +14,8 @@ The game is **bilingual: English and French**. English is the reference language
 English only (`ENABLED_LOCALES` in `web/src/i18n/translate.ts`), new messages go in `en.ts`
 only and `fr.ts` may lag. French comes back after the first games, with a translation pass;
 the i18n test then requires `fr.ts` to be complete again.
+Exception: the tutorial (`web/src/tutorial/`) is in English and French, with its own EN/FR switch
+(French phones start in French); its texts must exist in both files (i18n test).
 
 ## Source of truth
 

@@ -67,4 +67,28 @@ describe('Tutorial', () => {
     expect(isTutorialDismissed()).toBe(false)
     expect(wasTutorialSeenThisVisit()).toBe(true)
   })
+
+  it('switches to French with its own EN/FR buttons; game names stay as the app shows them', () => {
+    renderTutorial(false)
+    fireEvent.click(screen.getByRole('button', { name: 'FR' }))
+    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Bienvenue sur WARSTREET')
+    expect(screen.getByText('Étape 1 sur 7', { exact: false })).toBeInTheDocument()
+    expect(window.localStorage.getItem('tutorial.locale')).toBe('fr')
+    fireEvent.click(screen.getByRole('button', { name: 'Suivant' }))
+    // French text and number format, English slot name (the app is in English).
+    expect(screen.getByText(/^Champion ×2 · Orion Robotics \+4,0 % : \+80 ₩$/)).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: 'EN' }))
+    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('War Points (₩)')
+  })
+
+  it('starts in French on a French phone', () => {
+    const languages = vi.spyOn(navigator, 'languages', 'get').mockReturnValue(['fr-FR', 'fr'])
+    try {
+      renderTutorial(false)
+      expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Bienvenue sur WARSTREET')
+      expect(screen.getByRole('button', { name: 'FR' })).toHaveAttribute('aria-pressed', 'true')
+    } finally {
+      languages.mockRestore()
+    }
+  })
 })

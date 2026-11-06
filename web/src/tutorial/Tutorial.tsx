@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type ReactNode } from 'react'
+import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { CommanderEmblem } from '../components/CommanderEmblem'
 import { commanderExample } from '../components/commanderExample'
 import { commanderName } from '../components/commanderText'
@@ -6,10 +6,11 @@ import { GAME_NAME } from '../config'
 import { EXAMPLES } from '../content/examples.generated'
 import { GAME_CONFIG_VALUES } from '../content/gameConfig.generated'
 import { GameConfig } from '../data/gameConfig'
-import { useI18n } from '../i18n/context'
+import { I18nContext, useI18n, type I18nValue } from '../i18n/context'
 import type { MessageKey } from '../i18n/en'
 import { formatList, formatNumber, formatSigned, formatSignedPercent } from '../lib/format'
-import { dismissTutorial, markTutorialSeen } from './tutorialState'
+import { LOCALES, translate, type Locale, type Vars } from '../i18n/translate'
+import { dismissTutorial, markTutorialSeen, readTutorialLocale, saveTutorialLocale } from './tutorialState'
 
 // Public content: rule values from the build-time copy of engine/config.py, worked
 // examples from engine/examples.py. Nothing is computed here.
@@ -30,7 +31,13 @@ const TITLE: Record<Step, MessageKey> = {
 /** "23:59:59" → "23:59" (Paris time, as stored in game_config). */
 const hhmm = (value: unknown) => (typeof value === 'string' ? value.slice(0, 5) : '')
 
-function StepBody({ step }: { step: Step }): ReactNode {
+type T = (key: MessageKey, vars?: Vars) => string
+
+/**
+ * One step. `t` and `locale` are the tutorial's language; `ui` is the app's language, for
+ * the names the player will see on screen (slots, buttons, badges, commanders).
+ */
+function StepBody({ step, ui }: { step: Step; ui: T }): ReactNode {
   const { t, locale } = useI18n()
   const n = (value: number) => formatNumber(locale, value)
   const slot = (code: string) => n(CONFIG.numIn('slot_multipliers', code))
@@ -53,7 +60,7 @@ function StepBody({ step }: { step: Step }): ReactNode {
             {EXAMPLES.week.map((unit) => (
               <li key={unit.slot}>
                 {t('tutorial.pf.line', {
-                  slot: t(`slot.${unit.slot}` as MessageKey),
+                  slot: ui(`slot.${unit.slot}` as MessageKey),
                   mult: slot(unit.slot),
                   name: unit.name,
                   move: formatSignedPercent(locale, unit.move),
@@ -94,7 +101,7 @@ function StepBody({ step }: { step: Step }): ReactNode {
             })}
           </p>
           <p>{t('tutorial.squad.4')}</p>
-          <p>{t('tutorial.squad.5', { suggest: t('briefing.suggest') })}</p>
+          <p>{t('tutorial.squad.5', { suggest: ui('briefing.suggest') })}</p>
         </>
       )
     case 'week':
@@ -138,7 +145,7 @@ function StepBody({ step }: { step: Step }): ReactNode {
           <p>{t('tutorial.campaign.1', { points: formatList(locale, (table?.['4'] ?? []).map(n)) })}</p>
           <p>{t('tutorial.campaign.2', { final: n(CONFIG.num('final_week_multiplier')) })}</p>
           <p>{t('tutorial.campaign.3')}</p>
-          <p>{t('tutorial.campaign.4', { rusty: t('badge.rusty') })}</p>
+          <p>{t('tutorial.campaign.4', { rusty: ui('badge.rusty') })}</p>
         </>
       )
     }
@@ -154,7 +161,7 @@ function StepBody({ step }: { step: Step }): ReactNode {
                 <li key={code}>
                   <p className="tutorial-commander-head">
                     <CommanderEmblem code={code} />
-                    <strong>{commanderName(t, code)}</strong>
+                    <strong>{commanderName(ui, code)}</strong>
                   </p>
                   <p>{text.summary}</p>
                   <details>
@@ -173,9 +180,45 @@ function StepBody({ step }: { step: Step }): ReactNode {
 /**
  * How to play, in 7 short steps. `auto`: shown by itself at launch, with the
  * "don't show again" box (ticked by default); from the Help link it is just a page.
+ *
+ * The tutorial has its own language (owner's request: French for French phones while the
+ * rest of the app stays in English): the phone's language at first, then the EN/FR choice
+ * made at its top, remembered on the device.
  */
 export function Tutorial({ auto = false, onDone }: { auto?: boolean; onDone: () => void }) {
-  const { t } = useI18n()
+  const app = useI18n()
+  const [locale, setLocale] = useState<Locale>(readTutorialLocale)
+  const value = useMemo<I18nValue>(
+    () => ({ ...app, locale, t: (key: MessageKey, vars?: Vars) => translate(locale, key, vars) }),
+    [app, locale],
+  )
+  return (
+    <I18nContext value={value}>
+      <TutorialView
+        auto={auto}
+        onDone={onDone}
+        ui={app.t}
+        onLocale={(next) => {
+          setLocale(next)
+          saveTutorialLocale(next)
+        }}
+      />
+    </I18nContext>
+  )
+}
+
+function TutorialView({
+  auto,
+  onDone,
+  ui,
+  onLocale,
+}: {
+  auto: boolean
+  onDone: () => void
+  ui: T
+  onLocale: (locale: Locale) => void
+}) {
+  const { t, locale } = useI18n()
   const [index, setIndex] = useState(0)
   const [dontShow, setDontShow] = useState(true)
   const heading = useRef<HTMLHeadingElement>(null)
@@ -198,7 +241,23 @@ export function Tutorial({ auto = false, onDone }: { auto?: boolean; onDone: () 
     onDone()
   }
   return (
-    <section className="page tutorial" aria-labelledby="tutorial-title">
+    <section className="page tutorial" aria-labelledby="tutorial-title" lang={locale}>
+      <div className="language-switch tutorial-language" role="group" aria-label={ui('header.language')}>
+        {LOCALES.map((code) => (
+          <button
+            key={code}
+            type="button"
+            lang={code}
+            aria-pressed={locale === code}
+            title={ui(`language.${code}`)}
+            onClick={() => {
+              onLocale(code)
+            }}
+          >
+            {code.toUpperCase()}
+          </button>
+        ))}
+      </div>
       <p className="tutorial-progress">
         {t('tutorial.label')} · {t('tutorial.step', { n: index + 1, total: STEPS.length })}
       </p>
@@ -206,7 +265,7 @@ export function Tutorial({ auto = false, onDone }: { auto?: boolean; onDone: () 
         {t(TITLE[step], { game: GAME_NAME })}
       </h1>
       <div className="tutorial-body">
-        <StepBody step={step} />
+        <StepBody step={step} ui={ui} />
       </div>
       <div className="tutorial-nav">
         {index > 0 && (

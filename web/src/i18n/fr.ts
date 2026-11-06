@@ -492,4 +492,87 @@ export const fr: Partial<Record<MessageKey, string>> = {
     "Vendredi soir, la fumée se dissipe : {winner} tient la colline avec {pf} ₩. {best} a porté l'escouade ({best_move} %), {worst} a coulé ({worst_move} %). Drone : {drone_pf} ₩, {rusty} joueur(s) battu(s) par un tirage au sort.",
   'dispatch.debrief.2':
     'Semaine terminée. Médaille pour {winner} ({pf} ₩). Meilleure unité {best} à {best_move} %, pire {worst} à {worst_move} %. Les {drone_pf} ₩ du Drone ont humilié {rusty} commandant(s).',
+  // Tutorial in French (owner's request, while the rest of the app stays in English).
+  // Names of buttons, slots, tabs and commanders stay in English: that is what the app shows.
+  'tutorial.label': 'Comment jouer',
+  'tutorial.step': 'Étape {n} sur {total}',
+  'tutorial.back': 'Retour',
+  'tutorial.next': 'Suivant',
+  'tutorial.finish': 'Commencer à jouer',
+  'tutorial.skip': 'Passer le tutoriel',
+  'tutorial.dontShow': 'Ne plus afficher automatiquement (il reste dans Help)',
+  'tutorial.welcome.title': 'Bienvenue sur {game}',
+  'tutorial.welcome.1':
+    'Un jeu de bourse et de guerre entre amis, chaque semaine. Pas d’argent réel, aucune connaissance de la Bourse nécessaire : environ 10 minutes par semaine.',
+  'tutorial.welcome.2':
+    'Chaque semaine, vous alignez une escouade de 5 vraies actions européennes et américaines. Quand elles bougent en Bourse, elles rapportent des War Points (₩).',
+  'tutorial.welcome.3':
+    'Le meilleur score du vendredi soir gagne la semaine. Le plus de points de campagne après {weeks} semaines gagne la guerre.',
+  'tutorial.pf.title': 'War Points (₩)',
+  'tutorial.pf.1': 'Le ₩ est votre score de la semaine. Ce n’est pas de l’argent.',
+  'tutorial.pf.2': 'Chaque 1 % de mouvement d’une unité vaut {per} ₩ × le multiplicateur de son poste.',
+  'tutorial.pf.example': 'Semaine d’exemple',
+  'tutorial.pf.line': '{slot} ×{mult} · {name} {move} : {pf} ₩',
+  'tutorial.pf.total': 'Unités : {total} ₩',
+  'tutorial.pf.3':
+    'Bonus en plus : +{elite} ₩ pour chaque unité qu’aucun autre joueur n’a choisie, et des exploits comme Total Victory (+{victory} ₩ quand les 5 postes finissent en positif).',
+  'tutorial.pf.4': 'Tout le monde a de mauvaises semaines : un score négatif est normal. Seul votre rang compte.',
+  'tutorial.squad.title': 'Votre escouade',
+  'tutorial.squad.1':
+    '5 postes au front, chacun avec un multiplicateur : Champion ×{champion}, Veteran ×{veteran}, Priority Target ×{priority}, Marksman ×{marksman} et Saboteur ×{saboteur}.',
+  'tutorial.squad.2':
+    'Le Saboteur est votre pari contre une action : il marque quand elle baisse, et perd quand elle monte.',
+  'tutorial.squad.3':
+    'Au moins {front} unités européennes et {front} américaines au front, plus {reserve} unités en réserve pour un échange le jeudi.',
+  'tutorial.squad.4':
+    'Les actions calmes comptent un peu plus et les agitées un peu moins (chaque unité a un coefficient) : un choix tranquille peut aussi gagner.',
+  'tutorial.squad.5': 'Aucune idée ? Le bouton « {suggest} » compose une escouade valide pour vous.',
+  'tutorial.week.title': 'Votre semaine (heure de Paris)',
+  'tutorial.week.briefing': 'Week-end — Briefing : composez votre escouade avant dimanche {lock}.',
+  'tutorial.week.s1': 'Du lundi au mercredi — Marchés : votre score bouge en direct.',
+  'tutorial.week.resupply':
+    'Du mercredi soir au jeudi {close} — Resupply : vous pouvez échanger une unité du front contre une unité de réserve.',
+  'tutorial.week.s2': 'Jeudi et vendredi — Marchés à nouveau : la nouvelle unité marque dès jeudi.',
+  'tutorial.week.debrief': 'Vendredi soir — Debrief : classement, points de campagne et Front Dispatch.',
+  'tutorial.week.example':
+    'Exemple : jeudi, {out} continue de baisser. L’échanger contre {in} fait passer ce poste de {before} ₩ à {after} ₩.',
+  'tutorial.credits.title': 'Crédits et ordres (facultatif)',
+  'tutorial.credits.1': 'Vous recevez {income} crédits chaque semaine et pouvez en garder jusqu’à {cap}.',
+  'tutorial.credits.2':
+    'Dépensez-les en ordres : attaques contre l’escouade d’un rival, défenses et coups tactiques. Chaque ordre affiche son coût et son effet avant d’être joué.',
+  'tutorial.credits.3':
+    'Un joueur peut recevoir au plus {attacks} attaques par semaine, et les attaques contre le leader de la campagne coûtent {bounty} crédit de moins.',
+  'tutorial.credits.4': 'Les ordres sont facultatifs : vous pouvez gagner sans en jouer aucun.',
+  'tutorial.campaign.title': 'Points de campagne : qui gagne',
+  'tutorial.campaign.1': 'Votre rang du vendredi rapporte des points de campagne. À 4 joueurs : {points}.',
+  'tutorial.campaign.2': 'La dernière semaine de la campagne compte ×{final}.',
+  'tutorial.campaign.3': 'Le plus de points de campagne à la fin gagne la guerre.',
+  'tutorial.campaign.4':
+    'Un Random Drone joue une escouade au hasard chaque semaine. Il marque mais n’est pas classé : finissez derrière lui et vous gagnez le badge « {rusty} ».',
+  'tutorial.commanders.title': 'Commandants',
+  'tutorial.commanders.1':
+    'En rejoignant une ligue, vous choisissez un commandant : un bonus pour toute la campagne. Vous pouvez le changer dans le lobby jusqu’au début de la campagne, et plusieurs joueurs peuvent choisir le même.',
+  'tutorial.commanders.2': 'Ouvrez un exemple pour voir ce que chacun change, avec de vrais chiffres.',
+  'commander.example': 'Voir un exemple',
+  'commander.bastion.summary': 'Amortit votre pire perte de la semaine.',
+  'commander.bastion.example':
+    '{unit} fait {move} dans votre poste Marksman : {before} ₩ devient {after} ₩. La réduction ne dépasse jamais {max} ₩, et rien si aucune unité ne perd.',
+  'commander.berserker.summary': 'Un Champion plus fort, dans les deux sens.',
+  'commander.berserker.example':
+    '{unit} fait {move} dans votre poste Champion : {before} ₩ devient {after} ₩. Si elle baisse d’autant : {downBefore} ₩ devient {downAfter} ₩.',
+  'commander.prophet.summary': 'Un Saboteur plus fort : de plus gros gains quand son action baisse.',
+  'commander.prophet.example':
+    '{unit} fait {move} dans votre poste Saboteur : {before} ₩ devient {after} ₩. Si elle monte d’autant à la place : {upBefore} ₩ devient {upAfter} ₩.',
+  'commander.hunter.summary': 'Un bonus quand vous battez les joueurs devant vous au classement de campagne.',
+  'commander.hunter.example':
+    'Vous êtes 3e de la campagne et battez les deux premiers cette semaine : +{both} ₩. Un seul : +{one} ₩. Rien en semaine 1 ni quand vous êtes en tête.',
+  'commander.shadow.summary': 'Invisible jusqu’au vendredi soir.',
+  'commander.shadow.example':
+    'Aucun bonus de ₩. Vos rivaux ne voient ni votre escouade, ni votre score en direct, ni votre échange avant le debrief : ils vous attaquent à l’aveugle, et Intel ne peut pas vous espionner.',
+  'commander.technomancer.summary': 'Plus de crédits pour les ordres.',
+  'commander.technomancer.example':
+    '+{extra} crédit chaque semaine en plus des {baseIncome} habituels, et jusqu’à {cap} en réserve au lieu de {baseCap}.',
+  'commander.quartermaster.summary': 'Une réserve plus grande et un second échange le jeudi.',
+  'commander.quartermaster.example':
+    'Jeudi, {out} commence à baisser : un second échange contre {in} fait passer ce poste de {before} ₩ à {after} ₩. Les autres ne peuvent faire qu’un échange.',
 }
