@@ -406,3 +406,10 @@ h2::before {
   width: 100%;
   justify-content: center;
 }
+
+/* The guides' own EN/FR switch (Help and Rules), top right. */
+.guide-language {
+  display: flex;
+  width: max-content;
+  margin: 0 0 var(--space-3) auto;
+}

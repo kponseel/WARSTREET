@@ -34,3 +34,4 @@ export function markTutorialSeen(): void {
     // Storage unavailable: the gate's own state still hides it for this visit.
   }
 }
+

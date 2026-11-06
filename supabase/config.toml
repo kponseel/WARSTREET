@@ -36,7 +36,7 @@ enabled = false
 enabled = false
 
 # Local mailbox: login emails land here (http://127.0.0.1:54324), the e2e test reads them.
-[inbucket]
+[local_smtp]
 enabled = true
 port = 54324
 
