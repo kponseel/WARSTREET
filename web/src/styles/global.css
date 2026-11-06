@@ -525,10 +525,11 @@ fieldset legend {
 
 .member-commander {
   display: inline-flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: var(--space-1);
   color: var(--color-text-muted);
-  font-size: var(--text-md);
+  font-size: var(--text-sm);
 }
 
 .tag {
@@ -953,10 +954,17 @@ details.card[open] summary {
 
 .board {
   display: grid;
+  /* One column never wider than the screen: a long pseudo or commander name wraps instead
+     of pushing the whole page wider than a phone (seen with wider system fonts). */
+  grid-template-columns: minmax(0, 1fr);
   gap: var(--space-2);
   margin: 0;
   padding: 0;
   list-style: none;
+}
+
+.board-name {
+  overflow-wrap: anywhere;
 }
 
 .board-row {
