@@ -13,14 +13,14 @@ describe('i18n key sets', () => {
     expect(ENABLED_LOCALES.includes('fr') ? missing : []).toEqual([])
   })
 
-  // The tutorial is shown in French even while the rest of the app is English-only.
-  it('has every tutorial text in French', () => {
-    const tutorial = Object.keys(en).filter(
-      (key) =>
-        key.startsWith('tutorial.') || key === 'commander.example' || /^commander\.\w+\.(summary|example)$/.test(key),
+  // Help (tutorial) and Rules are shown in French even while the rest of the app is English-only.
+  it('has every Help and Rules text in French', () => {
+    const appOnly = new Set(['commander.pfHint', 'commander.pfHintLink'])
+    const guides = Object.keys(en).filter(
+      (key) => /^(tutorial|rules|term|order|commander)\./.test(key) && !appOnly.has(key),
     )
-    expect(tutorial.length).toBeGreaterThan(50)
-    expect(tutorial.filter((key) => !(key in fr))).toEqual([])
+    expect(guides.length).toBeGreaterThan(80)
+    expect(guides.filter((key) => !(key in fr))).toEqual([])
   })
 
   it('has no French key that English lacks', () => {

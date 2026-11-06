@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
+import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { CommanderEmblem } from '../components/CommanderEmblem'
 import { commanderExample } from '../components/commanderExample'
 import { commanderName } from '../components/commanderText'
@@ -6,11 +6,11 @@ import { GAME_NAME } from '../config'
 import { EXAMPLES } from '../content/examples.generated'
 import { GAME_CONFIG_VALUES } from '../content/gameConfig.generated'
 import { GameConfig } from '../data/gameConfig'
-import { I18nContext, useI18n, type I18nValue } from '../i18n/context'
+import { useI18n } from '../i18n/context'
 import type { MessageKey } from '../i18n/en'
 import { formatList, formatNumber, formatSigned, formatSignedPercent } from '../lib/format'
-import { LOCALES, translate, type Locale, type Vars } from '../i18n/translate'
-import { dismissTutorial, markTutorialSeen, readTutorialLocale, saveTutorialLocale } from './tutorialState'
+import { GuideI18n, type T } from '../i18n/guide'
+import { dismissTutorial, markTutorialSeen } from './tutorialState'
 
 // Public content: rule values from the build-time copy of engine/config.py, worked
 // examples from engine/examples.py. Nothing is computed here.
@@ -30,8 +30,6 @@ const TITLE: Record<Step, MessageKey> = {
 
 /** "23:59:59" → "23:59" (Paris time, as stored in game_config). */
 const hhmm = (value: unknown) => (typeof value === 'string' ? value.slice(0, 5) : '')
-
-type T = (key: MessageKey, vars?: Vars) => string
 
 /**
  * One step. `t` and `locale` are the tutorial's language; `ui` is the app's language, for
@@ -181,29 +179,16 @@ function StepBody({ step, ui }: { step: Step; ui: T }): ReactNode {
  * How to play, in 7 short steps. `auto`: shown by itself at launch, with the
  * "don't show again" box (ticked by default); from the Help link it is just a page.
  *
- * The tutorial has its own language (owner's request: French for French phones while the
- * rest of the app stays in English): the phone's language at first, then the EN/FR choice
- * made at its top, remembered on the device.
+ * Shown in the guides' own language (i18n/guide.tsx): French on a French phone, with an EN/FR
+ * switch at its top, while the rest of the app stays in English.
  */
 export function Tutorial({ auto = false, onDone }: { auto?: boolean; onDone: () => void }) {
-  const app = useI18n()
-  const [locale, setLocale] = useState<Locale>(readTutorialLocale)
-  const value = useMemo<I18nValue>(
-    () => ({ ...app, locale, t: (key: MessageKey, vars?: Vars) => translate(locale, key, vars) }),
-    [app, locale],
-  )
   return (
-    <I18nContext value={value}>
-      <TutorialView
-        auto={auto}
-        onDone={onDone}
-        ui={app.t}
-        onLocale={(next) => {
-          setLocale(next)
-          saveTutorialLocale(next)
-        }}
-      />
-    </I18nContext>
+    <GuideI18n>
+      {(ui, languageSwitch) => (
+        <TutorialView auto={auto} onDone={onDone} ui={ui} languageSwitch={languageSwitch} />
+      )}
+    </GuideI18n>
   )
 }
 
@@ -211,12 +196,12 @@ function TutorialView({
   auto,
   onDone,
   ui,
-  onLocale,
+  languageSwitch,
 }: {
   auto: boolean
   onDone: () => void
   ui: T
-  onLocale: (locale: Locale) => void
+  languageSwitch: ReactNode
 }) {
   const { t, locale } = useI18n()
   const [index, setIndex] = useState(0)
@@ -242,22 +227,7 @@ function TutorialView({
   }
   return (
     <section className="page tutorial" aria-labelledby="tutorial-title" lang={locale}>
-      <div className="language-switch tutorial-language" role="group" aria-label={ui('header.language')}>
-        {LOCALES.map((code) => (
-          <button
-            key={code}
-            type="button"
-            lang={code}
-            aria-pressed={locale === code}
-            title={ui(`language.${code}`)}
-            onClick={() => {
-              onLocale(code)
-            }}
-          >
-            {code.toUpperCase()}
-          </button>
-        ))}
-      </div>
+      {languageSwitch}
       <p className="tutorial-progress">
         {t('tutorial.label')} · {t('tutorial.step', { n: index + 1, total: STEPS.length })}
       </p>

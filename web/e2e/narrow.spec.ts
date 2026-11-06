@@ -70,7 +70,7 @@ test('every screen of a week fits at 360 px', async ({ page }) => {
   await expect(page.getByRole('heading', { name: TEXT.status })).toBeVisible()
   await expect(page.locator('.health-banner')).toContainText(TEXT.healthy)
 
-  // The tutorial has a French version (French phones, or its FR button): it must fit too.
+  // Help and Rules have a French version (French phones, or their FR button): it must fit too.
   await page.goto('/#/tutorial')
   await page.getByRole('button', { name: 'FR' }).click()
   await expect(page.getByRole('heading', { name: 'Bienvenue sur WARSTREET' })).toBeVisible()
@@ -78,6 +78,10 @@ test('every screen of a week fits at 360 px', async ({ page }) => {
   for (let i = 0; i < 6; i += 1) await page.getByRole('button', { name: 'Suivant' }).click()
   await page.getByText('Voir un exemple').first().click()
   await fits(page, 'tutorial commanders (fr)')
+  // Rules follow the same EN/FR choice as Help.
+  await page.goto('/#/rules')
+  await expect(page.getByRole('heading', { name: 'Règles', level: 1 })).toBeVisible()
+  await fits(page, 'rules (fr)')
 
   devAdvance(id, 'monday')
   await page.goto(`/#/l/${id}/front`)

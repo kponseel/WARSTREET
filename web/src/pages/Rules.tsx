@@ -1,23 +1,32 @@
 import { CommanderEmblem } from '../components/CommanderEmblem'
-import { commanderText } from '../components/commanderText'
+import { commanderName, commanderText } from '../components/commanderText'
 import { GAME_CONFIG_VALUES } from '../content/gameConfig.generated'
 import { rulesEn } from '../content/rules.en'
 import { rulesFr } from '../content/rules.fr'
 import { fillRuleText } from '../content/fillRuleText'
 import { GameConfig } from '../data/gameConfig'
 import { useI18n } from '../i18n/context'
+import { GuideI18n, type T } from '../i18n/guide'
+import type { ReactNode } from 'react'
 
 const CONTENT = { en: rulesEn, fr: rulesFr }
 // Public page: the values come from the build-time copy of engine/config.py.
 const CONFIG = GameConfig.fromValues(GAME_CONFIG_VALUES)
 const NUMBERS = CONFIG.numbers()
 
+/** The rules, in the guides' language (EN/FR switch at the top, like Help). */
 export function Rules() {
+  return <GuideI18n>{(ui, languageSwitch) => <RulesView ui={ui} languageSwitch={languageSwitch} />}</GuideI18n>
+}
+
+// Names the player sees on screen (commanders, glossary terms) come from `ui`, the app's language.
+function RulesView({ ui, languageSwitch }: { ui: T; languageSwitch: ReactNode }) {
   const { t, locale } = useI18n()
   const content = CONTENT[locale]
   const fill = (text: string) => fillRuleText(locale, text, NUMBERS)
   return (
-    <article className="page rules">
+    <article className="page rules" lang={locale}>
+      {languageSwitch}
       <h1>{t('rules.title')}</h1>
       <p className="lead">{fill(content.intro)}</p>
       <nav aria-label={t('rules.contents')}>
@@ -48,7 +57,7 @@ export function Rules() {
                   <li key={code} className="card">
                     <h3 className="choice-card-head">
                       <CommanderEmblem code={code} />
-                      {text.name}
+                      {commanderName(ui, code)}
                     </h3>
                     <p>
                       <span className="choice-card-label">{t('commander.passive')}</span>{' '}
@@ -70,7 +79,7 @@ export function Rules() {
         <dl className="glossary">
           {content.glossary.map((entry) => (
             <div key={entry.term}>
-              <dt>{t(entry.term)}</dt>
+              <dt>{ui(entry.term)}</dt>
               <dd>{entry.text}</dd>
             </div>
           ))}
