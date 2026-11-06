@@ -8,6 +8,7 @@ import { useI18n } from '../i18n/context'
 import type { MessageKey } from '../i18n/en'
 import { formatInstant } from '../lib/format'
 import { callRpc } from '../lib/rpc'
+import { orderDescription } from './orderText'
 import { useAction } from '../lib/useAction'
 import { slotKey } from './squadRules'
 
@@ -105,7 +106,7 @@ export function OrdersPanel({
                     {min === max ? t('orders.cost', { n: min }) : t('orders.costRange', { min, max })}
                   </span>
                 </div>
-                <p className="order-desc">{t(`order.${type}.desc` as MessageKey)}</p>
+                <p className="order-desc">{orderDescription(t, config, type)}</p>
                 {type === 'force_field' && <p className="hint">{t('orders.hidden')}</p>}
                 {!open ? (
                   <button

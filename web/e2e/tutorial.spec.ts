@@ -22,7 +22,7 @@ test('first launch shows the tutorial once; Help opens it again', async ({ page 
   await expect(page.getByText(/^Units: \+\d+ ₩$/)).toBeVisible()
   for (let i = 0; i < 5; i += 1) await page.getByRole('button', { name: 'Next' }).click()
   await expect(title).toHaveText('Commanders')
-  await page.getByText('See an example').first().click()
+  await page.locator('summary', { hasText: 'See an example' }).first().click()
   await expect(page.getByText(/₩ becomes/).first()).toBeVisible()
   await expectAccessible(page)
 

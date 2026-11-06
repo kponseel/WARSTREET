@@ -5,6 +5,6 @@ import { formatNumber } from '../lib/format'
 export function fillRuleText(locale: Locale, text: string, numbers: Record<string, number>): string {
   return text.replace(/\{(\w+)\}/g, (match, name: string) => {
     const value = numbers[name]
-    return value === undefined ? match : formatNumber(locale, value)
+    return value === undefined ? match : formatNumber(locale, value, 2)
   })
 }

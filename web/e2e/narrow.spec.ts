@@ -76,7 +76,7 @@ test('every screen of a week fits at 360 px', async ({ page }) => {
   await expect(page.getByRole('heading', { name: 'Bienvenue sur WARSTREET' })).toBeVisible()
   await fits(page, 'tutorial (fr)')
   for (let i = 0; i < 6; i += 1) await page.getByRole('button', { name: 'Suivant' }).click()
-  await page.getByText('Voir un exemple').first().click()
+  await page.locator('summary', { hasText: 'Voir un exemple' }).first().click()
   await fits(page, 'tutorial commanders (fr)')
   // Rules follow the same EN/FR choice as Help.
   await page.goto('/#/rules')

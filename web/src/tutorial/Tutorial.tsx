@@ -76,6 +76,12 @@ function StepBody({ step, ui }: { step: Step; ui: T }): ReactNode {
               victory: n(CONFIG.numIn('feats', 'total_victory')),
             })}
           </p>
+          <p>
+            {t('tutorial.pf.heavy', {
+              heavy: formatSigned(locale, CONFIG.numIn('feats', 'heavy_losses')),
+              heavyMove: formatNumber(locale, CONFIG.num('heavy_losses_max_return')),
+            })}
+          </p>
           <p>{t('tutorial.pf.4')}</p>
         </>
       )
@@ -98,7 +104,12 @@ function StepBody({ step, ui }: { step: Step; ui: T }): ReactNode {
               reserve: n(CONFIG.num('reserve_size')),
             })}
           </p>
-          <p>{t('tutorial.squad.4')}</p>
+          <p>
+            {t('tutorial.squad.4', {
+              coefMin: formatNumber(locale, CONFIG.num('coef_min'), 2),
+              coefMax: formatNumber(locale, CONFIG.num('coef_max'), 2),
+            })}
+          </p>
           <p>{t('tutorial.squad.5', { suggest: ui('briefing.suggest') })}</p>
         </>
       )
@@ -134,6 +145,12 @@ function StepBody({ step, ui }: { step: Step; ui: T }): ReactNode {
             })}
           </p>
           <p>{t('tutorial.credits.4')}</p>
+          <p>
+            {t('tutorial.credits.5', {
+              betrayal: formatSigned(locale, CONFIG.num('betrayal_penalty')),
+              traitor: ui('badge.traitor'),
+            })}
+          </p>
         </>
       )
     case 'campaign': {

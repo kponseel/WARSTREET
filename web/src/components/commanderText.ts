@@ -8,16 +8,21 @@ type T = (key: MessageKey, vars?: Vars) => string
 export interface CommanderText {
   name: string
   passive: string
-  constraint: string
+  /** null when the commander has no limit (the line is not shown). */
+  constraint: string | null
 }
 
-/** Name, passive and constraint of a commander, numbers read from game_config (§5). */
-export function commanderText(t: T, locale: Locale, config: GameConfig, code: string): CommanderText {
+/**
+ * Name, passive and constraint of a commander, numbers read from game_config (§5).
+ * `names` translates the names shown on screen (orders), when the text is in another
+ * language than the app (the Rules page).
+ */
+export function commanderText(t: T, locale: Locale, config: GameConfig, code: string, names: T = t): CommanderText {
   const n = (value: number) => formatNumber(locale, value)
   const mult = (value: number) => `×${n(value)}`
   const champion = config.numIn('slot_multipliers', 'champion')
   const saboteur = config.numIn('slot_multipliers', 'saboteur')
-  const none = t('commander.noConstraint')
+  const none = null
   switch (code) {
     case 'bastion':
       return {
@@ -35,7 +40,7 @@ export function commanderText(t: T, locale: Locale, config: GameConfig, code: st
         constraint: t('commander.berserker.constraint', {
           orders: formatList(
             locale,
-            config.strings('berserker_forbidden_orders').map((o) => t(`order.${o}` as MessageKey)),
+            config.strings('berserker_forbidden_orders').map((o) => names(`order.${o}` as MessageKey)),
             'disjunction',
           ),
         }),

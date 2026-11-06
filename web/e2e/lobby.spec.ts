@@ -19,7 +19,7 @@ async function expectAccessible(page: Page) {
 }
 
 async function fillMember(page: Page, pseudo: string, commander: string) {
-  await page.getByLabel('Your pseudo in this league').fill(pseudo)
+  await page.getByLabel('Your nickname in this league').fill(pseudo)
   await page.getByRole('radio', { name: new RegExp(commander) }).check()
 }
 
